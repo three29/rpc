@@ -194,7 +194,7 @@ class Router
 			DISABLE_CSRF undefined or false && ignore_csrf is undefined or false
 
 		*/
-		if ( empty( $command->ignore_csrf ) || ! getenv( 'DISABLE_CSRF' ) ) {
+		if ( empty( $command->ignore_csrf ) && ! getenv( 'DISABLE_CSRF' ) ) {
 			$this->request->validateCSRF();
 		}
 
