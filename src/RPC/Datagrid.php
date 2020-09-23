@@ -327,7 +327,7 @@ class Datagrid
 		//$columns = $this->sortby;
 		foreach( $columns as $column => $order )
 		{
-			$sort[] = $column . ' ' . $order;
+			$sort[] = "`{$column}`" . ' ' . $order;
 		}
 		$sort = empty( $sort ) ? '' : ' ORDER BY ' . implode( ',', $sort );
 		
