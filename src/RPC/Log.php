@@ -27,6 +27,7 @@ class Log {
 	 */
 	function __construct()
 	{
+		$root_path = \RPC\Registry::get('root_path');
 		if( ! getenv( 'LOGS_ENABLED' ) )
 		{
 			$this->_enabled = false;
@@ -44,7 +45,7 @@ class Log {
 		}
 		else
 		{
-			$this->log_path = ROOT_PATH . '/logs/';
+			$this->log_path = $root_path . '/logs/';
 		}
 
 

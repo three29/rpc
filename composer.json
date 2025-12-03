@@ -1,27 +1,32 @@
 {
-    "name": "jwele329/rpc",
-    "version": "1.1.6",
-    "license": "MIT",
-    "description": "Reusable PHP Components",
-    "authors": [
-        {
-            "name": "Justin Welenofsky",
-            "email": "jwelenofsky@three29.com"
-        }
-    ],
-    "require": {
-        "php": ">=5.6.0",
-        "vlucas/phpdotenv": "2.*",
-        "filp/whoops": "2.*",
-        "kint-php/kint": "2.*"
-    },
-    "require-dev" : {
-        "php": ">=5.6.0"
-    },
-    "autoload": {
-        "psr-0": {
-            "RPC": "src/"
-        },
-        "files": ["src/RPC/init.php"]
+  "name": "jwele329/rpc",
+  "version": "1.1.6",
+  "license": "MIT",
+  "description": "Reusable PHP Components",
+  "authors": [
+    {
+      "name": "Justin Welenofsky",
+      "email": "jwelenofsky@three29.com"
     }
+  ],
+  "config": {
+    "platform": {
+      "php": "7.4.0"
+    }
+  },
+  "require": {
+    "php": ">=7.4.0",
+    "vlucas/phpdotenv": "^5.6.2",
+    "filp/whoops": "^2.18",
+    "kint-php/kint": "^6.1"
+  },
+  "require-dev": {
+    "php": ">=7.4.0",
+    "phpunit/phpunit": "^9.6"
+  },
+  "autoload": {
+    "psr-0": {
+      "RPC": "src/"
+    }
+  }
 }
