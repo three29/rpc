@@ -37,7 +37,7 @@ class Date
 	
 	/**
 	 * Checks to see if the date is between two other dates. It can receive two
-	 * parameters (two RPC_Date objects) or four paramters (two dates as strings
+	 * parameters (two \RPC\Date objects) or four paramters (two dates as strings
 	 * each with it's format)
 	 */
 	public function between()
@@ -45,7 +45,7 @@ class Date
 		$args = func_get_args();
 		
 		/**
-		 * I assume two RPC_Date objects have been passed
+		 * I assume two \RPC\Date objects have been passed
 		 */
 		if( func_num_args() == 2 )
 		{
@@ -204,7 +204,7 @@ class Date
 	 * @param int    $amount Number of units
 	 * @param string $unit   Type of time unit
 	 * 
-	 * @return RPC_Date
+	 * @return \RPC\Date
 	 */
 	public function add( $amount, $unit )
 	{
@@ -230,7 +230,7 @@ class Date
 				break;
 		}
 		
-		return new RPC\Date( strtotime( '+' . $amount . ' ' . $unit, $this->timestamp ), 'U' );
+		return new \RPC\Date( strtotime( '+' . $amount . ' ' . $unit, $this->timestamp ), 'U' );
 	}
 	
 	/**
@@ -246,7 +246,7 @@ class Date
 	 * @param int $amount  Number of units
 	 * @param string $unit Type of time unit
 	 * 
-	 * @return RPC_Date
+	 * @return \RPC\Date
 	 */
 	public function substract( $amount, $unit )
 	{
@@ -445,17 +445,15 @@ class Date
 	 * 
 	 * @param int $seconds
 	 * 
-	 * @return RPC_Date
+	 * @return \RPC\Date
 	 */
 	public function setSeconds( $seconds )
 	{
 		$seconds = ( 0 <= $seconds ) && ( 60 >= $seconds ) ? $seconds : 0;
 		
-		list( $y, $m, $d, $h, $m, $s ) = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
+		list( $year, $month, $day, $hour, $minutes ) = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
 		
-		$s = $seconds;
-		
-		return new RPC\Date( mktime( $h, $m, $s, $m, $d, $y ), 'U' );
+		return new \RPC\Date( mktime( $hour, $minutes, $seconds, $month, $day, $year ), 'U' );
 	}
 	
 	/**
@@ -463,17 +461,15 @@ class Date
 	 * 
 	 * @param int $minutes
 	 * 
-	 * @return RPC_Date
+	 * @return \RPC\Date
 	 */
 	public function setMinutes( $minutes )
 	{
 		$minutes = ( 0 <= $minutes ) && ( 60 >= $minutes ) ? $minutes : 0;
-		
-		list( $y, $m, $d, $h, $m, $s ) = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
-		
-		$m = $minutes;
-		
-		return new RPC\Date( mktime( $h, $m, $s, $m, $d, $y ), 'U' );
+
+		[ $year, $month, $day, $hour, , $seconds ] = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
+
+		return new \RPC\Date( mktime( $hour, $minutes, $seconds, $month, $day, $year ), 'U' );
 	}
 	
 	/**
@@ -481,17 +477,15 @@ class Date
 	 * 
 	 * @param string $hour
 	 * 
-	 * @return RPC_Date
+	 * @return \RPC\Date
 	 */
 	public function setHour( $hour )
 	{
 		$hour = ( 0 <= $hour ) && ( 23 >= $hour ) ? $hour : 0;
-		
-		list( $y, $m, $d, $h, $m, $s ) = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
-		
-		$h = $hour;
-		
-		return new RPC\Date( mktime( $h, $m, $s, $m, $d, $y ), 'U' );
+
+		[ $year, $month, $day, , $minutes, $seconds ] = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
+
+		return new \RPC\Date( mktime( $hour, $minutes, $seconds, $month, $day, $year ), 'U' );
 	}
 	
 	/**
@@ -499,17 +493,15 @@ class Date
 	 * 
 	 * @param int $day
 	 * 
-	 * @return RPC_Date
+	 * @return \RPC\Date
 	 */
 	public function setDay( $day )
 	{
 		$day = ( 1 <= $day ) && ( 31 >= $day ) ? $day : 0;
-		
-		list( $y, $m, $d, $h, $m, $s ) = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
-		
-		$d = $day;
-		
-		return new RPC\Date( mktime( $h, $m, $s, $m, $d, $y ), 'U' );
+
+		[ $year, $month, , $hour, $minutes, $seconds ] = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
+
+		return new \RPC\Date( mktime( $hour, $minutes, $seconds, $month, $day, $year ), 'U' );
 	}
 	
 	/**
@@ -517,17 +509,15 @@ class Date
 	 * 
 	 * @param int $month
 	 * 
-	 * @return RPC_Date
+	 * @return \RPC\Date
 	 */
 	public function setMonth( $month )
 	{
-		$seconds = ( 1 <= $month ) && ( 12 >= $month ) ? $month : 0;
-		
-		list( $y, $m, $d, $h, $m, $s ) = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
-		
-		$m = $month;
-		
-		return new RPC\Date( mktime( $h, $m, $s, $m, $d, $y ), 'U' );
+		$month = ( 1 <= $month ) && ( 12 >= $month ) ? $month : 0;
+
+		[ $year, , $day, $hour, $minutes, $seconds ] = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
+
+		return new \RPC\Date( mktime( $hour, $minutes, $seconds, $month, $day, $year ), 'U' );
 	}
 	
 	/**
@@ -535,19 +525,14 @@ class Date
 	 * 
 	 * @param int $year
 	 * 
-	 * @return RPC_Date
+	 * @return \RPC\Date
 	 */
 	public function setYear( $year )
 	{
 		$year = ( 1901 <= $year ) && ( 2038 >= $year ) ? $year : 0;
-		
-		list( $y, $m, $d, $h, $m, $s ) = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
-		
-		$y = $year;
-		
-		return new RPC\Date( mktime( $h, $m, $s, $m, $d, $y ), 'U' );
-	}
-	
-}
 
-?>
+		[ , $month, $day, $hour, $minutes, $seconds ] = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
+
+		return new \RPC\Date( mktime( $hour, $minutes, $seconds, $month, $day, $year ), 'U' );
+	}
+}

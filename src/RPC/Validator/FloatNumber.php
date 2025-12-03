@@ -4,9 +4,9 @@ namespace RPC\Validator;
 
 use RPC\Validator;
 
-class Float extends Validator
+class FloatNumber extends Validator
 {
-	
+
 	/**
 	* Returns value if it is a valid float value, FALSE otherwise.
 	*
@@ -17,7 +17,7 @@ class Float extends Validator
 	{
 		return is_float( $value );
 	}
-	
+
 }
 
 ?>

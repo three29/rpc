@@ -41,7 +41,7 @@ class Registry
 	 * @param string $name
 	 * @param object $obj
 	 * 
-	 * @return RPC_Registry
+	 * @return \RPC\Registry
 	 */
 	public static function set( $name, $obj )
 	{		

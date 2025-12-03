@@ -67,7 +67,7 @@ class MSSQL extends Adapter
 	 * @param string $password
 	 * @param int    $options
 	 * 
-	 * @return RPC_Db_Adapter_MySQL
+	 * @return \RPC\Db\Adapter\MSSQL
 	 */
 	public function connect( $username, $password, $options = null )
 	{ 
@@ -97,8 +97,8 @@ class MSSQL extends Adapter
 	}
 	
 	/**
-	 * Overiding the default implementation as it seems to have a bug, at least
-	 * with MySQL
+	 * Overriding the default implementation as it seems to have a bug, at least
+	 * with MSSQL
 	 * 
 	 * @return int
 	 */
@@ -141,7 +141,7 @@ class MSSQL extends Adapter
 	 * @param string $sql
 	 * @param array  $options
 	 * 
-	 * @return RPC_Db_Statement
+	 * @return \RPC\Db\Statement
 	 */
 	public function prepare( $sql, $options = array() )
 	{

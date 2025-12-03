@@ -22,8 +22,8 @@ class Application {
 	}
 
 	protected static function setupEnvironment($root_path) {
-		$dotenv = new \Dotenv\Dotenv( $root_path . '/config' );
-		$dotenv->load();
+		$dotenv = \Dotenv\Dotenv::createImmutable( $root_path . '/config' );
+		$dotenv->safeLoad(); // Use safeLoad to not throw if .env doesn't exist
 
 		//set some default constants if they aren't defined
 		if( ! defined( 'APP_PATH' ) )

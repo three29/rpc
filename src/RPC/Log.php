@@ -73,12 +73,12 @@ class Log {
 	 * Generally this function will be called using the global log_message() function
 	 *
 	 * @access	public
-	 * @param	string	the error level
 	 * @param	string	the error message
+	 * @param	string	the error level
 	 * @param	bool	whether the error is a native PHP error
 	 * @return	bool
 	 */
-	function write_log( $level = 'error', $msg, $php_error = false )
+	function write_log( $msg, $level = 'error', $php_error = false )
 	{
 		if ($this->_enabled === false)
 		{

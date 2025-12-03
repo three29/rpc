@@ -3,7 +3,6 @@
 namespace RPC\Validator;
 
 use RPC\Validator;
-use RPC\Date;
 
 class Date extends Validator
 {
@@ -29,7 +28,7 @@ class Date extends Validator
 	 */
 	public function validate( $value )
 	{
-		return RPC\Date::validDate( $value, $this->format );
+		return \RPC\Date::validDate( $value, $this->format );
 	}
 	
 }

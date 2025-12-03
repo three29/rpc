@@ -18,15 +18,52 @@
     "php": ">=7.4.0",
     "vlucas/phpdotenv": "^5.6.2",
     "filp/whoops": "^2.18",
-    "kint-php/kint": "^6.1"
+    "kint-php/kint": "^6.1",
+    "ext-gd": "*"
   },
   "require-dev": {
     "php": ">=7.4.0",
-    "phpunit/phpunit": "^9.6"
+    "phpunit/phpunit": "^9.6",
+    "phpcompatibility/php-compatibility": "^9.3"
   },
   "autoload": {
     "psr-0": {
       "RPC": "src/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "test:unit": "phpunit tests/Unit",
+    "test:feature": "phpunit tests/Feature",
+    "test:coverage": "phpunit --coverage-html coverage",
+    "test:coverage-text": "phpunit --coverage-text",
+    "compat": "phpcs --standard=phpcs.xml",
+    "compat:summary": "phpcs --standard=phpcs.xml --report=summary",
+    "compat:full": "phpcs --standard=phpcs.xml -s",
+    "lint": [
+      "@compat",
+      "@test"
+    ],
+    "check": [
+      "@compat:summary",
+      "@test"
+    ]
+  },
+  "scripts-descriptions": {
+    "test": "Run all tests",
+    "test:unit": "Run unit tests only",
+    "test:feature": "Run feature tests only",
+    "test:coverage": "Run tests with HTML coverage report (output to coverage/)",
+    "test:coverage-text": "Run tests with text coverage report",
+    "compat": "Check PHP 7.4-8.5 compatibility",
+    "compat:summary": "Check PHP compatibility (summary only)",
+    "compat:full": "Check PHP compatibility (detailed with error codes)",
+    "lint": "Run compatibility check and all tests",
+    "check": "Quick check - compatibility summary + tests"
   }
 }

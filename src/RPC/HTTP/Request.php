@@ -97,7 +97,7 @@ class Request
 	 * Returns an instance of RPC_HTTP_Response. Subsequent calls to this method
 	 * will return the same object
 	 *
-	 * @return RPC_HTTP_Request
+	 * @return \RPC\HTTP\Request
 	 */
 	public static function getInstance()
 	{
@@ -115,7 +115,7 @@ class Request
 	 *
 	 * @param string $name
 	 *
-	 * @return RPC_HTTP_Cookie
+	 * @return \RPC\HTTP\Cookie
 	 */
 	public function getCookie( $name )
 	{
@@ -224,7 +224,7 @@ class Request
 	 *
 	 * @param object $router
 	 *
-	 * @return RPC_HTTP_Request
+	 * @return \RPC\HTTP\Request
 	 */
 	public function setRouter( \RPC\Router $router )
 	{

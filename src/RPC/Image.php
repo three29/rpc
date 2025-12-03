@@ -49,7 +49,7 @@ class Image
 					$img = @imagecreatefrompng($file);
 					break;
 				default:
-					throw new Exception( 'This is not an image' );
+					throw new \Exception( 'This is not an image' );
 					$img = false;
 					break;
 			}
@@ -235,7 +235,7 @@ class Image
 
 				default:
 					// *** No extension - No save.
-					throw new Exception( 'File has no extension.' );
+					throw new \Exception( 'File has no extension.' );
 					break;
 			}
 

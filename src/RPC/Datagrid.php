@@ -39,7 +39,7 @@ class Datagrid
 	/**
 	 * Datagrid's pager
 	 * 
-	 * @var RPC_Datagrid_Pager
+	 * @var \RPC\Datagrid\Pager
 	 */
 	protected $pager = null;
 	
@@ -143,7 +143,7 @@ class Datagrid
 	 * The function receives a variabile number of parameters (column
 	 * names)
 	 * 
-	 * @return RPC_Datagrid
+	 * @return \RPC\Datagrid
 	 */
 	public function allowSortBy()
 	{
@@ -205,7 +205,7 @@ class Datagrid
 	 * @param string|array $sort
 	 * @param string       $order
 	 * 
-	 * @return RPC_Datagrid
+	 * @return \RPC\Datagrid
 	 */
 	public function initialSortBy( $sort, $order = '' )
 	{
@@ -227,9 +227,9 @@ class Datagrid
 	/**
 	 * Sets the datagrid's pager
 	 * 
-	 * @param RPC_Datagrid_Pager $pager
+	 * @param \RPC\Datagrid\Pager $pager
 	 * 
-	 * @return RPC_Datagrid
+	 * @return \RPC\Datagrid
 	 */
 	public function setPager( $pager )
 	{
@@ -239,7 +239,7 @@ class Datagrid
 	/**
 	 * Returns the datagrid's pager
 	 * 
-	 * @return RPC_Datagrid_Pager
+	 * @return \RPC\Datagrid\Pager
 	 */
 	public function getPager()
 	{

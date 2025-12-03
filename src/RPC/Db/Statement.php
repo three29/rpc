@@ -39,12 +39,12 @@ class Statement
 	
 	/**
 	 * Prepares the query
-	 * 
+	 *
 	 * @param string         $sql
+	 * @param \RPC\Db\Adapter $db
 	 * @param array          $options
-	 * @param RPC_Db_Adapter $db
 	 */
-	public function __construct( $sql, $options = array(), \RPC\Db\Adapter $db )
+	public function __construct( $sql, \RPC\Db\Adapter $db, $options = array() )
 	{
 		$this->db  = $db;
 		$this->sql = $sql;

@@ -87,20 +87,20 @@ class Signal
 	 */
 	public static function connectSignal( $signal1, $signal2 )
 	{
-		if( is_array( $signal ) )
+		if( is_array( $signal1 ) )
 		{
-			$emitent = $signal[0];
-			$signal  = $signal[1];
-			
+			$emitent = $signal1[0];
+			$signal  = $signal1[1];
+
 			if( is_object( $emitent ) )
 			{
 				$emitent = get_class( $emitent );
 			}
-			
-			$signal = $emitent . '_' . $signal;
+
+			$signal1 = $emitent . '_' . $signal;
 		}
-		
-		$GLOBALS['_RPC_']['signals'][$signal][] = array( 'type' => 'signal', 'slot' => $slot );
+
+		$GLOBALS['_RPC_']['signals'][$signal1][] = array( 'type' => 'signal', 'slot' => $signal2 );
 	}
 	
 	/**

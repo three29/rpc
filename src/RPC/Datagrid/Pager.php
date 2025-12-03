@@ -56,7 +56,7 @@ class Pager
 	 *
 	 * @param int $number
 	 *
-	 * @return RPC_Datagrid_Pager
+	 * @return \RPC\Datagrid\Pager
 	 */
 	public function setTotal( $number )
 	{
@@ -70,7 +70,7 @@ class Pager
 	 *
 	 * @param int $page
 	 *
-	 * @return RPC_Datagrid_Pager
+	 * @return \RPC\Datagrid\Pager
 	 */
 	public function setCurrent( $page )
 	{
@@ -83,7 +83,7 @@ class Pager
 	 *
 	 * @param int $perpage
 	 *
-	 * @return RPC_Datagrid_Pager
+	 * @return \RPC\Datagrid\Pager
 	 */
 	public function setPerPage( $perpage )
 	{
@@ -112,7 +112,7 @@ class Pager
 	 *
 	 * @param int $delta
 	 *
-	 * @return RPC_Datagrid_Pager
+	 * @return \RPC\Datagrid\Pager
 	 */
 	public function setDelta( $delta )
 	{

@@ -4,7 +4,7 @@ namespace RPC\Validator;
 
 use RPC\Validator;
 
-class Int extends Validator
+class Integer extends Validator
 {
 	
 	/**
@@ -19,5 +19,3 @@ class Int extends Validator
 	}
 	
 }
-
-?>

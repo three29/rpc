@@ -33,7 +33,7 @@ abstract class Adapter
 	/**
 	 * Table's database object
 	 *
-	 * @var RPC_Db_Adapter
+	 * @var \RPC\Db_Adapter
 	 */
 	protected $db = null;
 
@@ -75,7 +75,7 @@ abstract class Adapter
 	/**
 	 * Identity map for loaded rows from the table
 	 *
-	 * @var RPC_Db_Table_RowMap
+	 * @var \RPC\Db\Table\Row\Map
 	 */
 	protected $map = null;
 
@@ -93,7 +93,7 @@ abstract class Adapter
 	 * @param string $condition_sql
 	 * @param array $condition_values
 	 *
-	 * @return RPC_Db_Table_Row
+	 * @return \RPC\Db\Table\Row
 	 */
 	abstract public function find();
 
@@ -103,7 +103,7 @@ abstract class Adapter
 	 * @param string $condition_sql
 	 * @param array $condition_values
 	 *
-	 * @return RPC_Db_Table_Row
+	 * @return \RPC\Db\Table\Row
 	 */
 	abstract public function findAll();
 
@@ -113,7 +113,7 @@ abstract class Adapter
 	 * @param string $condition_sql
 	 * @param array $condition_values
 	 *
-	 * @return RPC_Db_Table_Row
+	 * @return \RPC\Db\Table\Row
 	 */
 	abstract public function findBySql();
 
@@ -141,7 +141,7 @@ abstract class Adapter
 	 *
 	 * @param array $array
 	 *
-	 * @return RPC_Db_Table_Row
+	 * @return \RPC\Db\Table\Row
 	 */
 	abstract protected function updateRow( \RPC\Db\Table\Row $row );
 
@@ -236,7 +236,7 @@ abstract class Adapter
 	/**
 	 * Sets the parent database connection
 	 *
-	 * @param RPC_Db_Adapter $database
+	 * @param \RPC\Db\Adapter $database
 	 */
 	protected function setDb( \RPC\Db\Adapter $db )
 	{
@@ -246,7 +246,7 @@ abstract class Adapter
 	/**
 	 * Get the table's database connection
 	 *
-	 * @return RPC_Db_Adapter
+	 * @return \RPC\Db_Adapter
 	 */
 	public function getDb()
 	{
@@ -276,7 +276,7 @@ abstract class Adapter
 	/**
 	 * Sets an identity map for this table
 	 *
-	 * @param RPC_Db_Table_RowMap $map
+	 * @param \RPC\Db\Table\Row\Map $map
 	 */
 	public function setIdentityMap( \RPC\Db\Table\Row\Map $map )
 	{
@@ -286,7 +286,7 @@ abstract class Adapter
 	/**
 	 * Returns the table's identity map
 	 *
-	 * @return RPC_Db_Table_RowMap
+	 * @return \RPC\Db\Table\Row\Map
 	 */
 	public function getIdentityMap()
 	{
@@ -299,7 +299,7 @@ abstract class Adapter
 	 *
 	 * @param string $pk
 	 *
-	 * @return RPC_Db_Table_Adapter
+	 * @return \RPC\Db\Table\Adapter
 	 */
 	public function setPkField( $pk )
 	{
@@ -322,7 +322,7 @@ abstract class Adapter
 	 *
 	 * @param array $data
 	 *
-	 * @return RPC_Db_Table_Row
+	 * @return \RPC\Db\Table\Row
 	 */
 	public function create( $data = array() )
 	{
@@ -341,7 +341,7 @@ abstract class Adapter
 				    ! is_array( $data[$field] ) &&
 				    ! is_object( $data[$field] ) )
 				{
-					$tmp[$field] = $hash->$field;
+					$tmp[$field] = $data[$field];
 				}
 				else
 				{
@@ -375,9 +375,9 @@ abstract class Adapter
 
 	/**
 	 * Creates a prepared statement for insertion in the table of a given
-	 * RPC_Db_Table_Row
+	 * \RPC\Db\Table\Row
 	 *
-	 * @param RPC_Db_Table_Row $row
+	 * @param \RPC\Db\Table\Row $row
 	 *
 	 * @return bool
 	 */
@@ -433,7 +433,7 @@ abstract class Adapter
 	 * Hook called before executing an insert query. If it returns false the
 	 * transaction will be rolled back
 	 *
-	 * @param RPC_Db_Table_Row $row
+	 * @param \RPC\Db\Table\Row $row
 	 *
 	 * @return bool
 	 */
@@ -461,7 +461,7 @@ abstract class Adapter
 	 * Hook called after executing an insert query. If it returns false the
 	 * transaction will be rolled back
 	 *
-	 * @param RPC_Db_Table_Row $row
+	 * @param \RPC\Db\Table\Row $row
 	 *
 	 * @return bool
 	 */
@@ -483,7 +483,7 @@ abstract class Adapter
 	 * Creates a prepared statement for update in the table the given row
 	 * identified by it's primary key
 	 *
-	 * @param RPC_Db_Table_Row $row
+	 * @param \RPC\Db\Table\Row $row
 	 *
 	 * @return int Number of affected rows
 	 */
@@ -536,7 +536,7 @@ abstract class Adapter
 	 * Hook called before executing an update query. If it returns false the
 	 * transaction will be rolled back
 	 *
-	 * @param RPC_Db_Table_Row $row
+	 * @param \RPC\Db\Table\Row $row
 	 *
 	 * @return bool
 	 */
@@ -558,7 +558,7 @@ abstract class Adapter
 	/**
 	 * Hook called after PDO Transaction
 	 *
-	 * @param RPC_Db_Table_Row $row
+	 * @param \RPC\Db\Table\Row $row
 	 *
 	 * @return bool
 	 */
@@ -570,7 +570,7 @@ abstract class Adapter
 	 * Hook called after executing an update query. If it returns false the
 	 * transaction will be rolled back
 	 *
-	 * @param RPC_Db_Table_Row $row
+	 * @param \RPC\Db\Table\Row $row
 	 *
 	 * @return bool
 	 */
@@ -592,7 +592,7 @@ abstract class Adapter
 	/**
 	 * Delets the given row
 	 *
-	 * @param RPC_Db_Table_Row $row
+	 * @param \RPC\Db\Table\Row $row
 	 *
 	 * @return bool
 	 */
@@ -628,7 +628,7 @@ abstract class Adapter
 	 * Hook called before executing a delete query. If it returns false the
 	 * transaction will be rolled back
 	 *
-	 * @param RPC_Db_Table_Row $row
+	 * @param \RPC\Db\Table\Row $row
 	 *
 	 * @return bool
 	 */
@@ -641,7 +641,7 @@ abstract class Adapter
 	 * Hook called after executing a delete query. If it returns false the
 	 * transaction will be rolled back
 	 *
-	 * @param RPC_Db_Table_Row $row
+	 * @param \RPC\Db\Table\Row $row
 	 *
 	 * @return bool
 	 */

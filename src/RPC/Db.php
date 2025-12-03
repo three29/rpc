@@ -83,7 +83,7 @@ class Db
 	 * 
 	 * @param mixed $db_name
 	 * 
-	 * @return RPC_Db_Adapter
+	 * @return \RPC\Db\Adapter
 	 */
 	public static function factory( $connection = '' )
 	{
@@ -196,10 +196,10 @@ class Db
 	
 	/**
 	 * Sets the default connetion name
-	 * 
+	 *
 	 * @param string $name
-	 * 
-	 * @return self
+	 *
+	 * @return void
 	 */
 	public static function setDefaultConnection( $name )
 	{
@@ -211,8 +211,6 @@ class Db
 		{
 			throw new \Exception( 'Connection not loaded' );
 		}
-		
-		return $this;
 	}
 
 	

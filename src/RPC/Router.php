@@ -3,14 +3,11 @@
 namespace RPC;
 
 
-
 use RPC\HTTP\Request;
 use RPC\HTTP\Response;
 use RPC\Regex;
 
-class Router
-{
-
+class Router {
 	protected $rewrite_rules = array();
 
 	protected $controller;
@@ -22,60 +19,86 @@ class Router
 	protected $params;
 
 
-	public function __construct()
-	{
-		$this->controller 	= 'Home';
-		$this->action 		= 'index';
+	public function __construct() {
+		$this->controller = 'Home';
+		$this->action     = 'index';
 
-		$this->request = Request::getInstance();
+		$this->request  = Request::getInstance();
 		$this->response = Response::getInstance();
 
 		$this->request->setRouter( $this );
 	}
 
-	public function setRewriteRules( $rules )
-	{
+	public function setRewriteRules( $rules ) {
 		$this->rewrite_rules = array_replace( $this->rewrite_rules, $rules );
 	}
 
-	public function run()
-	{
+	public function run() {
+		try {
+			$this->executeRoute();
+		} catch ( \Exception $e ) {
+			// Only show custom error page in production (when SHOW_ERRORS is not true)
+			if ( getenv( 'SHOW_ERRORS' ) === 'true' ) {
+				// In development, re-throw to let Whoops handle it
+				throw $e;
+			}
+
+			// Production: show custom 500 error page
+			if ( ! headers_sent() ) {
+				$this->response->setStatus( '500 Internal Server Error' );
+			}
+
+			// Try to render custom error template
+			try {
+				$view = new \RPC\View( APP_PATH . '/View', new \RPC\View\Cache( CACHE_PATH . '/view' ) );
+
+				// Try specific error template first, then fallback templates
+				if ( file_exists( APP_PATH . '/View/errors/500.php' ) ) {
+					$view->display( 'errors/500.php' );
+				} elseif ( file_exists( APP_PATH . '/View/errors/5xx.php' ) ) {
+					$view->display( 'errors/5xx.php' );
+				} else {
+					// Generic fallback if no templates exist
+					echo '500 - Internal Server Error';
+				}
+			} catch ( \Exception $viewException ) {
+				// If view rendering fails, show generic message
+				echo 'Something went wrong. Our amazing team of developers have been notified. Please try again later.';
+			}
+
+			exit;
+		}
+	}
+
+	protected function executeRoute() {
 		$uri = strtolower( trim( $this->request->getURI(), '/' ) );
 
 		/**
 		 * If the requested URI does not have a path info, then the default
 		 * command and action will be returned
 		 */
-		if( $uri && $this->rewrite_rules )
-		{
+		if ( $uri && $this->rewrite_rules ) {
 			/**
 			 * If the string has some GET parameters, they will be ignored during
 			 * the routing process
 			 */
-			if( ( $pos = strpos( $uri, '?' ) ) !== false )
-			{
+			if ( ( $pos = strpos( $uri, '?' ) ) !== false ) {
 				$uri = substr( $uri, 0, $pos );
 			}
 
-			foreach( $this->rewrite_rules as $rule => $arr )
-			{
+			foreach ( $this->rewrite_rules as $rule => $arr ) {
 				$matches = array();
 
 				$regex = new \RPC\Regex( '#' . str_replace( '#', '\#', $rule ) . '#' );
 
-				if( $regex->match( $uri, $matches ) )
-				{
+				if ( $regex->match( $uri, $matches ) ) {
 					$l = count( $matches[0] );
 
-					if( $l == 1 )
-					{
+					if ( $l == 1 ) {
 						$uri = $arr;
-					}
-					else
-					{
-						for( $replace = array(), $search = array(), $i = 1, $l = count( $matches[0] ); $i < $l; $i++ )
-						{
-							$replace[] = $matches[0][$i][0];
+					} else {
+						for ( $replace = array(), $search = array(), $i = 1, $l = count( $matches[0] ); $i < $l; $i ++ ) {
+							$replace[] = $matches[0][ $i ][0];
 							$search[]  = '$' . $i;
 						}
 
@@ -88,65 +111,73 @@ class Router
 
 		}
 
-		if( $uri )
-		{
-			if( strpos( $uri, '/params' ) !== false )
-			{
+		if ( $uri ) {
+			if ( strpos( $uri, '/params' ) !== false ) {
 				list( $uri, $params ) = explode( '/params', $uri );
 
 				$params = explode( '/', substr( $params, 1 ) );
-				for( $i = 0, $l = count( $params ); $i < $l; $i += 2 )
-				{
-					$this->params[$params[$i]] = @$params[$i + 1];
+				for ( $i = 0, $l = count( $params ); $i < $l; $i += 2 ) {
+					$this->params[ $params[ $i ] ] = @$params[ $i + 1 ];
 				}
 			}
 
 			$uri = trim( $uri, '/' );
 
-			if( $uri )
-			{
+			if ( $uri ) {
 				$cmdparts = explode( '/', $uri );
 
 				$cmdkey = end( $cmdparts );
 				reset( $cmdparts );
 				array_pop( $cmdparts );
 
-				if( count( $cmdparts ) )
-				{
-					foreach( $cmdparts as $k => $v )
-					{
-						$cmdparts[$k] = ucfirst( $v );
+				if ( count( $cmdparts ) ) {
+					foreach ( $cmdparts as $k => $v ) {
+						$cmdparts[ $k ] = ucfirst( $v );
 					}
-					$this->controller = implode( '\\' , $cmdparts );
-					$this->action = $cmdkey;
-				}
-				else
-				{
-					$cmdparts = array( ucfirst( $cmdkey ) );
-					$this->controller = implode( '\\' , $cmdparts );
+					$this->controller = implode( '\\', $cmdparts );
+					$this->action     = $cmdkey;
+				} else {
+					$cmdparts         = array( ucfirst( $cmdkey ) );
+					$this->controller = implode( '\\', $cmdparts );
 				}
 			}
 		}
 
 		$command = 'APP\\Controller\\' . $this->controller;
 
-		if( ! class_exists( $command ) )
-		{
-			if( $this->action != 'index' )
-			{
-				$command .= '\\' . ucfirst( $this->action );
+		if ( ! class_exists( $command ) ) {
+			if ( $this->action != 'index' ) {
+				$command      .= '\\' . ucfirst( $this->action );
 				$this->action = 'index';
 			}
 		}
 
-		$command = new $command;
-		if( ! $command instanceof \RPC\Controller )
-		{
-			throw new \Exception( 'Class "' . ( is_object( $command ) ? get_class( $command ) : $command ) . '" has to inherit from RPC_Command' );
+		if ( ! class_exists( $command ) ) {
+			// Handle 404 - Laravel-style error page lookup
+			$this->response->setStatus( '404 Not Found' );
+
+			// Create view instance for error template
+			$view = new \RPC\View( APP_PATH . '/View', new \RPC\View\Cache( CACHE_PATH . '/view' ) );
+
+			// Try specific error template first, then fallback templates
+			if ( file_exists( APP_PATH . '/View/errors/404.php' ) ) {
+				$view->display( 'errors/404.php' );
+			} elseif ( file_exists( APP_PATH . '/View/errors/4xx.php' ) ) {
+				$view->display( 'errors/4xx.php' );
+			} else {
+				// Generic fallback if no templates exist
+				echo '404 - Page Not Found';
+			}
+
+			exit;
 		}
 
-		if( ! in_array( $_SERVER['REQUEST_METHOD'], array( 'GET', 'POST', 'PUT' ) ) )
-		{
+		$command = new $command;
+		if ( ! $command instanceof \RPC\Controller ) {
+			throw new \Exception( 'Class "' . ( is_object( $command ) ? get_class( $command ) : $command ) . '" has to inherit from \RPC\Command' );
+		}
+
+		if ( ! in_array( $_SERVER['REQUEST_METHOD'], array( 'GET', 'POST', 'PUT' ) ) ) {
 			return false;
 		}
 
@@ -155,8 +186,7 @@ class Router
 
 		$methodname = $this->action . $request;
 
-		if( ! is_callable( array( $command, $methodname ), false ) )
-		{
+		if ( ! is_callable( array( $command, $methodname ), false ) ) {
 			throw new \Exception( 'Class "' . get_class( $command ) . '" was found but method "' . $methodname . '" could not be executed' );
 		}
 
@@ -201,44 +231,38 @@ class Router
 		$command->request  = $this->request;
 		$command->response = $this->response;
 
-		$command->current_method = $this->action;
-		$command_name = get_class( $command );
-		$command_name = explode( '\\', $command_name );
+		$command->current_method     = $this->action;
+		$command_name                = get_class( $command );
+		$command_name                = explode( '\\', $command_name );
 		$command->current_controller = strtolower( end( $command_name ) );
 
-		if( is_callable( array( $command, 'setup' ), false ) )
-		{
+		if ( is_callable( array( $command, 'setup' ), false ) ) {
 			$command->setup( $this->request, $this->response );
 		}
 
-		if( is_callable( array( $command, $this->action . 'Setup' ), false ) )
-		{
+		if ( is_callable( array( $command, $this->action . 'Setup' ), false ) ) {
 			$command->{$this->action . 'Setup'}( $this->request, $this->response );
 		}
 
 		$command->$methodname( $this->request, $this->response );
 
-		if( is_callable( array( $command, $this->action . 'Teardown' ), false ) )
-		{
+		if ( is_callable( array( $command, $this->action . 'Teardown' ), false ) ) {
 			$command->{$this->action . 'Teardown'}( $this->request, $this->response );
 		}
 
 		$command->flash = $command->flash();
 
-		if( ! $command->template )
-		{
+		if ( ! $command->template ) {
 			$command->getView( true )->display();
 		}
 
-		if( is_callable( array( $command, 'teardown' ), false ) )
-		{
+		if ( is_callable( array( $command, 'teardown' ), false ) ) {
 			$command->teardown( $this->request, $this->response );
 		}
 
 	}
 
-	public function getParams()
-	{
+	public function getParams() {
 		return $this->params;
 	}
 }

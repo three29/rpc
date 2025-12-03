@@ -3,7 +3,6 @@
 namespace RPC\Validator;
 
 use RPC\Validator;
-use Regex;
 
 /**
  * Matches the given string against a regex

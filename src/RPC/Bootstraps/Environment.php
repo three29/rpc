@@ -13,8 +13,8 @@ class Environment implements Bootstrap {
 			throw new \RuntimeException('Root path not set');
 		}
 
-		$dotenv = new \Dotenv\Dotenv( $root_path . '/config' );
-		$dotenv->load();
+		$dotenv = \Dotenv\Dotenv::createImmutable( $root_path . '/config' );
+		$dotenv->safeLoad(); // Use safeLoad to not throw if .env doesn't exist
 
 		//set some default constants if they aren't defined
 		if( ! defined( 'APP_PATH' ) )

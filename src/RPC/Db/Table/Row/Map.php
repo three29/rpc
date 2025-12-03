@@ -29,7 +29,7 @@ class Map
 	/**
 	 * Adds a row to the map, only if the row doesn't yet exist
 	 * 
-	 * @param RPC_Db_Table_Row $row
+	 * @param \RPC\Db\Table\Row $row
 	 */
 	public function add( $row )
 	{
@@ -42,7 +42,7 @@ class Map
 	/**
 	 * Removes a row from the map
 	 * 
-	 * @param RPC_Db_Table_Row $row
+	 * @param \RPC\Db\Table\Row $row
 	 */
 	public function remove( $row )
 	{
@@ -55,7 +55,7 @@ class Map
 	 * 
 	 * @param int $id
 	 * 
-	 * @return RPC_Db_Table_Row
+	 * @return \RPC\Db\Table\Row
 	 */
 	public function get( $id )
 	{

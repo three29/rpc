@@ -11,30 +11,37 @@ namespace RPC\HTTP;
  */
 class Response
 {
-	
+
 	/**
 	 * Header for a GIF image
 	 */
 	const HEADER_GIF = 'Content-type: image/gif';
-	
+
 	/**
 	 * Header for a PNG image
 	 */
 	const HEADER_PNG = 'Content-type: image/png';
-	
+
 	/**
 	 * Header for a JPG image
 	 */
 	const HEADER_JPEG = 'Content-type: image/jpeg';
-	
+
 	/**
 	 * Sent when the requested resource cannot be found
 	 */
 	const HEADER_NOT_FOUND = 'HTTP/1.0 404 Not Found';
-	
+
+	/**
+	 * Response buffer
+	 *
+	 * @var string
+	 */
+	protected $buffer = '';
+
 	/**
 	 * Singleton
-	 * 
+	 *
 	 * @see self::getInstance()
 	 */
 	protected function __construct() {}
@@ -48,7 +55,7 @@ class Response
 	 * Returns an instance of the class. Subsequent calls to this method will
 	 * return the same object
 	 * 
-	 * @return RPC_HTTP_Response
+	 * @return \RPC\HTTP\Response
 	 */
 	public static function getInstance()
 	{
@@ -94,7 +101,7 @@ class Response
 	 * to modify an already set one. Returns true if the adding was successful,
 	 * false otherwise.
 	 * 
-	 * @param RPC_HTTP_Cookie $cookie The cookie object to add
+	 * @param \RPC\HTTP\Cookie $cookie The cookie object to add
 	 * 
 	 * @return boolean True if the adding was successful, false otherwise
 	 * 
@@ -126,7 +133,7 @@ class Response
 	/**
 	 * Deletes the specified cookie from the response.
 	 * 
-	 * @param RPC_HTTP_Cookie $cookie the cookie object to delete
+	 * @param \RPC\HTTP\Cookie $cookie the cookie object to delete
 	 * 
 	 * @return bool If the cookie has been sent (doesn't mean the client
 	 *              accepted it)
@@ -212,7 +219,7 @@ class Response
 	 * 
 	 * @param string $content
 	 * 
-	 * @return RPC_HTTP_Response
+	 * @return \RPC\HTTP\Response
 	 */
 	public function setBuffer( $content )
 	{
@@ -226,7 +233,7 @@ class Response
 	 * 
 	 * @param string $content
 	 * 
-	 * @return RPC_HTTP_Response
+	 * @return \RPC\HTTP\Response
 	 */
 	public function prepend( $content )
 	{
@@ -240,7 +247,7 @@ class Response
 	 * 
 	 * @param string $content
 	 * 
-	 * @return RPC_HTTP_Response
+	 * @return \RPC\HTTP\Response
 	 */
 	public function append( $content )
 	{

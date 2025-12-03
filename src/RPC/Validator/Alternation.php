@@ -28,10 +28,10 @@ class Alternation extends Validator
 	/**
 	 * Another method to add validators to the object
 	 *
-	 * @param RPC_Validator $validator
-	 * @return RPC_Validator_Alternation
+	 * @param \RPC\Validator $validator
+	 * @return \RPC\Validator\Alternation
 	 */
-	public function add( RPC\Validator $validator )
+	public function add( \RPC\Validator $validator )
 	{
 		$this->alternates[] = $validator;
 	}

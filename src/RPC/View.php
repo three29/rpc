@@ -3,6 +3,7 @@
 namespace RPC;
 
 
+use RPC\HTTP\Response;
 use RPC\View\Cache;
 use RPC\View\Filter\Form;
 
@@ -75,14 +76,14 @@ class View
 	/**
 	 * HTTP Request object
 	 *
-	 * @var RPC_HTTP_Request
+	 * @var \RPC\HTTP\Request
 	 */
 	public $request;
 
 	/**
 	 * HTTP Response object
 	 *
-	 * @var RPC_HTTP_Response
+	 * @var \RPC\HTTP\Response
 	 */
 	public $response;
 
@@ -107,7 +108,7 @@ class View
 
 
 		$this->setRequest( \RPC\HTTP\Request::getInstance() );
-		$this->setResponse( \RPC\HTTP\Response::getInstance() );
+		$this->setResponse( Response::getInstance() );
 
 		foreach( $this->_view_defaultfilters as $v )
 		{
@@ -138,7 +139,7 @@ class View
 	/**
 	 * Set the HTTP Response object
 	 *
-	 * @param RPC_HTTP_Response $response
+	 * @param Response $response
 	 */
 	public function setResponse( $response )
 	{
@@ -148,7 +149,7 @@ class View
 	/**
 	 * Set the HTTP Response object
 	 *
-	 * @param RPC_HTTP_Response $response
+	 * @param Response $response
 	 */
 	public function getResponse( $response )
 	{
@@ -158,7 +159,7 @@ class View
 	/**
 	 * Set the HTTP Request object
 	 *
-	 * @param RPC_HTTP_Request $request
+	 * @param \RPC\HTTP\Request $request
 	 */
 	public function setRequest( $request )
 	{
@@ -168,7 +169,7 @@ class View
 	/**
 	 * Returnt the HTTP Request object
 	 *
-	 * @param RPC_HTTP_Request $request
+	 * @param \RPC\HTTP\Request $request
 	 */
 	public function getRequest()
 	{
@@ -235,7 +236,7 @@ class View
 	 *
 	 * @param string $filter
 	 *
-	 * @return RPC_View
+	 * @return \RPC_View
 	 */
 	public function unregisterFilter( $filter )
 	{
@@ -250,7 +251,7 @@ class View
 	/**
 	 * Returns the parser's cache object
 	 *
-	 * @return RPC_View_Cache
+	 * @return\RPC\View\Cache
 	 */
 	public function getCache()
 	{
@@ -260,7 +261,7 @@ class View
 	/**
 	 * Set the view cache
 	 *
-	 * @param RPC_View_Cache $cache the parser's cache object
+	 * @param \RPC\View\Cache $cache the parser's cache object
 	 */
 	public function setCache($cache)
 	{
@@ -453,7 +454,7 @@ class View
 	/**
 	 * Adds a new filter to the queue
 	 *
-	 * @param RPC_View_Filter $filter
+	 * @param \RPC\View\Filter $filter
 	 *
 	 * @return self
 	 */
@@ -467,9 +468,9 @@ class View
 	/**
 	 * Removes a filter from the queue
 	 *
-	 * @param RPC_View_Filter $filter
+	 * @param \RPC\View\Filter $filter
 	 *
-	 * @return RPC_View
+	 * @return \RPC\View
 	 */
 	public function removeFilter( \RPC\View\Filter $filter )
 	{

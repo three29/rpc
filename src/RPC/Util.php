@@ -291,7 +291,7 @@ class Util
 	* @access	public
 	* @return	void
 	*/
-	public static function log_message( $level = 'error', $message, $php_error = false )
+	public static function log_message( $message, $level = 'error', $php_error = false )
 	{
 		$log = new Log;
 
@@ -300,7 +300,7 @@ class Util
 			return;
 		}
 
-		$log->write_log( $level, $message, $php_error );
+		$log->write_log( $message, $level, $php_error );
 	}
 
     /**

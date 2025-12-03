@@ -2,10 +2,10 @@
 
 namespace RPC\Validator;
 
-use RPC\Validator;
 use RPC\Regex;
+use RPC\Validator;
 
-class Name extends RPC_Validator
+class Name extends Validator
 {
 	
 	/**
@@ -21,5 +21,3 @@ class Name extends RPC_Validator
 	}
 	
 }
-
-?>

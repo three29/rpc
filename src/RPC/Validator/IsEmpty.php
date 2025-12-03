@@ -4,7 +4,7 @@ namespace RPC\Validator;
 
 use RPC\Validator;
 
-class Empty extends Validator
+class IsEmpty extends Validator
 {
 	
 	/**

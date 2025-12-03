@@ -67,7 +67,7 @@ class MySQL extends Adapter
 	 * @param string $password
 	 * @param array  $options
 	 * 
-	 * @return RPC_Db_Adapter_MySQL
+	 * @return \RPC\Db\Adapter\MySQL
 	 */
 	public function connect( $username, $password, $options = [] )
 	{ 
@@ -147,7 +147,7 @@ class MySQL extends Adapter
 	 * @param string $sql
 	 * @param array  $options
 	 * 
-	 * @return RPC_Db_Statement
+	 * @return \RPC\Db\Statement
 	 */
 	public function prepare( $sql, $options = array() )
 	{

@@ -237,7 +237,7 @@ abstract class Adapter
 	/**
 	 * Prepares a query for execution. Returns a statement
 	 *
-	 * @return RPC_Db_Statement
+	 * @return \RPC\Db\Statement
 	 */
 	abstract public function prepare( $sql, $options = null );
 

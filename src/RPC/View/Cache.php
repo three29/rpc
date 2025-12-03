@@ -34,7 +34,7 @@ class Cache
 	 * 
 	 * @param string $path
 	 * 
-	 * @return RPC_View_Cache
+	 * @return \RPC\View\Cache
 	 */
 	public function setDirectory( $path )
 	{		
@@ -122,7 +122,7 @@ class Cache
 	 * @param string $file
 	 * @param string $content
 	 * 
-	 * @return RPC_View_Cache
+	 * @return \RPC\View\Cache
 	 */
 	public function set( $file, $content, $template_name )
 	{

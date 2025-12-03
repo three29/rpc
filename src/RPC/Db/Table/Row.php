@@ -19,7 +19,7 @@ class Row implements ArrayAccess
 	/**
 	 * Stores a reference to the parent table
 	 *
-	 * @var RPC_Db_Table_Adapter
+	 * @var RPC\Db\Table\Adapter
 	 */
 	protected $table = null;
 
@@ -68,7 +68,7 @@ class Row implements ArrayAccess
 	/**
 	 * Class constructor
 	 *
-	 * @param RPC_Db_Table_Adapter $table
+	 * @param \RPC\Db\Table\Adapter $table
 	 * @param object               $row
 	 */
 	public function __construct( \RPC\Db\Table\Adapter $table, $row = array() )
@@ -82,7 +82,7 @@ class Row implements ArrayAccess
 	/**
 	 * Convenience method for returning database object
 	 *
-	 * @return RPC_Db_Adapter
+	 * @return \RPC\Db\Adapter
 	 */
 	public function getDb()
 	{
@@ -92,7 +92,7 @@ class Row implements ArrayAccess
 	/**
 	 * Sets the table instance to which the row belongs
 	 *
-	 * @param RPC_Db_Table_Adapter $table
+	 * @param \RPC\Db\Table\Adapter $table
 	 */
 	protected function setTable( \RPC\Db\Table\Adapter $table )
 	{
@@ -102,7 +102,7 @@ class Row implements ArrayAccess
 	/**
 	 * Returns the table instance where the row belongs
 	 *
-	 * @return RPC_Db_Table_Adapter
+	 * @return \RPC\Db\Table\Adapter
 	 */
 	public function getTable()
 	{
@@ -145,7 +145,7 @@ class Row implements ArrayAccess
 	 *
 	 * @param bool $dirty
 	 *
-	 * @return RPC_Db_Table_Row
+	 * @return \RPC\Db\Table\Row
 	 */
 	protected function setDirty( $dirty )
 	{
@@ -179,7 +179,7 @@ class Row implements ArrayAccess
 	 * Reverts the row to it's original state when it was retrieved from the
 	 * database or since the last save
 	 *
-	 * @return RPC_Db_Table_Row
+	 * @return \RPC\Db\Table\Row
 	 */
 	public function revert()
 	{
@@ -196,6 +196,7 @@ class Row implements ArrayAccess
 	 *
 	 * @implements ArrayAccess
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetSet( $index, $newval )
 	{
 		if( $this->offsetExists( $index ) )
@@ -238,6 +239,7 @@ class Row implements ArrayAccess
 	 *
 	 * @implements ArrayAccess
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetUnset( $index )
 	{
 		throw new \Exception( 'You cannot remove a field from the row' );
@@ -250,6 +252,7 @@ class Row implements ArrayAccess
 	 *
 	 * @implements ArrayAccess
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetExists( $index )
 	{
 		return in_array( $index, $this->getFields() );
@@ -264,6 +267,7 @@ class Row implements ArrayAccess
 	 *
 	 * @implements ArrayAccess
 	 */
+	#[\ReturnTypeWillChange]
 	public function offsetGet( $index )
 	{
 		if( ! $this->offsetExists( $index ) )
@@ -285,7 +289,7 @@ class Row implements ArrayAccess
 	 *
 	 * @param mixed $pk
 	 *
-	 * @return RPC_Db_Table_Row
+	 * @return \RPC\Db\Table\Row
 	 */
 	public function setPk( $pk, $force_pk = false )
 	{
@@ -329,7 +333,7 @@ class Row implements ArrayAccess
 	 *
 	 * @param array $errors
 	 *
-	 * @return RPC_Db_Table_Row
+	 * @return \RPC\Db\Table\Row
 	 */
 	public function setErrors( $errors )
 	{
@@ -354,7 +358,7 @@ class Row implements ArrayAccess
 	 * @param string $field
 	 * @param string $error
 	 *
-	 * @return RPC_Db_Table_Row
+	 * @return \RPC\Db\Table\Row
 	 */
 	public function setError( $field, $error = '' )
 	{
@@ -381,7 +385,7 @@ class Row implements ArrayAccess
 	 * @param array $values
 	 * @param boolean $field_exists
 	 *
-	 * @return RPC_Db_Table_Row
+	 * @return \RPC\Db\Table\Row
 	 */
 	public function populate( $values, $options = array() )
 	{
@@ -508,7 +512,7 @@ class Row implements ArrayAccess
 
 	public function _validate_numeric( $column, $value = '', $msg = 'This field requires a numeric value.' )
 	{
-		$v = new \RPC\Validator\Numeric( $msg );
+		$v = new \RPC\Validator\IsNumeric( $msg );
 		if( ! $v->validate( $value ) )
 		{
 			return $this->setError( $column, $v->getError() );
