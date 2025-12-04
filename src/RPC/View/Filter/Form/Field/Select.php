@@ -24,6 +24,7 @@ class Select extends Field
 	public function filter( $source )
 	{
 		$regex = new \RPC\Regex( '/<select.*?(?<!\?)><\/select>/' );
+		$matches = [];
 		$regex->match( $source, $matches );
 
 		foreach( $matches as $select )

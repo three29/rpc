@@ -155,4 +155,130 @@ class RequestTest extends UnitTestCase
         $this->assertEquals('post', Request::METHOD_POST);
         $this->assertEquals('put', Request::METHOD_PUT);
     }
+
+    public function testNewInstanceIsNotSingleton(): void
+    {
+        $instance1 = Request::getInstance();
+        $instance2 = new Request();
+
+        $this->assertNotSame($instance1, $instance2);
+    }
+
+    public function testGetIPPriorityOrder(): void
+    {
+        // HTTP_CLIENT_IP has highest priority
+        $_SERVER['HTTP_CLIENT_IP'] = '10.0.0.1';
+        $_SERVER['HTTP_X_FORWARDED_FOR'] = '172.16.0.1';
+        $_SERVER['REMOTE_ADDR'] = '192.168.1.1';
+
+        $this->assertEquals('10.0.0.1', $this->request->getIP());
+
+        // HTTP_X_FORWARDED_FOR is second priority
+        unset($_SERVER['HTTP_CLIENT_IP']);
+        $this->assertEquals('172.16.0.1', $this->request->getIP());
+
+        // REMOTE_ADDR is lowest priority
+        unset($_SERVER['HTTP_X_FORWARDED_FOR']);
+        $this->assertEquals('192.168.1.1', $this->request->getIP());
+    }
+
+    public function testGetIPReturnsNullWhenNotSet(): void
+    {
+        unset($_SERVER['HTTP_CLIENT_IP']);
+        unset($_SERVER['HTTP_X_FORWARDED_FOR']);
+        unset($_SERVER['REMOTE_ADDR']);
+
+        $this->assertNull($this->request->getIP());
+    }
+
+    public function testGetMethodIsCaseInsensitive(): void
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $this->assertEquals('get', $this->request->getMethod());
+
+        $_SERVER['REQUEST_METHOD'] = 'get';
+        $this->assertEquals('get', $this->request->getMethod());
+
+        $_SERVER['REQUEST_METHOD'] = 'Post';
+        $this->assertEquals('post', $this->request->getMethod());
+    }
+
+    public function testIsSecureWithDifferentValues(): void
+    {
+        $_SERVER['HTTPS'] = 'ON';
+        $this->assertTrue($this->request->isSecure());
+
+        $_SERVER['HTTPS'] = 'On';
+        $this->assertTrue($this->request->isSecure());
+
+        $_SERVER['HTTPS'] = 'OFF';
+        $this->assertFalse($this->request->isSecure());
+
+        $_SERVER['HTTPS'] = '1';
+        $this->assertFalse($this->request->isSecure());
+
+        unset($_SERVER['HTTPS']);
+        $this->assertFalse($this->request->isSecure());
+    }
+
+    public function testGetQueryStringWithEmptyValue(): void
+    {
+        $_SERVER['QUERY_STRING'] = '';
+        $this->assertEquals('', $this->request->getQueryString());
+    }
+
+    public function testGetPathInfoReturnsNullWhenNotSet(): void
+    {
+        unset($_SERVER['PATH_INFO']);
+        $this->assertNull($this->request->getPathInfo());
+    }
+
+    public function testGetPathInfoWhenSet(): void
+    {
+        $_SERVER['PATH_INFO'] = '/users/123';
+        $this->assertEquals('/users/123', $this->request->getPathInfo());
+    }
+
+    public function testConstructorPopulatesPostGetFiles(): void
+    {
+        $_POST = ['key1' => 'value1'];
+        $_GET = ['key2' => 'value2'];
+        $_FILES = ['file1' => ['name' => 'test.txt']];
+
+        $request = new Request();
+
+        $this->assertEquals(['key1' => 'value1'], $request->post);
+        $this->assertEquals(['key2' => 'value2'], $request->get);
+        $this->assertEquals(['file1' => ['name' => 'test.txt']], $request->files);
+    }
+
+    public function testGetUriWithQueryString(): void
+    {
+        $_SERVER['REQUEST_URI'] = '/users/list?page=1&sort=name';
+        $this->assertEquals('/users/list?page=1&sort=name', $this->request->getURI());
+    }
+
+    public function testGetUriWithFragment(): void
+    {
+        $_SERVER['REQUEST_URI'] = '/products#featured';
+        $this->assertEquals('/products#featured', $this->request->getURI());
+    }
+
+    public function testGetCookieReturnsNewInstanceEachTime(): void
+    {
+        $cookie1 = $this->request->getCookie('test');
+        $cookie2 = $this->request->getCookie('test');
+
+        $this->assertNotSame($cookie1, $cookie2);
+        $this->assertEquals($cookie1->getName(), $cookie2->getName());
+    }
+
+    public function testSetRouterReturnsRequestInstance(): void
+    {
+        $router = new \RPC\Router();
+        $result = $this->request->setRouter($router);
+
+        $this->assertInstanceOf(Request::class, $result);
+        $this->assertSame($this->request, $result);
+    }
 }

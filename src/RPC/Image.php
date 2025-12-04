@@ -2,7 +2,7 @@
 
 namespace RPC;
 
-
+use RPC\Exception\InvalidArgumentException;
 
 /**
  * Very simple image class which allows for resizing and converting
@@ -15,11 +15,11 @@ class Image
 
 	// *** Class variables
 		private $image;
-	    private $width;
-	    private $height;
+	    private int $width;
+	    private int $height;
 		private $imageResized;
 
-		function __construct($fileName)
+		function __construct(string $fileName)
 		{
 			// *** Open up the file
 			$this->image = $this->openImage($fileName);
@@ -31,7 +31,7 @@ class Image
 
 		## --------------------------------------------------------
 
-		private function openImage($file)
+		private function openImage(string $file)
 		{
 			// *** Get extension
 			$extension = strtolower(strrchr($file, '.'));
@@ -49,22 +49,20 @@ class Image
 					$img = @imagecreatefrompng($file);
 					break;
 				default:
-					throw new \Exception( 'This is not an image' );
-					$img = false;
-					break;
+					throw new InvalidArgumentException( 'This is not an image' );
 			}
 			return $img;
 		}
 
 		## --------------------------------------------------------
 
-		public function resize($newWidth, $newHeight, $option="auto")
+		public function resize(int $newWidth, int $newHeight, string $option="auto"): void
 		{
 			// *** Get optimal width and height - based on $option
 			$optionArray = $this->getDimensions($newWidth, $newHeight, $option);
 
-			$optimalWidth  = $optionArray['optimalWidth'];
-			$optimalHeight = $optionArray['optimalHeight'];
+			$optimalWidth  = (int)$optionArray['optimalWidth'];
+			$optimalHeight = (int)$optionArray['optimalHeight'];
 
 
 			// *** Resample - create image canvas of x, y size
@@ -80,9 +78,11 @@ class Image
 
 		## --------------------------------------------------------
 
-		private function getDimensions($newWidth, $newHeight, $option)
+		private function getDimensions(int $newWidth, int $newHeight, string $option): array
 		{
 
+		$optimalWidth = 0;
+		$optimalHeight = 0;
 		   switch ($option)
 			{
 				case 'exact':
@@ -108,26 +108,26 @@ class Image
 					$optimalHeight = $optionArray['optimalHeight'];
 					break;
 			}
-			return array('optimalWidth' => $optimalWidth, 'optimalHeight' => $optimalHeight);
+			return array('optimalWidth' => (int)$optimalWidth, 'optimalHeight' => (int)$optimalHeight);
 		}
 
 		## --------------------------------------------------------
 
-		private function getSizeByFixedHeight($newHeight)
+		private function getSizeByFixedHeight(int $newHeight): float
 		{
 			$ratio = $this->width / $this->height;
 			$newWidth = $newHeight * $ratio;
 			return $newWidth;
 		}
 
-		private function getSizeByFixedWidth($newWidth)
+		private function getSizeByFixedWidth(int $newWidth): float
 		{
 			$ratio = $this->height / $this->width;
 			$newHeight = $newWidth * $ratio;
 			return $newHeight;
 		}
 
-		private function getSizeByAuto($newWidth, $newHeight)
+		private function getSizeByAuto(int $newWidth, int $newHeight): array
 		{
 			if ($this->height < $this->width)
 			// *** Image to be resized is wider (landscape)
@@ -157,12 +157,12 @@ class Image
 				}
 			}
 
-			return array('optimalWidth' => $optimalWidth, 'optimalHeight' => $optimalHeight);
+			return array('optimalWidth' => (int)$optimalWidth, 'optimalHeight' => (int)$optimalHeight);
 		}
 
 		## --------------------------------------------------------
 
-		private function getOptimalCrop($newWidth, $newHeight)
+		private function getOptimalCrop(int $newWidth, int $newHeight): array
 		{
 
 			$heightRatio = $this->height / $newHeight;
@@ -177,16 +177,16 @@ class Image
 			$optimalHeight = $this->height / $optimalRatio;
 			$optimalWidth  = $this->width  / $optimalRatio;
 
-			return array('optimalWidth' => $optimalWidth, 'optimalHeight' => $optimalHeight);
+			return array('optimalWidth' => (int)$optimalWidth, 'optimalHeight' => (int)$optimalHeight);
 		}
 
 		## --------------------------------------------------------
 
-		private function crop($optimalWidth, $optimalHeight, $newWidth, $newHeight)
+		private function crop(float $optimalWidth, float $optimalHeight, int $newWidth, int $newHeight): void
 		{
 			// *** Find center - this will be used for the crop
-			$cropStartX = ( $optimalWidth / 2) - ( $newWidth /2 );
-			$cropStartY = ( $optimalHeight/ 2) - ( $newHeight/2 );
+			$cropStartX = (int)(( $optimalWidth / 2) - ( $newWidth /2 ));
+			$cropStartY = (int)(( $optimalHeight/ 2) - ( $newHeight/2 ));
 
 			$crop = $this->imageResized;
 			//imagedestroy($this->imageResized);
@@ -198,7 +198,7 @@ class Image
 
 		## --------------------------------------------------------
 
-		public function save($savePath, $imageQuality="100")
+		public function save(string $savePath, string|int $imageQuality="100"): void
 		{
 			// *** Get extension
     		$extension = strrchr($savePath, '.');
@@ -221,7 +221,7 @@ class Image
 
 				case '.png':
 					// *** Scale quality from 0-100 to 0-9
-					$scaleQuality = round(($imageQuality/100) * 9);
+					$scaleQuality = (int) round(($imageQuality/100) * 9);
 
 					// *** Invert quality setting as 0 is best, not 9
 					$invertScaleQuality = 9 - $scaleQuality;
@@ -235,15 +235,14 @@ class Image
 
 				default:
 					// *** No extension - No save.
-					throw new \Exception( 'File has no extension.' );
-					break;
-			}
+					throw new InvalidArgumentException( 'File has no extension.' );
 
-			imagedestroy($this->imageResized);
+		}
+			// imagedestroy() is no longer needed in PHP 8.0+ - GdImage objects are automatically destroyed
 		}
 
 
-		public function rotateImage( $savePath, $angle = 90 )
+		public function rotateImage( string $savePath, int $angle = 90 ): void
 		{
 			$imageQuality = 100;
 
@@ -251,7 +250,9 @@ class Image
     		$extension = strrchr($savePath, '.');
    			$extension = strtolower($extension);
 
-			$this->image = imagerotate( $this->image, $angle, -1 );
+			// Create a transparent background color for rotation (PHP 8.5 compatible)
+			$transparent = imagecolorallocatealpha($this->image, 0, 0, 0, 127);
+			$this->image = imagerotate( $this->image, $angle, $transparent );
 
 			switch($extension)
 			{
@@ -270,7 +271,7 @@ class Image
 
 				case '.png':
 					// *** Scale quality from 0-100 to 0-9
-					$scaleQuality = round(($imageQuality/100) * 9);
+					$scaleQuality = (int) round(($imageQuality/100) * 9);
 
 					// *** Invert quality setting as 0 is best, not 9
 					$invertScaleQuality = 9 - $scaleQuality;
@@ -287,7 +288,7 @@ class Image
 					break;
 			}
 
-			imagedestroy( $this->image );
+			// imagedestroy() is no longer needed in PHP 8.0+ - GdImage objects are automatically destroyed
 		}
 
 		## --------------------------------------------------------

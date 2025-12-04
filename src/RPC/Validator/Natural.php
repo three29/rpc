@@ -13,7 +13,7 @@ class Natural extends Validator
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		if( ( ! is_numeric( $value ) ) ||
 		    ( (int) $value != $value ) ||
@@ -21,7 +21,7 @@ class Natural extends Validator
 		{
 			return false;
 		}
-		
+
 		return true;
 	}
 	

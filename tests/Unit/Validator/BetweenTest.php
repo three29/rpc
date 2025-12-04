@@ -62,16 +62,14 @@ class BetweenTest extends UnitTestCase
 
     public function testConstructorRequiresMinMax(): void
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Invalid arguments');
+        $this->expectException(\TypeError::class);
 
         new Between(null, 10);
     }
 
     public function testConstructorRequiresMaximum(): void
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Invalid arguments');
+        $this->expectException(\TypeError::class);
 
         new Between(10, null);
     }

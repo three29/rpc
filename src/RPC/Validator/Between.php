@@ -2,6 +2,7 @@
 
 namespace RPC\Validator;
 
+use RPC\Exception\InvalidArgumentException;
 use RPC\Validator;
 
 
@@ -12,34 +13,28 @@ class Between extends Validator
 	
 	protected $max;
 	
-	function __construct( $min = null, $max = null, $errormessage = '' )
+	function __construct( int|float $min, int|float $max, string $errormessage = '' )
 	{
-		if( is_null( $min ) ||
-		    is_null( $max ) )
-		{
-			throw new \Exception( 'Invalid arguments' );
-		}
-		
 		$this->min = $min;
 		$this->max = $max;
-		
+
 		parent::__construct( $errormessage );
 	}
-	
+
 	/**
 	 * Returns true if it is greater than or equal to $min and less
 	 * than or equal to $max, false otherwise.
 	 *
-	 * @param int $value
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		if( ! is_numeric( $value ) )
 		{
 			return false;
 		}
-		
+
 		return ( $this->min <= $value ) &&
 		       ( $this->max >= $value );
 	}

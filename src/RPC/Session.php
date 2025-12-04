@@ -2,12 +2,12 @@
 
 namespace RPC;
 
-
+use RPC\Exception\RuntimeException;
 
 /**
  * Session class which provides a few convenience methods. It is
  * designed to allow users to work with $_SESSION.
- * 
+ *
  * @package Core
  */
 class Session
@@ -36,10 +36,10 @@ class Session
 	
 	/**
 	 * Whether the session should be sent only over a HTTPS connection
-	 * 
+	 *
 	 * @var bool
 	 */
-	protected $_rpc_secure = 0;
+	protected $_rpc_secure = false;
 	
 	/**
 	 * Whether the session will be available only over HTTP connections
@@ -50,48 +50,50 @@ class Session
 	
 	/**
 	 * Class instance
-	 * 
-	 * @var \RPC\Session
+	 *
+	 * @var \RPC\Session|null
 	 */
-	protected static $_rpc_instance = null;
+	protected static ?\RPC\Session $_rpc_instance = null;
 	
 	/**
-	 * Class cannot be instantiated using the new operator
-	 * 
-	 * @see self::getInstance()
+	 * Class constructor
+	 * Now supports dependency injection while maintaining getInstance() for backward compatibility
 	 */
-	public function __construct() {}
-	
+	public function __construct()
+	{
+		$this->setDefaultCookieParams();
+	}
+
 	/**
-	 * Singleton
-	 * 
+	 * Get singleton instance (backward compatibility)
+	 *
 	 * @return \RPC\Session
 	 */
 	public static function getInstance()
 	{
-		if( ! isset( self::$instance ) )
+		if( ! isset( self::$_rpc_instance ) )
 		{
-			$c = __CLASS__;
-			self::$_rpc_instance = new $c;
-			self::$_rpc_instance->setDefaultCookieParams();
+			self::$_rpc_instance = new self();
 		}
-		
+
 		return self::$_rpc_instance;
 	}
-	
+
 	/**
-	 * Singleton
+	 * Prevent session from being cloned
+	 *
+	 * @throws \Exception
 	 */
 	public function __clone()
 	{
-		throw new \Exception( 'Singletons can\'t be cloned' );
+		throw new RuntimeException("Singletons can't be cloned");
 	}
 	
 	/**
 	 * Sets a name for the current's application session cookie
 	 * Each application should have a different session name
 	 * 
-	 * @param string name
+	 * @param string $name
 	 * 
 	 * @return \RPC\Session
 	 */
@@ -204,8 +206,8 @@ class Session
 	 */
 	public function setCacheExpire( $expire )
 	{
-		session_cache_expire( round( $expire / 60 ) );
-		
+		session_cache_expire( (int) round( $expire / 60 ) );
+
 		return $this;
 	}
 	
@@ -295,12 +297,13 @@ class Session
 	/**
 	 * Sets a save adapter for the session. The object will provide a
 	 * medium to keep the session data.
-	 * 
+	 *
 	 * @param \RPC\Session\Adapter $adapter
-	 * 
+	 *
 	 * @return \RPC\Session
+	 * @phpstan-ignore-next-line Session\Adapter class not yet implemented
 	 */
-	public function setAdapter( RPC\Session\Adapter $adapter )
+	public function setAdapter( \RPC\Session\Adapter $adapter )
 	{
 		session_set_save_handler( array( $adapter, 'open' ),
 		                          array( $adapter, 'close' ),
@@ -326,13 +329,28 @@ class Session
 	
 	/**
 	 * Initializes the session
-	 * 
+	 *
 	 * @return \RPC\Session
 	 */
 	public function start()
 	{
-		session_set_cookie_params( $this->_rpc_expire, $this->_rpc_path, $this->_rpc_domain, $this->_rpc_secure, $this->_rpc_httponly );
-		
+		// PHP 7.3+ supports array format with samesite option
+		if( PHP_VERSION_ID >= 70300 )
+		{
+			session_set_cookie_params([
+				'lifetime' => $this->_rpc_expire,
+				'path' => $this->_rpc_path,
+				'domain' => $this->_rpc_domain,
+				'secure' => $this->_rpc_secure,
+				'httponly' => $this->_rpc_httponly,
+				'samesite' => 'Lax'
+			]);
+		}
+		else
+		{
+			session_set_cookie_params( $this->_rpc_expire, $this->_rpc_path, $this->_rpc_domain, $this->_rpc_secure, $this->_rpc_httponly );
+		}
+
 		session_start();
 
 		//fixation attacks
@@ -345,7 +363,7 @@ class Session
 		//session hijacking
 		if( isset( $_SESSION['HTTP_USER_AGENT'] ) )
 		{
-		    if( $_SESSION['HTTP_USER_AGENT'] != md5( @$_SERVER['HTTP_USER_AGENT'] . 'three29framework' ) )
+		    if( ! hash_equals( $_SESSION['HTTP_USER_AGENT'], hash_hmac( 'sha256', @$_SERVER['HTTP_USER_AGENT'], session_id() ) ) )
 		    {
 		        /* Prompt for password */
 		        $this->destroy();
@@ -354,7 +372,7 @@ class Session
 		}
 		else
 		{
-		    $_SESSION['HTTP_USER_AGENT'] = md5( @$_SERVER['HTTP_USER_AGENT'] . 'three29framework' );
+		    $_SESSION['HTTP_USER_AGENT'] = hash_hmac( 'sha256', @$_SERVER['HTTP_USER_AGENT'], session_id() );
 		}
 		
 		return $this;

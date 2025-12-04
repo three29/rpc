@@ -10,12 +10,13 @@ class RegistryTest extends UnitTestCase
     {
         parent::setUp();
 
-        // Clear registry before each test using reflection
-        $reflection = new \ReflectionClass(Registry::class);
-        $property = $reflection->getProperty('registry');
-        // setAccessible() is deprecated in PHP 8.5 - no longer needed for properties
-        // setValue() for static properties requires null as first argument in PHP 8.5+
-        $property->setValue(null, []);
+        // Clear global registry
+        $GLOBALS['_RPC_REGISTRY_'] = [];
+
+        // Clear Application container if it exists
+        if (\RPC\Application::$app !== null) {
+            \RPC\Application::$app->flush();
+        }
     }
 
     public function testSetAndGet(): void

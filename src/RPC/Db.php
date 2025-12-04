@@ -4,6 +4,8 @@ namespace RPC;
 
 use PDO;
 use RPC\Db\Adapter\MySQL;
+use RPC\Exception\DatabaseException;
+use RPC\Exception\InvalidArgumentException;
 
 /**
  * Static class meant as a factory for every connection in the project
@@ -76,20 +78,20 @@ class Db
 	
 	/**
 	 * Loads a connection given the database name
-	 * 
+	 *
 	 * If nothing is given it will return the connection marked as default. If
 	 * no connection is marked as default, it will return the first (this saves
 	 * a few keystrokes in case there is only one connection).
-	 * 
-	 * @param mixed $db_name
-	 * 
-	 * @return \RPC\Db\Adapter
+	 *
+	 * @param string $connection
+	 *
+	 * @return mixed
 	 */
-	public static function factory( $connection = '' )
+	public static function factory( string $connection = '' ): mixed
 	{
 		if( empty( self::$connections ) )
 		{
-			throw new \Exception( 'No connections loaded' );
+			throw new DatabaseException( 'No connections loaded' );
 		}
 		
 		/*
@@ -110,7 +112,7 @@ class Db
 		}
 		elseif( ! array_key_exists( $connection, self::$connections ) )
 		{
-			throw new \Exception( 'Connection ' . $connection . ' is not loaded' );
+			throw new DatabaseException( 'Connection ' . $connection . ' is not loaded' );
 		}
 		
 		/*
@@ -141,7 +143,7 @@ class Db
 	
 	/**
 	 * Adds a database's configuration options
-	 * 
+	 *
 	 * The $db_info array can have the following keys:
 	 * <ul>
 	 * 	<li>adapter</li>
@@ -153,24 +155,19 @@ class Db
 	 * 	<li>password</li>
 	 *  <li>prefix</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param string $name Connection name
 	 * @param array  $info DSN or array containing options
 	 */
-	public static function addConnection( $name, $info )
+	public static function addConnection( string $name, array $info ): void
 	{
-		if( ! is_array( $info ) )
-		{
-			throw new \Exception( '$info should be an array or an array' );
-		}
-		
 		if( empty( $name ) )
 		{
-			throw new \Exception( 'The configuration array should have a database name set' );
+			throw new InvalidArgumentException( 'The configuration array should have a database name set' );
 		}
 		elseif( empty( $info['database'] ) )
 		{
-			throw new \Exception( 'The configuration array should have a database adapter set' );
+			throw new InvalidArgumentException( 'The configuration array should have a database adapter set' );
 		}
 		
 		self::$connections[$name] = $info;
@@ -178,22 +175,17 @@ class Db
 	
 	/**
 	 * Loads multiple connections from an array
-	 * 
+	 *
 	 * @param array $connections
 	 */
-	public static function addConnections( $connections )
+	public static function addConnections( array $connections ): void
 	{
-		if( ! is_array( $connections ) )
-		{
-			throw new \Exception( 'You must pass an array of connections' );
-		}
-		
 		foreach( $connections as $name => $info )
 		{
 			self::addConnection( $name, $info );
 		}
 	}
-	
+
 	/**
 	 * Sets the default connetion name
 	 *
@@ -201,7 +193,7 @@ class Db
 	 *
 	 * @return void
 	 */
-	public static function setDefaultConnection( $name )
+	public static function setDefaultConnection( string $name ): void
 	{
 		if( array_key_exists( $name, self::$connections ) )
 		{
@@ -209,7 +201,7 @@ class Db
 		}
 		else
 		{
-			throw new \Exception( 'Connection not loaded' );
+			throw new DatabaseException( 'Connection not loaded' );
 		}
 	}
 

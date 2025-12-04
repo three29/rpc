@@ -2,165 +2,140 @@
 
 namespace RPC;
 
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
- * This class is a simple implementation of the slots/signals concept.
- * 
- * To briefly summarize, they allow you to bind a signal to one or more methods
- * or functions and/or signals. When a signal is "emitted", all slots bound to
- * it are called. When a signal is called by another signal, the called signal
- * is emitted, calling the slots bound to it and so on.
- * 
- * Any parameters passed when the signal is emitted are passed to the slots and
- * signals that that are called. This easily allows you to write handler
- * functions (slots) and bind them to events (signals) as needed - without
- * having to make explicit function calls or rewrite handler functions just to
- * accomodate minor modifications in how a function is called.
- * 
- * Some uses include message passing, logging and error handling.
- * 
+ * PSR-14 compliant event dispatcher
+ *
+ * Modern event dispatching system that allows you to register listeners
+ * for events and dispatch those events throughout your application.
+ *
  * @package Core
  */
-class Signal
+class Signal implements EventDispatcherInterface
 {
-	
 	/**
-	 * When a registered callback returns this value, the emit function
-	 * will return false and all the following registered callbacks will
-	 * not be called anymore
-	 * 
-	 * @var int
+	 * Registered event listeners
+	 *
+	 * @var array<string, array<callable>>
 	 */
-	const STOP_SIGNAL = 1;
-	
+	protected array $listeners = [];
+
 	/**
-	 * When a registered callback returns this value the emit function
-	 * will return true but all the following callbacks will not be
-	 * called anymore
-	 * 
-	 * @var int
+	 * Singleton instance
+	 *
+	 * @var self|null
 	 */
-	const STOP_BROADCAST = 2;
-	
+	protected static ?self $instance = null;
+
 	/**
-	 * Connects a signal to a slot. The emitent is an object which sends the
-	 * signal, while the receiver is a class method or a function which will be
-	 * executed when the signal is emitted
-	 * 
-	 * <code>
-	 * 
-	 * RPC_Signal::connect( array( 'RPC_View', 'render_start' ), array( 'RPC_View_Cache', 'check' ) );
-	 * RPC_Signal::connect( array( 'RPC_View', 'render_start' ), 'view_cache_check' );
-	 * RPC_Signal::connect( 'some_signal', array( 'RPC_Some_Object', 'somemethod' ) );
-	 * RPC_Signal::connect( 'some_signal', 'some_method' );
-	 * 
-	 * </code>
-	 * 
-	 * @param string|array $signal
-	 * @param string|array $slot
+	 * Get singleton instance
+	 *
+	 * @return self
 	 */
-	public static function connect( $signal, $slot )
+	public static function getInstance(): self
 	{
-		if( is_array( $signal ) )
-		{
-			$emitent = $signal[0];
-			$signal  = $signal[1];
-			
-			if( is_object( $emitent ) )
-			{
-				$emitent = get_class( $emitent );
-			}
-			
-			$signal = $emitent . '_' . $signal;
+		if (self::$instance === null) {
+			self::$instance = new self();
 		}
-		
-		$GLOBALS['_RPC_']['signals'][$signal][] = array( 'type' => 'callback', 'slot' => $slot );
+		return self::$instance;
 	}
-	
+
 	/**
-	 * Same as connect, only that instead of registering a callback,
-	 * it registers another signal that will be emitted when $signal1
-	 * is emitted
-	 * 
-	 * @param string|array $signal1
-	 * @param string|array $signal2
+	 * Register an event listener
+	 *
+	 * @param string $eventName Event class name or event identifier
+	 * @param callable $listener Callable to be invoked when event is dispatched
+	 * @param int $priority Higher priority listeners are called first (default: 0)
+	 * @return void
 	 */
-	public static function connectSignal( $signal1, $signal2 )
+	public function listen(string $eventName, callable $listener, int $priority = 0): void
 	{
-		if( is_array( $signal1 ) )
-		{
-			$emitent = $signal1[0];
-			$signal  = $signal1[1];
-
-			if( is_object( $emitent ) )
-			{
-				$emitent = get_class( $emitent );
-			}
-
-			$signal1 = $emitent . '_' . $signal;
+		if (!isset($this->listeners[$eventName])) {
+			$this->listeners[$eventName] = [];
 		}
 
-		$GLOBALS['_RPC_']['signals'][$signal1][] = array( 'type' => 'signal', 'slot' => $signal2 );
+		$this->listeners[$eventName][] = [
+			'listener' => $listener,
+			'priority' => $priority
+		];
+
+		// Sort by priority (highest first)
+		usort($this->listeners[$eventName], fn($a, $b) => $b['priority'] <=> $a['priority']);
 	}
-	
+
 	/**
-	 * Emits a certain signal and all the connected slots are executed with the
-	 * passed parameters
-	 * 
-	 * <code>
-	 * 
-	 * RPC_Signal::emit( array( $this, 'some_signal' ), array( $param1, $param2 ) );
-	 * RPC_Signal::emit( array( 'RPC_View', 'some_signal' ), array( $param1 ) );
-	 * 
-	 * </code>
-	 * 
-	 * @param string|array $signal
-	 * @param array        $params
-	 * 
+	 * PSR-14: Provide all relevant listeners with an event to process
+	 *
+	 * @param object $event The event object to dispatch
+	 * @return object The event that was passed, potentially modified by listeners
+	 */
+	public function dispatch(object $event): object
+	{
+		$eventName = get_class($event);
+
+		if (!isset($this->listeners[$eventName])) {
+			return $event;
+		}
+
+		foreach ($this->listeners[$eventName] as $item) {
+			// Check if event propagation has been stopped
+			if ($event instanceof StoppableEventInterface && $event->isPropagationStopped()) {
+				break;
+			}
+
+			// Invoke the listener
+			call_user_func($item['listener'], $event);
+		}
+
+		return $event;
+	}
+
+	/**
+	 * Remove all listeners for a specific event
+	 *
+	 * @param string $eventName
+	 * @return void
+	 */
+	public function forget(string $eventName): void
+	{
+		unset($this->listeners[$eventName]);
+	}
+
+	/**
+	 * Remove all registered listeners
+	 *
+	 * @return void
+	 */
+	public function flush(): void
+	{
+		$this->listeners = [];
+	}
+
+	/**
+	 * Check if event has any listeners
+	 *
+	 * @param string $eventName
 	 * @return bool
 	 */
-	public static function emit( $signal, $params = array() )
+	public function hasListeners(string $eventName): bool
 	{
-		if( is_array( $signal ) )
-		{
-			$emitent = $signal[0];
-			$signal  = $signal[1];
-			
-			if( is_object( $emitent ) )
-			{
-				$emitent = get_class( $emitent );
-			}
-			
-			$signal = $emitent . '_' . $signal;
-		}
-		
-		if( ! empty( $GLOBALS['_RPC_']['signals'][$signal] ) )
-		{
-			foreach( $GLOBALS['_RPC_']['signals'][$signal] as $slot )
-			{
-				if( $slot['type'] == 'callback' )
-				{
-					$ret = call_user_func_array( $slot['slot'], $params );
-				}
-				else
-				{
-					$ret = \RPC\Signal::emit( $slot['slot'], $params );
-				}
-				
-				if( $ret === \RPC\Signal::STOP_BROADCAST )
-				{
-					break;
-				}
-				elseif( $ret === \RPC\Signal::STOP_SIGNAL )
-				{
-					return false;
-				}
-			}
-		}
-		
-		return true;
+		return isset($this->listeners[$eventName]) && count($this->listeners[$eventName]) > 0;
 	}
-	
-}
 
-?>
+	/**
+	 * Get all listeners for a specific event
+	 *
+	 * @param string $eventName
+	 * @return array<callable>
+	 */
+	public function getListeners(string $eventName): array
+	{
+		if (!isset($this->listeners[$eventName])) {
+			return [];
+		}
+
+		return array_map(fn($item) => $item['listener'], $this->listeners[$eventName]);
+	}
+}

@@ -33,7 +33,7 @@ abstract class Adapter
 	/**
 	 * Table's database object
 	 *
-	 * @var \RPC\Db_Adapter
+	 * @var \RPC\Db\Adapter|null
 	 */
 	protected $db = null;
 
@@ -79,94 +79,85 @@ abstract class Adapter
 	 */
 	protected $map = null;
 
-	abstract protected function loadFields();
+	abstract protected function loadFields(): void;
 
-	abstract public function get();
+	abstract public function get(): array;
 
-	abstract public function getAll();
+	abstract public function getAll(): array;
 
-	abstract public function getBySql();
+	abstract public function getBySql(): array|false;
 
 	/**
 	 * Returns one row (the first in case there are more) which is returned by the query on the model's table. If no row is found, returns null
 	 *
-	 * @param string $condition_sql
-	 * @param array $condition_values
-	 *
-	 * @return \RPC\Db\Table\Row
+	 * @return \RPC\Db\Table\Row|false|null
 	 */
-	abstract public function find();
+	abstract public function find(): \RPC\Db\Table\Row|false|null;
 
 	/**
-	 * Returns all rows returned by the query on the model's table. If no row is found, returns null
+	 * Returns all rows returned by the query on the model's table. If no row is found, returns empty array
 	 *
-	 * @param string $condition_sql
-	 * @param array $condition_values
-	 *
-	 * @return \RPC\Db\Table\Row
+	 * @return array
 	 */
-	abstract public function findAll();
+	abstract public function findAll(): array;
 
 	/**
-	 * Returns all rows returned by the custom query. If no row is found, returns null
+	 * Returns all rows returned by the custom query. If no row is found, returns false
 	 *
-	 * @param string $condition_sql
-	 * @param array $condition_values
-	 *
-	 * @return \RPC\Db\Table\Row
+	 * @return array|false
 	 */
-	abstract public function findBySql();
+	abstract public function findBySql(): array|false;
 
 	/**
 	 * Removes the rows which have the $field = $value
 	 *
-	 * @param int $field
+	 * @param string $field
 	 * @param mixed $value
 	 *
-	 * @return int Number of affected rows
+	 * @return array|bool
 	 */
-	abstract public function deleteBy( $field, $value );
+	abstract public function deleteBy( string $field, mixed $value ): array|bool;
 
 	/**
 	 * Performs an insert given the supplied data
 	 *
-	 * @param array $array
+	 * @param \RPC\Db\Table\Row $row
 	 *
-	 * @return bool
+	 * @return array|bool
 	 */
-	abstract protected function insertRow( \RPC\Db\Table\Row $row );
+	abstract protected function insertRow( \RPC\Db\Table\Row $row ): array|bool;
 
 	/**
 	 * Performs an update given the supplied data
 	 *
-	 * @param array $array
+	 * @param \RPC\Db\Table\Row $row
 	 *
-	 * @return \RPC\Db\Table\Row
+	 * @return array|bool
 	 */
-	abstract protected function updateRow( \RPC\Db\Table\Row $row );
+	abstract protected function updateRow( \RPC\Db\Table\Row $row ): array|bool;
 
 
 
 	/**
 	 * Locks a table
 	 *
-	 * @return bool
+	 * @return void
 	 */
-	abstract public function lock();
+	abstract public function lock(): void;
 
 	/**
 	 * Unlocks the table
 	 *
-	 * @return bool
+	 * @return void
 	 */
-	abstract public function unlock();
+	abstract public function unlock(): void;
 
 	/**
 	 * Initializes the table based on two conventions:
 	 * - object name will be: <table_name>Model
 	 * - table primary key will be: <table_name>_id
 	 */
-	public function __construct( $table_name = null, $ignore_fields = false )
+	public function __construct( ?string $table_name = null, bool $ignore_fields = false )
 	{
 		if( $ignore_fields ||
 		 	( count( explode( '\\', get_called_class() ) ) == 2 && ! $table_name ) )
@@ -236,9 +227,9 @@ abstract class Adapter
 	/**
 	 * Sets the parent database connection
 	 *
-	 * @param \RPC\Db\Adapter $database
+	 * @param \RPC\Db\Adapter $db
 	 */
-	protected function setDb( \RPC\Db\Adapter $db )
+	protected function setDb( \RPC\Db\Adapter $db ): void
 	{
 		$this->db = $db;
 	}
@@ -246,9 +237,9 @@ abstract class Adapter
 	/**
 	 * Get the table's database connection
 	 *
-	 * @return \RPC\Db_Adapter
+	 * @return \RPC\Db\Adapter
 	 */
-	public function getDb()
+	public function getDb(): \RPC\Db\Adapter
 	{
 		return $this->db;
 	}
@@ -258,7 +249,7 @@ abstract class Adapter
 	 *
 	 * @param string $name
 	 */
-	public function setName( $name )
+	public function setName( string $name ): void
 	{
 		$this->name = $name;
 	}
@@ -268,7 +259,7 @@ abstract class Adapter
 	 *
 	 * @return string
 	 */
-	public function getName()
+	public function getName(): string
 	{
 		return $this->name;
 	}
@@ -278,7 +269,7 @@ abstract class Adapter
 	 *
 	 * @param \RPC\Db\Table\Row\Map $map
 	 */
-	public function setIdentityMap( \RPC\Db\Table\Row\Map $map )
+	public function setIdentityMap( \RPC\Db\Table\Row\Map $map ): void
 	{
 		$this->map = $map;
 	}
@@ -288,7 +279,7 @@ abstract class Adapter
 	 *
 	 * @return \RPC\Db\Table\Row\Map
 	 */
-	public function getIdentityMap()
+	public function getIdentityMap(): \RPC\Db\Table\Row\Map
 	{
 		return $this->map;
 	}
@@ -301,7 +292,7 @@ abstract class Adapter
 	 *
 	 * @return \RPC\Db\Table\Adapter
 	 */
-	public function setPkField( $pk )
+	public function setPkField( string $pk ): self
 	{
 		$this->pk = $pk;
 		return $this;
@@ -312,7 +303,7 @@ abstract class Adapter
 	 *
 	 * @return string
 	 */
-	public function getPkField()
+	public function getPkField(): string
 	{
 		return $this->pk;
 	}
@@ -324,36 +315,27 @@ abstract class Adapter
 	 *
 	 * @return \RPC\Db\Table\Row
 	 */
-	public function create( $data = array() )
+	public function create( array $data = array() ): \RPC\Db\Table\Row
 	{
-		if( is_array( $data ) ||
-		        ( is_object( $data ) &&
-		          $data instanceof ArrayAccess ) )
+		/*
+			We build an array of fields, filling the fields found in the
+			array with the corresponding values and nulling the rest
+		*/
+		$tmp = array();
+		foreach( $this->getFields() as $k => $field )
 		{
-			/*
-				We build an array of fields, filling the fields found in the
-				array with the corresponding values and nulling the rest
-			*/
-			$tmp = array();
-			foreach( $this->getFields() as $k => $field )
+			if( isset( $data[$field] ) &&
+			    ! is_array( $data[$field] ) &&
+			    ! is_object( $data[$field] ) )
 			{
-				if( isset( $data[$field] ) &&
-				    ! is_array( $data[$field] ) &&
-				    ! is_object( $data[$field] ) )
-				{
-					$tmp[$field] = $data[$field];
-				}
-				else
-				{
-					$tmp[$field] = null;
-				}
-
-				$tmp[$this->getPkField()] = null;
+				$tmp[$field] = $data[$field];
 			}
-		}
-		else
-		{
-			throw new \Exception( 'If given, data must be an array' );
+			else
+			{
+				$tmp[$field] = null;
+			}
+
+			$tmp[$this->getPkField()] = null;
 		}
 
 		return new $this->rowclass( $this, $tmp );
@@ -367,7 +349,7 @@ abstract class Adapter
 	 *
 	 * @todo Create a standard value object / structure for fields
 	 */
-	public function getFields()
+	public function getFields(): array
 	{
 		return $this->fields;
 	}
@@ -381,7 +363,7 @@ abstract class Adapter
 	 *
 	 * @return bool
 	 */
-	public function insert( \RPC\Db\Table\Row $row )
+	public function insert( \RPC\Db\Table\Row $row ): bool
 	{
 		$this->getDb()->beginTransaction();
 
@@ -437,7 +419,7 @@ abstract class Adapter
 	 *
 	 * @return bool
 	 */
-	public function onBeforeInsert( $row )
+	public function onBeforeInsert( \RPC\Db\Table\Row $row ): bool
 	{
 		//by default set created and modified dates
 		$row->created( date( 'Y-m-d H:i:s' ) );
@@ -454,7 +436,7 @@ abstract class Adapter
 			$row->deleted( date( 'Y-m-d H:i:s' ) );
 		}
 
-		return $row;
+		return true;
 	}
 
 	/**
@@ -465,17 +447,17 @@ abstract class Adapter
 	 *
 	 * @return bool
 	 */
-	public function onAfterInsert( $row )
+	public function onAfterInsert( \RPC\Db\Table\Row $row ): bool
 	{
 		return true;
 	}
 
 	/**
 	 * Hook called after complete PDO Transaction
-	 *	
+	 *
 	 * @return bool
 	 */
-	public function afterCompleteInsert( $row ){
+	public function afterCompleteInsert( \RPC\Db\Table\Row $row ): bool {
 		return true;
 	}
 
@@ -485,9 +467,9 @@ abstract class Adapter
 	 *
 	 * @param \RPC\Db\Table\Row $row
 	 *
-	 * @return int Number of affected rows
+	 * @return bool
 	 */
-	public function update( $row )
+	public function update( \RPC\Db\Table\Row $row ): bool
 	{
 		$this->getDb()->beginTransaction();
 
@@ -507,7 +489,7 @@ abstract class Adapter
 		{
 			$this->updateRow( $row );
 		}
-		catch( Exception $e )
+		catch( \Exception $e )
 		{
 			$this->getDb()->rollback();
 			return false;
@@ -540,7 +522,7 @@ abstract class Adapter
 	 *
 	 * @return bool
 	 */
-	public function onBeforeUpdate( $row )
+	public function onBeforeUpdate( \RPC\Db\Table\Row $row ): bool
 	{
 		//set modified date by default
 		$row->modified( date( 'Y-m-d H:i:s' ) );
@@ -562,7 +544,7 @@ abstract class Adapter
 	 *
 	 * @return bool
 	 */
-	public function afterCompleteUpdate( $row ){
+	public function afterCompleteUpdate( \RPC\Db\Table\Row $row ): bool {
 		return true;
 	}
 
@@ -574,17 +556,17 @@ abstract class Adapter
 	 *
 	 * @return bool
 	 */
-	public function onAfterUpdate( $row )
+	public function onAfterUpdate( \RPC\Db\Table\Row $row ): bool
 	{
 		return true;
 	}
 
-	public function onBeforeSave( $row, $op )
+	public function onBeforeSave( \RPC\Db\Table\Row $row, string $op ): bool
 	{
 		return true;
 	}
 
-	public function onAfterSave( $row, $op )
+	public function onAfterSave( \RPC\Db\Table\Row $row, string $op ): bool
 	{
 		return true;
 	}
@@ -596,7 +578,7 @@ abstract class Adapter
 	 *
 	 * @return bool
 	 */
-	public function delete( $row )
+	public function delete( \RPC\Db\Table\Row $row ): bool
 	{
 		$this->getDb()->beginTransaction();
 
@@ -632,7 +614,7 @@ abstract class Adapter
 	 *
 	 * @return bool
 	 */
-	public function onBeforeDelete( $row )
+	public function onBeforeDelete( \RPC\Db\Table\Row $row ): bool
 	{
 		return true;
 	}
@@ -645,12 +627,12 @@ abstract class Adapter
 	 *
 	 * @return bool
 	 */
-	public function onAfterDelete( $row )
+	public function onAfterDelete( \RPC\Db\Table\Row $row ): bool
 	{
 		return true;
 	}
 
-	public function lastQuery( $show_all = false )
+	public function lastQuery( bool $show_all = false ): mixed
 	{
 		return $this->getDb()->getQueries( $show_all );
 	}

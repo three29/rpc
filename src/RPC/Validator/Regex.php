@@ -2,6 +2,7 @@
 
 namespace RPC\Validator;
 
+use RPC\Exception\InvalidArgumentException;
 use RPC\Validator;
 
 /**
@@ -21,41 +22,41 @@ class Regex extends Validator
 	
 	/**
 	 * Sets the regex and error message in case the string doesn't match it
-	 * 
+	 *
 	 * @param string $pattern
 	 * @param string $errormessage
 	 */
-	function __construct( $pattern, $errormessage = '' )
+	function __construct( string $pattern, string $errormessage = '' )
 	{
 		if( empty( $pattern ) )
 		{
-			throw new \Exception( 'You must supply a valid pattern' );
+			throw new InvalidArgumentException( 'You must supply a valid pattern' );
 		}
-		
+
 		$this->pattern = $pattern;
 		parent::__construct( $errormessage );
 	}
-	
+
 	/**
 	 * Matches the given string against the stored regex
-	 * 
+	 *
 	 * @param mixed $value
-	 * 
+	 *
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		if( is_int( $value ) )
 		{
 			$value = '' . $value;
 		}
-		
+
 		if( ! is_string( $value ) )
 		{
 			return false;
 		}
-		
-		return preg_match( $this->pattern, $value );
+
+		return (bool) preg_match( $this->pattern, $value );
 	}
 	
 }

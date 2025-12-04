@@ -2,21 +2,21 @@
 
 namespace RPC;
 
-
+use RPC\Exception\RoutingException;
 use RPC\HTTP\Request;
 use RPC\HTTP\Response;
 use RPC\Regex;
 
 class Router {
-	protected $rewrite_rules = array();
+	protected array $rewrite_rules = array();
 
-	protected $controller;
-	protected $action;
+	protected string $controller;
+	protected string $action;
 
-	protected $request;
-	protected $response;
+	protected Request $request;
+	protected Response $response;
 
-	protected $params;
+	protected ?array $params = null;
 
 
 	public function __construct() {
@@ -29,11 +29,11 @@ class Router {
 		$this->request->setRouter( $this );
 	}
 
-	public function setRewriteRules( $rules ) {
+	public function setRewriteRules( array $rules ): void {
 		$this->rewrite_rules = array_replace( $this->rewrite_rules, $rules );
 	}
 
-	public function run() {
+	public function run(): void {
 		try {
 			$this->executeRoute();
 		} catch ( \Exception $e ) {
@@ -70,7 +70,7 @@ class Router {
 		}
 	}
 
-	protected function executeRoute() {
+	protected function executeRoute(): void {
 		$uri = strtolower( trim( $this->request->getURI(), '/' ) );
 
 		/**
@@ -174,11 +174,11 @@ class Router {
 
 		$command = new $command;
 		if ( ! $command instanceof \RPC\Controller ) {
-			throw new \Exception( 'Class "' . ( is_object( $command ) ? get_class( $command ) : $command ) . '" has to inherit from \RPC\Command' );
+			throw new RoutingException( 'Class "' . get_class( $command ) . '" has to inherit from \RPC\Command' );
 		}
 
 		if ( ! in_array( $_SERVER['REQUEST_METHOD'], array( 'GET', 'POST', 'PUT' ) ) ) {
-			return false;
+			return;
 		}
 
 		$request = $_SERVER['REQUEST_METHOD'];
@@ -187,7 +187,7 @@ class Router {
 		$methodname = $this->action . $request;
 
 		if ( ! is_callable( array( $command, $methodname ), false ) ) {
-			throw new \Exception( 'Class "' . get_class( $command ) . '" was found but method "' . $methodname . '" could not be executed' );
+			throw new RoutingException( 'Class "' . get_class( $command ) . '" was found but method "' . $methodname . '" could not be executed' );
 		}
 
 		/*

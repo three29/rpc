@@ -14,9 +14,9 @@ class Email extends Validator
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
-		return preg_match( Regex::EMAIL, $value );
+		return (bool) preg_match( Regex::EMAIL, $value );
 	}
 	
 }

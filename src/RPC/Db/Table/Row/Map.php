@@ -28,10 +28,10 @@ class Map
 	
 	/**
 	 * Adds a row to the map, only if the row doesn't yet exist
-	 * 
+	 *
 	 * @param \RPC\Db\Table\Row $row
 	 */
-	public function add( $row )
+	public function add( \RPC\Db\Table\Row $row ): void
 	{
 		if( empty( $this->map[$row->getPk()] ) )
 		{
@@ -41,10 +41,10 @@ class Map
 	
 	/**
 	 * Removes a row from the map
-	 * 
+	 *
 	 * @param \RPC\Db\Table\Row $row
 	 */
-	public function remove( $row )
+	public function remove( \RPC\Db\Table\Row $row ): void
 	{
 		unset( $this->map[$row->getPk()] );
 	}
@@ -52,12 +52,12 @@ class Map
 	/**
 	 * Returns an instance of a row if there is one already stored, null
 	 * otherwise
-	 * 
+	 *
 	 * @param int $id
-	 * 
+	 *
 	 * @return \RPC\Db\Table\Row
 	 */
-	public function get( $id )
+	public function get( int $id ): ?\RPC\Db\Table\Row
 	{
 		return isset( $this->map[$id] ) ? $this->map[$id] : null;
 	}

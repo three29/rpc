@@ -2,6 +2,7 @@
 
 namespace RPC\Validator;
 
+use RPC\Exception\InvalidArgumentException;
 use RPC\Validator;
 
 
@@ -10,26 +11,20 @@ class OneOf extends Validator
 	
 	protected $values;
 	
-	public function __construct( $values, $errormessage = '' )
+	public function __construct( array|object $values, string $errormessage = '' )
 	{
-		if( ! is_array( $values ) &&
-		    ! is_object( $values ) )
-		{
-			throw new \Exception( 'Illegal parameter' );
-		}
-		
 		$this->values = $values;
-		
+
 		parent::__construct( $errormessage );
 	}
-	
+
 	/**
 	 * Returns true if the given value if within the given array/object
 	 *
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		$valid = false;
 		foreach( $this->values as $v )
@@ -40,7 +35,7 @@ class OneOf extends Validator
 				break;
 			}
 		}
-		
+
 		return $valid;
 	}
 	

@@ -29,6 +29,7 @@ class Textarea extends Field
 	public function filter( $source )
 	{
 		$regex = new \RPC\Regex( '/<textarea.*?(?<!\?)>.*?(?<!\?)><\/textarea>/ms' );
+		$matches = [];
 		$regex->match( $source, $matches );
 		
 		foreach( $matches as $textarea )

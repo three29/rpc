@@ -13,12 +13,12 @@ namespace RPC;
 
 class Log {
 
-	var $log_path;
-	var $_threshold = 1;
-	var $_date_fmt  = 'Y-m-d H:i:s A';
-	var $_enabled   = true;
-	var $_log_to_file = true;
-	var $_levels       = array('ERROR' => '1', 'DEBUG' => '2',  'INFO' => '3', 'ALL' => '4');
+	public string $log_path;
+	public int $_threshold = 1;
+	public string $_date_fmt  = 'Y-m-d H:i:s A';
+	public bool $_enabled   = true;
+	public bool $_log_to_file = true;
+	public array $_levels       = array('ERROR' => '1', 'DEBUG' => '2',  'INFO' => '3', 'ALL' => '4');
 
 	/**
 	 * Constructor
@@ -31,7 +31,7 @@ class Log {
 		if( ! getenv( 'LOGS_ENABLED' ) )
 		{
 			$this->_enabled = false;
-			return false;
+			return;
 		}
 
 		if ( ! getenv( 'LOG_TO_FILE' ) )
@@ -56,7 +56,7 @@ class Log {
 
 		if( getenv( "LOG_THRESHOLD" ) )
 		{
-			$this->_threshold = getenv( "LOG_THRESHOLD" );
+			$this->_threshold = (int) getenv( "LOG_THRESHOLD" );
 		}
 
 		if( getenv( "LOG_DATE_FORMAT" ) )
@@ -73,12 +73,12 @@ class Log {
 	 * Generally this function will be called using the global log_message() function
 	 *
 	 * @access	public
-	 * @param	string	the error message
-	 * @param	string	the error level
-	 * @param	bool	whether the error is a native PHP error
+	 * @param	string $msg	the error message
+	 * @param	string $level	the error level
+	 * @param	bool $php_error	whether the error is a native PHP error
 	 * @return	bool
 	 */
-	function write_log( $msg, $level = 'error', $php_error = false )
+	function write_log( string $msg, string $level = 'error', bool $php_error = false ): bool
 	{
 		if ($this->_enabled === false)
 		{

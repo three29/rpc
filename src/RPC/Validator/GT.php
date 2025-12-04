@@ -6,22 +6,29 @@ use RPC\Validator;
 
 class GT extends Validator
 {
-	
-	protected $min;
-	
-	function __construct( $min, $errormessage = '' )
+
+	/**
+	 * @var int|float $min
+	 */
+	protected int|float $min;
+
+	/**
+	 * @param int|float $min
+	 * @param string $errormessage
+	 */
+	function __construct( int|float $min, string $errormessage = '' )
 	{
-		$this->min = $min;
 		parent::__construct( $errormessage );
+		$this->min = $min;
 	}
 	
 	/**
 	* Returns true if it is greater than $min, false otherwise.
 	*
-	* @param mixed $value
+	* @param int|float $value
 	* @return bool
 	*/
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		return $value > $this->min;
 	}

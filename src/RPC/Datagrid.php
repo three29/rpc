@@ -46,14 +46,14 @@ class Datagrid
 	/**
 	 * Array of results returned by the datagrid
 	 * 
-	 * @var array
+	 * @var array|false|null
 	 */
 	protected $rows = null;
 
 	/**
 	 * Database object
-	 * 
-	 * @var RPC_Database_Adapter
+	 *
+	 * @var \RPC\Db\Adapter|null
 	 */
 	protected $db = null;
 
@@ -74,7 +74,7 @@ class Datagrid
 	/**
 	 * Class constructor
 	 */
-	public function __construct( $model = null, $select_only = null )
+	public function __construct( mixed $model = null, ?string $select_only = null )
 	{
 		$this->model = $model;
 		$this->setPager( new Pager() );
@@ -83,13 +83,13 @@ class Datagrid
 	
 	/**
 	 * Returns a link which, when clicked, will sort by the $column field
-	 * 
+	 *
 	 * @param string $column
 	 * @param string $name
-	 * 
+	 *
 	 * @return string
 	 */
-	public function printSortBy( $column, $name )
+	public function printSortBy( string $column, string $name ): string
 	{
 		$request = Request::getInstance();
 		
@@ -139,26 +139,26 @@ class Datagrid
 	
 	/**
 	 * Gives the columns for which the sorting is allowed
-	 * 
+	 *
 	 * The function receives a variabile number of parameters (column
 	 * names)
-	 * 
+	 *
 	 * @return \RPC\Datagrid
 	 */
-	public function allowSortBy()
+	public function allowSortBy(): self
 	{
 		$this->allowsort = func_get_args();
-		
+
 		return $this;
 	}
 	
 	/**
 	 * Returns the columns the results should be sorted by, as well as
 	 * the order to be sorted
-	 * 
+	 *
 	 * @return array
 	 */
-	public function getSortBy()
+	public function getSortBy(): array
 	{
 		static $called = 0;
 		
@@ -201,13 +201,13 @@ class Datagrid
 	
 	/**
 	 * Sets the initial sort of the datagrid
-	 * 
+	 *
 	 * @param string|array $sort
 	 * @param string       $order
-	 * 
+	 *
 	 * @return \RPC\Datagrid
 	 */
-	public function initialSortBy( $sort, $order = '' )
+	public function initialSortBy( string|array $sort, string $order = '' ): self
 	{
 		if( $order )
 		{
@@ -220,86 +220,85 @@ class Datagrid
 				$this->sortby[$k] = $v;
 			}
 		}
-		
+
 		return $this;
 	}
 	
 	/**
 	 * Sets the datagrid's pager
-	 * 
+	 *
 	 * @param \RPC\Datagrid\Pager $pager
-	 * 
-	 * @return \RPC\Datagrid
+	 *
+	 * @return void
 	 */
-	public function setPager( $pager )
+	public function setPager( Pager $pager ): void
 	{
 		$this->pager = $pager;
 	}
-	
+
 	/**
 	 * Returns the datagrid's pager
-	 * 
+	 *
 	 * @return \RPC\Datagrid\Pager
 	 */
-	public function getPager()
+	public function getPager(): Pager
 	{
 		return $this->pager;
 	}
-	
-	public function setDb( $db )
+
+	public function setDb( mixed $db ): self
 	{
 		$this->db = $db;
-		
+
 		return $this;
 	}
-	
-	public function getDb()
+
+	public function getDb(): mixed
 	{
 		if( ! $this->db )
 		{
 			$this->db = Db::factory( 'default' );
 		}
-		
+
 		return $this->db;
 	}
 	
 	/**
 	 * Returns the array of rows fetched by the datagrid
-	 * 
+	 *
 	 * If called multiple times, it will only execute the fetching
 	 * instructions once and then cache the results
-	 * 
-	 * @return array
+	 *
+	 * @return array|false
 	 */
-	public function getRows()
+	public function getRows(): array|false
 	{
 		list( $from, $to ) = $this->getPager()->getLimits();
 		if( ! is_null( $this->rows ) )
 		{
 			return $this->rows;
 		}
-		
+
 		return $this->fetchRows( $from, $to );
 	}
-	
-	
-	public function setRows( $rows )
+
+
+	public function setRows( array|false $rows ): void
 	{
 		$this->rows = $rows;
 	}
 
-	public function getPrefix() {
-
+	public function getPrefix(): string
+	{
 		return $this->getDb()->getPrefix();
-	
 	}
 	
 	/**
 	 * Returns an array of items
-	 * 
-	 * @return array
+	 *
+	 * @return array|false
 	 */
-	public function fetchRows( $from, $to )
+	public function fetchRows( int $from, int $to ): array|false
 	{
 		$db = $this->getDb();
 
@@ -390,11 +389,11 @@ class Datagrid
 		return $this->rows;
 	}
 	
-	public function setCondition( $condition, $value )
+	public function setCondition( string $condition, mixed $value ): void
 	{
 		if( strpos( $condition, '?' ) === false )
 		{
-			$condition .= ' = ?'; 
+			$condition .= ' = ?';
 		}
 		$this->conditions[] = $condition;
 		if( is_array( $value ) )
@@ -410,24 +409,25 @@ class Datagrid
 		}
 	}
 
-	
-	public function setPerPage( $limit )
+
+	public function setPerPage( int $limit ): void
 	{
 		$this->getPager()->setPerPage( $limit );
 	}
-	
-	public function setSortBy( $sort, $order = '' )
+
+	public function setSortBy( string $sort, string $order = '' ): void
 	{
 		$this->sortby[$sort] = $order;
 	}
 
 
-	public function groupBy( $group_by = null )
+	public function groupBy( ?string $group_by = null ): void
 	{
 		$this->group_by = ' ' . $group_by . ' ';
 	}
 
-	public function query( $sql, $conditions = null ) {
+	public function query( string $sql, array|string|null $conditions = null ): void
+	{
 		$this->manual_sql = $sql;
 
 		if( $conditions )
@@ -439,19 +439,19 @@ class Datagrid
 			else
 			{
 				$this->conditions_value[] = $conditions;
-		
+
 			}
 		}
 	}
 
 
-	public function sqlJoin( $join_sql )
+	public function sqlJoin( string $join_sql ): void
 	{
 		$this->join_sql = $join_sql;
 	}
 
 
-	public function nextPageExists()
+	public function nextPageExists(): int
 	{
 		if( ( $this->getPager()->getCurrentPage() + 1 ) < $this->getPager()->getTotalPages() )
 		{

@@ -10,9 +10,9 @@ class Alternation extends Validator
 	/**
 	 * Given validators
 	 *
-	 * @var RPC_Validator
+	 * @var array<\RPC\Validator>
 	 */
-	protected $alternates = array();
+	protected array $alternates = array();
 	
 	/**
 	 * Adds the given validators to the object
@@ -34,6 +34,7 @@ class Alternation extends Validator
 	public function add( \RPC\Validator $validator )
 	{
 		$this->alternates[] = $validator;
+		return $this;
 	}
 	
 	/**
@@ -41,9 +42,10 @@ class Alternation extends Validator
 	 * In case they all fail, the first error message encountered will be
 	 * returned
 	 *
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		foreach( $this->alternates as $validator )
 		{
@@ -59,7 +61,7 @@ class Alternation extends Validator
 				}
 			}
 		}
-		
+
 		return false;
 	}
 	

@@ -111,11 +111,11 @@ class Form extends Filter
 		return $this->escape( $this->isSubmitted() ? $this->getValue( $name ) : $value );
 	}
 
-	public function checkbox( $name, $value = 1, $checked = false )
+	public function checkbox( string $name, mixed $value = 1, $checked = false )
 	{
 		if( $this->isSubmitted() )
 		{
-			if( substr( $name, -2 ) == '[]' )
+			if( str_ends_with( $name, '[]' ) )
 			{
 				if( in_array( $value, $this->getValue( $name ) ) )
 				{
@@ -140,7 +140,7 @@ class Form extends Filter
 		return '';
 	}
 
-	public function radio( $name, $value, $checked = false )
+	public function radio( string $name, mixed $value, bool $checked = false ): string
 	{
 		if( $this->isSubmitted() )
 		{
@@ -157,115 +157,118 @@ class Form extends Filter
 		return '';
 	}
 
-	public function textarea( $name, $value = '' )
+	public function textarea( string $name, mixed $value = '' ): string
 	{
 		return $this->escape( $this->isSubmitted() ? $this->getValue( $name ) : $value );
 	}
 
-	public function select( $name, $source, $selected = '' )
+	/**
+	 * @param string $name
+	 * @param array<string|numeric, string|array> $source
+	 * @param mixed $selected
+	 *
+	 * @return string
+	 */
+	public function select( string $name, array $source, mixed $selected = '' ): string
 	{
-
-		$selected = ( $this->isSubmitted() && strpos( $name, '$view-&gt;escape' ) !== false ) ? $this->getValue( $name ) : $selected;
+		$selected = ( $this->isSubmitted() && str_contains( $name, '$view-&gt;escape' ) ) ? $this->getValue( $name ) : $selected;
 		$options = '';
 
-		if( is_array( $source ) )
+		foreach( $source as $k => $v )
 		{
-			foreach( $source as $k => $v )
+			if( is_array( $v ) )
 			{
-				if( is_array( $v ) )
+				$options .= '<optgroup label="' . $k . '">';
+				foreach( $v as $k1 => $v1 )
 				{
-					$options .= '<optgroup label="' . $k . '">';
-					foreach( $v as $k1 => $v1 )
+					$options .= '<option value="' . $this->escape( $k1 ) . '"';
+
+					if( str_ends_with( $name, '[]' ) )
 					{
-						$options .= '<option value="' . $this->escape( $k1 ) . '"';
-
-						if( substr( $name, -2 ) == '[]' )
-						{
-							if( in_array( $k1, $selected ) )
-							{
-								$options .= ' selected="selected"';
-							}
-						}
-						else
-						{
-							if( $k1 == $selected )
-							{
-								$options .= ' selected="selected"';
-							}
-						}
-
-						$options .= '>' . $this->escape( $v1 ) . '</option>';
-					}
-					$options .= '</optgroup>';
-				}
-				else
-				{
-					$options .= '<option value="' . $this->escape( $k ) . '"';
-
-					if( substr( $name, -2 ) == '[]' )
-					{
-						if( in_array( $k, $selected ) )
+						if( in_array( $k1, $selected ) )
 						{
 							$options .= ' selected="selected"';
 						}
 					}
 					else
 					{
-						// problem with == because '' (the default value for selected) is equal to 0 (usual value as key in source arrays)
-
-						if( $k == $selected &&
-						    @strlen( $k ) == @strlen( $selected ) ||
-						    ( is_array( $selected ) && in_array( $k, $selected ) ) )
+						if( $k1 == $selected )
 						{
 							$options .= ' selected="selected"';
 						}
 					}
 
-					$options .= '>' . $this->escape( $v ) . '</option>';
+					$options .= '>' . $this->escape( $v1 ) . '</option>';
 				}
+				$options .= '</optgroup>';
+			}
+			else
+			{
+				$options .= '<option value="' . $this->escape( $k ) . '"';
+
+				if( str_ends_with( $name, '[]' ) )
+				{
+					if( in_array( $k, $selected ) )
+					{
+						$options .= ' selected="selected"';
+					}
+				}
+				else
+				{
+					// problem with == because '' (the default value for selected) is equal to 0 (usual value as key in source arrays)
+
+					if( $k == $selected &&
+					    @strlen( $k ) == @strlen( $selected ) ||
+					    ( is_array( $selected ) && in_array( $k, $selected ) ) )
+					{
+						$options .= ' selected="selected"';
+					}
+				}
+
+				$options .= '>' . $this->escape( $v ) . '</option>';
 			}
 		}
 
 		return $options;
 	}
 
-	public function getValue( $name )
+	public function getValue( string $name )
 	{
 		$m = $this->method;
 
-		if( strpos( $name, '[' ) === false )
+		if( ! str_contains( $name, '[' ) )
 		{
 			return @$this->request->{$m}[$name];
 		}
 
-		if( substr( $name, -2 ) == '[]' )
+		if( str_ends_with( $name, '[]' ) )
 		{
 			$name = substr( $name, 0, -2 );
-			$defaultreturn = array();
+			$default_return = array();
 		}
 		else
 		{
-			$defaultreturn = '';
+			$default_return = '';
 		}
 
 		$name = "['" . implode( "']['", explode( '[', str_replace( ']', '', $name ) ) ) . "']";
 		$val = eval( 'return @$this->request->' . $m . $name . ';' );
-		return empty( $val ) ? $defaultreturn : $val;
+		return empty( $val ) ? $default_return : $val;
 	}
 
-	public function isSubmitted()
+	public function isSubmitted(): bool
 	{
 		//check if we have token
 		if( $this->method == 'post' )
 		{
-			return $this->request->getMethod() == 'post';
+			return $this->request->getMethod() === 'post';
 		}
 
 		$arr = $this->request->getQueryString();
 		return ! empty( $arr );
 	}
 
-	public function escape( $str )
+	public function escape( string $str ): string
 	{
 		return htmlentities( $str, ENT_QUOTES, 'UTF-8', false );
 	}

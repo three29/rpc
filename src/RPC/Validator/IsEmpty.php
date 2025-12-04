@@ -13,7 +13,7 @@ class IsEmpty extends Validator
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		return empty( $value );
 	}

@@ -12,6 +12,14 @@ use RPC\Db\Table\Adapter;
  * Generic Row class that can be used with any database adapter
  *
  * @package Db
+ *
+ * Magic methods for common fields via __call():
+ * @method mixed created(string $value = null) Get or set the 'created' field
+ * @method mixed modified(string $value = null) Get or set the 'modified' field
+ * @method mixed deleted(string $value = null) Get or set the 'deleted' field
+ * @method mixed status(string $value = null) Get or set the 'status' field
+ * @method mixed name(string $value = null) Get or set the 'name' field
+ * @method mixed value(mixed $value = null) Get or set the 'value' field
  */
 class Row implements ArrayAccess
 {
@@ -19,7 +27,7 @@ class Row implements ArrayAccess
 	/**
 	 * Stores a reference to the parent table
 	 *
-	 * @var RPC\Db\Table\Adapter
+	 * @var Adapter|null
 	 */
 	protected $table = null;
 
@@ -33,7 +41,7 @@ class Row implements ArrayAccess
 	/**
 	 * Array containing the original field values
 	 *
-	 * @var array
+	 * @var array|null
 	 */
 	protected $clean = null;
 
@@ -47,7 +55,7 @@ class Row implements ArrayAccess
 	/**
 	 * Array containing the actual row
 	 *
-	 * @var array
+	 * @var array|object
 	 */
 	protected $row = array();
 
@@ -66,10 +74,17 @@ class Row implements ArrayAccess
 	protected $extrafields = array();
 
 	/**
+	 * Flag to force primary key assignment
+	 *
+	 * @var bool|null
+	 */
+	public bool|null $force_pk = false;
+
+	/**
 	 * Class constructor
 	 *
 	 * @param \RPC\Db\Table\Adapter $table
-	 * @param object               $row
+	 * @param array|object         $row
 	 */
 	public function __construct( \RPC\Db\Table\Adapter $table, $row = array() )
 	{
@@ -84,7 +99,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return \RPC\Db\Adapter
 	 */
-	public function getDb()
+	public function getDb(): \RPC\Db\Adapter
 	{
 		return $this->getTable()->getDb();
 	}
@@ -94,7 +109,7 @@ class Row implements ArrayAccess
 	 *
 	 * @param \RPC\Db\Table\Adapter $table
 	 */
-	protected function setTable( \RPC\Db\Table\Adapter $table )
+	protected function setTable( \RPC\Db\Table\Adapter $table ): void
 	{
 		$this->table = $table;
 	}
@@ -104,7 +119,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return \RPC\Db\Table\Adapter
 	 */
-	public function getTable()
+	public function getTable(): \RPC\Db\Table\Adapter
 	{
 		return $this->table;
 	}
@@ -114,7 +129,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return array
 	 */
-	public function getFields()
+	public function getFields(): array
 	{
 		return $this->getTable()->getFields();
 	}
@@ -125,7 +140,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return array
 	 */
-	public function getChangedFields()
+	public function getChangedFields(): array
 	{
 		return $this->changedfields;
 	}
@@ -135,7 +150,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return array
 	 */
-	public function getExtraFields()
+	public function getExtraFields(): array
 	{
 		return $this->extrafields;
 	}
@@ -147,7 +162,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return \RPC\Db\Table\Row
 	 */
-	protected function setDirty( $dirty )
+	protected function setDirty( bool $dirty ): self
 	{
 		$this->dirty = $dirty;
 
@@ -159,7 +174,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return bool
 	 */
-	public function isDirty()
+	public function isDirty(): bool
 	{
 		return $this->dirty;
 	}
@@ -170,7 +185,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return array
 	 */
-	public function getCleanArray()
+	public function getCleanArray(): ?array
 	{
 		return $this->clean;
 	}
@@ -181,7 +196,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return \RPC\Db\Table\Row
 	 */
-	public function revert()
+	public function revert(): self
 	{
 		$this->row = $this->getCleanArray();
 
@@ -194,7 +209,6 @@ class Row implements ArrayAccess
 	 * @param string|int $index
 	 * @param mixed      $newval
 	 *
-	 * @implements ArrayAccess
 	 */
 	#[\ReturnTypeWillChange]
 	public function offsetSet( $index, $newval )
@@ -237,7 +251,6 @@ class Row implements ArrayAccess
 	 *
 	 * @param string $index
 	 *
-	 * @implements ArrayAccess
 	 */
 	#[\ReturnTypeWillChange]
 	public function offsetUnset( $index )
@@ -250,7 +263,6 @@ class Row implements ArrayAccess
 	 *
 	 * @param string $index Field name
 	 *
-	 * @implements ArrayAccess
 	 */
 	#[\ReturnTypeWillChange]
 	public function offsetExists( $index )
@@ -265,7 +277,6 @@ class Row implements ArrayAccess
 	 *
 	 * @return mixed
 	 *
-	 * @implements ArrayAccess
 	 */
 	#[\ReturnTypeWillChange]
 	public function offsetGet( $index )
@@ -291,7 +302,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return \RPC\Db\Table\Row
 	 */
-	public function setPk( $pk, $force_pk = false )
+	public function setPk( mixed $pk, bool $force_pk = false ): self
 	{
 		if( $force_pk )
 		{
@@ -313,7 +324,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return int
 	 */
-	public function getPk()
+	public function getPk(): mixed
 	{
 		return $this->offsetGet( $this->getTable()->getPkField() );
 	}
@@ -323,7 +334,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return int
 	 */
-	public function hasErrors()
+	public function hasErrors(): int
 	{
 		return count( $this->errors );
 	}
@@ -335,7 +346,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return \RPC\Db\Table\Row
 	 */
-	public function setErrors( $errors )
+	public function setErrors( array $errors ): self
 	{
 		$this->errors = $errors;
 
@@ -347,7 +358,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return array
 	 */
-	public function getErrors()
+	public function getErrors(): array
 	{
 		return $this->errors;
 	}
@@ -360,7 +371,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return \RPC\Db\Table\Row
 	 */
-	public function setError( $field, $error = '' )
+	public function setError( string $field, string $error = '' ): self
 	{
 		$this->errors[$field] = $error;
 
@@ -372,7 +383,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return string
 	 */
-	public function getError( $field )
+	public function getError( string $field ): ?string
 	{
 		return isset( $this->errors[$field] ) ? $this->errors[$field] : null;
 	}
@@ -383,11 +394,11 @@ class Row implements ArrayAccess
 	 * because one may need to add more data to the row before validating
 	 *
 	 * @param array $values
-	 * @param boolean $field_exists
+	 * @param mixed $options
 	 *
-	 * @return \RPC\Db\Table\Row
+	 * @return self
 	 */
-	public function populate( $values, $options = array() )
+	public function populate( array $values, mixed $options = array() ): self
 	{
 		$fields_to_ignore 	= array();
 		$fields_to_parse 	= array();
@@ -568,14 +579,11 @@ class Row implements ArrayAccess
 		{
 			$tmp = explode( '|', $rule );
 
-			if( $tmp )
+			foreach( $tmp as $k => $r )
 			{
-				foreach( $tmp as $k => $r )
+				if( $r )
 				{
-					if( $r )
-					{
-						$rules[$r] = false;
-					}
+					$rules[$r] = false;
 				}
 			}
 		}
@@ -673,7 +681,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return bool
 	 */
-	public function validate( $options = array() )
+	public function validate( array $options = array() ): bool
 	{
 		$pk = $this->getPk();
 
@@ -713,7 +721,7 @@ class Row implements ArrayAccess
 				}
 				else
 				{
-					if( ( $key = array_search( $field, $fields ) ) !== false )
+					if( ( $key = array_search( $options['skip'], $fields ) ) !== false )
 					{
 						unset( $fields[$key] );
 					}
@@ -765,7 +773,7 @@ class Row implements ArrayAccess
 	 * Inserts or updates an array into a table, based on the primary key: if
 	 * the primary key is empty it will insert, otherwise update
 	 */
-	public function save()
+	public function save(): bool
 	{
 		$pk = $this->getPk();
 		if( empty( $pk )|| ( isset( $this->force_pk ) && $this->force_pk ) )
@@ -789,7 +797,7 @@ class Row implements ArrayAccess
 	 *
 	 * @return bool
 	 */
-	public function delete()
+	public function delete(): bool
 	{
 		$pk = $this->getPk();
 		if( ! empty( $pk ) )
@@ -826,11 +834,7 @@ class Row implements ArrayAccess
 	 */
 	public function __destruct()
 	{
-		$this->table  = null;
-		$this->row    = null;
-		$this->clean  = null;
-		$this->dirty  = null;
-		$this->errors = null;
+		// Properties are automatically cleaned up by PHP's garbage collector
 	}
 
 
@@ -864,7 +868,7 @@ class Row implements ArrayAccess
     }
 
 
-    public function getData()
+    public function getData(): array
     {
     	$data = array();
 

@@ -216,7 +216,7 @@ class Pager
 	 */
 	public function getTotalPages()
 	{
-		return ceil( $this->total / $this->perpage );
+		return (int) ceil( $this->total / $this->perpage );
 	}
 
 	/**

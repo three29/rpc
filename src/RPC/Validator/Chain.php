@@ -23,7 +23,7 @@ class Chain extends Validator
 	/**
 	 * Adds a new rule to the chain
 	 *
-	 * @param \RPC\Validator\Interface $validator
+	 * @param \RPC\Validator $validator
 	 * @return \RPC\Validator\Chain
 	 */
 	public function add( \RPC\Validator $validator )
@@ -39,7 +39,7 @@ class Chain extends Validator
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		foreach( $this->chain as $validator )
 		{
@@ -49,7 +49,7 @@ class Chain extends Validator
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 	

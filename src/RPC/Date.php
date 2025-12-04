@@ -2,9 +2,11 @@
 
 namespace RPC;
 
+use RPC\Exception\InvalidArgumentException;
+
 /**
  * Incorporates a set of most used functions which manipulate dates and time
- * 
+ *
  * @package Core
  */
 class Date
@@ -60,7 +62,7 @@ class Date
 		}
 		else
 		{
-			throw new \Exception( 'The function expects two or four parameters' );
+			throw new InvalidArgumentException( 'The function expects two or four parameters' );
 		}
 	}
 	
@@ -96,7 +98,7 @@ class Date
 	 * @param mixed  $date   Date string or timestamp
 	 * @param string $format Format of the date
 	 * 
-	 * @return int Date timestamp
+	 * @return int|null Date timestamp
 	 */
 	static public function getTimestamp( $date, $format = 'Y-m-d' )
 	{
@@ -123,7 +125,7 @@ class Date
 	 * @param string $iformat Initial format
 	 * @param string $fformat Final format
 	 * 
-	 * @return string The date in the final format
+	 * @return string|null The date in the final format
 	 */
 	static public function changeFormat( $date, $iformat, $fformat )
 	{
@@ -234,7 +236,7 @@ class Date
 	}
 	
 	/**
-	 * Substracts the amount specified by the amount * unit.
+	 * Subtracts the amount specified by the amount * unit.
 	 * Unit can be one of:
 	 * - y: year
 	 * - m: month
@@ -242,13 +244,13 @@ class Date
 	 * - h: hour
 	 * - i: minute
 	 * - s: second
-	 * 
+	 *
 	 * @param int $amount  Number of units
 	 * @param string $unit Type of time unit
-	 * 
+	 *
 	 * @return \RPC\Date
 	 */
-	public function substract( $amount, $unit )
+	public function subtract( $amount, $unit )
 	{
 		switch( strtolower( $unit ) )
 		{
@@ -272,9 +274,23 @@ class Date
 				break;
 		}
 		
-		return new RPC\Date( strtotime( '-' . $amount . ' ' . $unit, $this->timestamp ), 'U' );
+		return new \RPC\Date( strtotime( '-' . $amount . ' ' . $unit, $this->timestamp ), 'U' );
 	}
-	
+
+	/**
+	 * Alias for subtract() - kept for backwards compatibility
+	 *
+	 * @deprecated Use subtract() instead
+	 * @param int $amount  Number of units
+	 * @param string $unit Type of time unit
+	 *
+	 * @return \RPC\Date
+	 */
+	public function substract( $amount, $unit )
+	{
+		return $this->subtract( $amount, $unit );
+	}
+
 	/**
 	 * Calculates the difference between 2 dates
 	 * 
@@ -308,11 +324,11 @@ class Date
 		{
 			case 'yyyy': // Number of full years
 				$years_difference = floor( $difference / 31536000 );
-				if( mktime( date( 'H', $datefrom ), date( 'i', $datefrom ), date( 's', $datefrom ), date( 'n', $datefrom ), date( 'j', $datefrom ), date( 'Y', $datefrom ) + $years_difference ) > $dateto ) 
+				if( mktime( (int) date( 'H', $datefrom ), (int) date( 'i', $datefrom ), (int) date( 's', $datefrom ), (int) date( 'n', $datefrom ), (int) date( 'j', $datefrom ), (int) (date( 'Y', $datefrom ) + $years_difference) ) > $dateto ) 
 				{
 					$years_difference--;
 				}
-				if( mktime( date( 'H', $dateto ), date( 'i', $dateto ), date( 's', $dateto ), date( 'n', $dateto), date( 'j', $dateto ), date( 'Y', $dateto )-( $years_difference + 1 ) ) > $datefrom )
+				if( mktime( (int) date( 'H', $dateto ), (int) date( 'i', $dateto ), (int) date( 's', $dateto ), (int) date( 'n', $dateto), (int) date( 'j', $dateto ), (int) (date( 'Y', $dateto )-( $years_difference + 1 )) ) > $datefrom )
 				{
 					$years_difference++;
 				}
@@ -320,16 +336,16 @@ class Date
 				break;
 			case 'q': // Number of full quarters
 				$quarters_difference = floor( $difference / 8035200 );
-				while( mktime( date( 'H', $datefrom ), date( 'i', $datefrom ), date( 's', $datefrom ), date( 'n', $datefrom ) + ( $quarters_difference * 3 ), date( 'j', $dateto ), date( 'Y', $datefrom ) ) < $dateto )
+				while( mktime( (int) date( 'H', $datefrom ), (int) date( 'i', $datefrom ), (int) date( 's', $datefrom ), (int) (date( 'n', $datefrom ) + ( $quarters_difference * 3 )), (int) date( 'j', $dateto ), (int) date( 'Y', $datefrom ) ) < $dateto )
 				{
-					$months_difference++;
+					$quarters_difference++;
 				}
 				$quarters_difference--;
 				$datediff = $quarters_difference;
 				break;
 			case 'm': // Number of full months
 				$months_difference = floor($difference / 2678400);
-				while( mktime( date( 'H', $datefrom ), date( 'i', $datefrom ), date( 's', $datefrom ), date( 'n', $datefrom ) + ( $months_difference ), date( 'j', $dateto ), date( 'Y', $datefrom ) ) < $dateto )
+				while( mktime( (int) date( 'H', $datefrom ), (int) date( 'i', $datefrom ), (int) date( 's', $datefrom ), (int) (date( 'n', $datefrom ) + ( $months_difference )), (int) date( 'j', $dateto ), (int) date( 'Y', $datefrom ) ) < $dateto )
 				{
 					$months_difference++;
 				}
@@ -450,10 +466,10 @@ class Date
 	public function setSeconds( $seconds )
 	{
 		$seconds = ( 0 <= $seconds ) && ( 60 >= $seconds ) ? $seconds : 0;
-		
+
 		list( $year, $month, $day, $hour, $minutes ) = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
-		
-		return new \RPC\Date( mktime( $hour, $minutes, $seconds, $month, $day, $year ), 'U' );
+
+		return new \RPC\Date( mktime( (int) $hour, (int) $minutes, $seconds, (int) $month, (int) $day, (int) $year ), 'U' );
 	}
 	
 	/**
@@ -469,7 +485,7 @@ class Date
 
 		[ $year, $month, $day, $hour, , $seconds ] = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
 
-		return new \RPC\Date( mktime( $hour, $minutes, $seconds, $month, $day, $year ), 'U' );
+		return new \RPC\Date( mktime( (int) $hour, $minutes, (int) $seconds, (int) $month, (int) $day, (int) $year ), 'U' );
 	}
 	
 	/**
@@ -485,7 +501,7 @@ class Date
 
 		[ $year, $month, $day, , $minutes, $seconds ] = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
 
-		return new \RPC\Date( mktime( $hour, $minutes, $seconds, $month, $day, $year ), 'U' );
+		return new \RPC\Date( mktime( $hour, (int) $minutes, (int) $seconds, (int) $month, (int) $day, (int) $year ), 'U' );
 	}
 	
 	/**
@@ -501,7 +517,7 @@ class Date
 
 		[ $year, $month, , $hour, $minutes, $seconds ] = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
 
-		return new \RPC\Date( mktime( $hour, $minutes, $seconds, $month, $day, $year ), 'U' );
+		return new \RPC\Date( mktime( (int) $hour, (int) $minutes, (int) $seconds, (int) $month, $day, (int) $year ), 'U' );
 	}
 	
 	/**
@@ -517,7 +533,7 @@ class Date
 
 		[ $year, , $day, $hour, $minutes, $seconds ] = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
 
-		return new \RPC\Date( mktime( $hour, $minutes, $seconds, $month, $day, $year ), 'U' );
+		return new \RPC\Date( mktime( (int) $hour, (int) $minutes, (int) $seconds, $month, (int) $day, (int) $year ), 'U' );
 	}
 	
 	/**
@@ -533,6 +549,6 @@ class Date
 
 		[ , $month, $day, $hour, $minutes, $seconds ] = explode( '/', date( 'Y/m/d/H/i/s', $this->timestamp ) );
 
-		return new \RPC\Date( mktime( $hour, $minutes, $seconds, $month, $day, $year ), 'U' );
+		return new \RPC\Date( mktime( (int) $hour, (int) $minutes, (int) $seconds, (int) $month, (int) $day, $year ), 'U' );
 	}
 }

@@ -20,7 +20,7 @@ class Zip extends Validator
 	 * 
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		return (bool) preg_match( Regex::US_ZIP, $value );
 	}

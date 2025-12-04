@@ -15,7 +15,7 @@ class MSSQL extends Adapter
 	/**
 	 * @todo Use a cache
 	 */
-	public function loadFields()
+	public function loadFields(): void
 	{
 		/**
 		 * I store the fields in a global variable for performance reasons: if
@@ -41,7 +41,7 @@ class MSSQL extends Adapter
 		}
 	}
 
-	public static function query()
+	public static function query(): array
 	{
 		$args = func_get_args();
 
@@ -71,7 +71,7 @@ class MSSQL extends Adapter
 		return $t->getDb()->query( $sql );
 	}
 
-	public static function execute()
+	public static function execute(): mixed
 	{
 		$args = func_get_args();
 
@@ -101,7 +101,7 @@ class MSSQL extends Adapter
 		return $t->getDb()->execute( $sql );
 	}
 
-	public function get()
+	public function get(): array
 	{
 		$args = func_get_args();
 
@@ -165,7 +165,7 @@ class MSSQL extends Adapter
 	}
 
 
-	public function getAll()
+	public function getAll(): array
 	{
 		$args = func_get_args();
 
@@ -232,7 +232,7 @@ class MSSQL extends Adapter
 	}
 
 
-	public function getBySql()
+	public function getBySql(): array|false
 	{
 
 		$args = func_get_args();
@@ -296,7 +296,7 @@ class MSSQL extends Adapter
 	}
 
 
-	public function find()
+	public function find(): \RPC\Db\Table\Row|false|null
 	{
 		$args = func_get_args();
 
@@ -381,7 +381,7 @@ class MSSQL extends Adapter
 		return null;
 	}
 
-	public function findAll()
+	public function findAll(): array
 	{
 		$args = func_get_args();
 
@@ -477,7 +477,7 @@ class MSSQL extends Adapter
 		return [];
 	}
 
-	public function findBySql()
+	public function findBySql(): array|false
 	{
 
 		$args = func_get_args();
@@ -568,7 +568,7 @@ class MSSQL extends Adapter
 	}
 
 
-	protected function insertRow( \RPC\Db\Table\Row $row )
+	protected function insertRow( \RPC\Db\Table\Row $row ): array|bool
 	{
 		$columns = array();
 		$values    = array();
@@ -608,7 +608,7 @@ class MSSQL extends Adapter
 		return $this->getDb()->prepare( $sql )->execute( $values );
 	}
 
-	public function updateRow( \RPC\Db\Table\Row $row )
+	public function updateRow( \RPC\Db\Table\Row $row ): array|bool
 	{
 		$columns = array();
 		$values  = array();
@@ -639,7 +639,7 @@ class MSSQL extends Adapter
 		return $this->getDb()->prepare( $sql )->execute( $values );
 	}
 
-	public function deleteBy( $field, $value )
+	public function deleteBy( string $field, mixed $value ): array|bool
 	{
 		$sql   = 'delete from "' . $this->getName() . '" where "' . $field . '"=?';
 
@@ -650,7 +650,7 @@ class MSSQL extends Adapter
 	/**
 	 * @todo Implement
 	 */
-	public function lock()
+	public function lock(): void
 	{
 		throw new \Exception( 'Not implemented' );
 	}
@@ -658,13 +658,13 @@ class MSSQL extends Adapter
 	/**
 	 * @todo Implement
 	 */
-	public function unlock()
+	public function unlock(): void
 	{
 		throw new \Exception( 'Not implemented' );
 	}
 
 
-	public function cacheQuery( $sql, $seconds )
+	public function cacheQuery( string $sql, int $seconds ): mixed
 	{
 		$filename = CACHE_PATH . '/sql_' . md5( $sql );
 		if( is_readable( $filename ) &&
@@ -681,13 +681,13 @@ class MSSQL extends Adapter
 	}
 
 
-	public function newObject( $row )
+	public function newObject( array $row ): \RPC\Db\Table\Row
 	{
 		return new $this->rowclass( $this, $row );
 	}
 
 
-	public static function __callStatic( $name, $arguments )
+	public static function __callStatic( string $name, array $arguments ): object
     {
     	$class_called = get_called_class();
     	$temp_name = str_replace( '_', '', $name );

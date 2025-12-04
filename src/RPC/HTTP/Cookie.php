@@ -271,13 +271,7 @@ class Cookie
 	/**
 	 * Stores extra information in the value so that the cookie can be
 	 * removed easily
-	 * 
-	 * @param string $value
-	 * @param string $path
-	 * @param string $domain
-	 * @param bool   $secure
-	 * @param bool   $httponly
-	 * 
+	 *
 	 * @return string
 	 */
 	protected function encode()
@@ -293,7 +287,7 @@ class Cookie
 	 * 
 	 * @return array
 	 */
-	protected function decode()
+	protected function decode(string $name)
 	{
 		$value = $_COOKIE[$name];
 		$pos   = strrpos( $value, '#' );
