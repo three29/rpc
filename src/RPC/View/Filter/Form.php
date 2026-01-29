@@ -268,9 +268,9 @@ class Form extends Filter
 		return ! empty( $arr );
 	}
 
-	public function escape( string $str ): string
+	public function escape( string|null $str ): string
 	{
-		return htmlentities( $str, ENT_QUOTES, 'UTF-8', false );
+		return htmlentities( $str ?: '', ENT_QUOTES, 'UTF-8', false );
 	}
 
 }

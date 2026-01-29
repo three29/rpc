@@ -7,7 +7,7 @@ use RPC\Contracts\Bootstrap;
 class Session implements Bootstrap {
 	public static function handle() {
 		// Skip session setup in testing environment to avoid header issues
-		if (getenv('APP_ENV') === 'testing') {
+		if (env('APP_ENV') === 'testing') {
 			return;
 		}
 

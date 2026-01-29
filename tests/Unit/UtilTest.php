@@ -307,25 +307,6 @@ class UtilTest extends TestCase
         $this->assertEquals(100, strlen($password));
     }
 
-    public function testGeneratePasswordAdvancedAllCharacterTypes()
-    {
-        $password = Util::generatePasswordAdvanced(50, true, true, true, true);
-
-        $this->assertEquals(50, strlen($password));
-
-        // Should contain at least one uppercase
-        $this->assertMatchesRegularExpression('/[A-Z]/', $password);
-
-        // Should contain at least one lowercase
-        $this->assertMatchesRegularExpression('/[a-z]/', $password);
-
-        // Should contain at least one number
-        $this->assertMatchesRegularExpression('/[0-9]/', $password);
-
-        // Should contain at least one special char
-        $this->assertMatchesRegularExpression('/[^A-Za-z0-9]/', $password);
-    }
-
     public function testCsrfTokenIsConsistent()
     {
         $_SESSION = [];

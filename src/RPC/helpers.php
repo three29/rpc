@@ -82,3 +82,67 @@ if (!function_exists('dispatch')) {
 		return events()->dispatch($event);
 	}
 }
+
+if (!function_exists('env')) {
+	/**
+	 * Get an environment variable value
+	 *
+	 * Checks $_ENV first, then $_SERVER, then falls back to getenv()
+	 * Converts string representations to proper types:
+	 * - 'true', '(true)' => true
+	 * - 'false', '(false)' => false
+	 * - 'null', '(null)' => null
+	 * - 'empty', '(empty)' => ''
+	 *
+	 * @param string $key Environment variable name
+	 * @param mixed $default Default value if not found
+	 * @return mixed
+	 */
+	function env(string $key, mixed $default = null): mixed
+	{
+		// Check $_ENV first (Dotenv v5 priority)
+		if (isset($_ENV[$key])) {
+			return _env_convert_value($_ENV[$key]);
+		}
+
+		// Check $_SERVER
+		if (isset($_SERVER[$key])) {
+			return _env_convert_value($_SERVER[$key]);
+		}
+
+		// Fall back to getenv() for compatibility
+		$value = getenv($key);
+		if ($value !== false) {
+			return _env_convert_value($value);
+		}
+
+		// Return default if not found
+		return $default;
+	}
+}
+
+if (!function_exists('_env_convert_value')) {
+	/**
+	 * Convert environment variable string values to proper types
+	 *
+	 * @internal
+	 * @param mixed $value
+	 * @return mixed
+	 */
+	function _env_convert_value(mixed $value): mixed
+	{
+		if (!is_string($value)) {
+			return $value;
+		}
+
+		$lower = strtolower($value);
+
+		return match ($lower) {
+			'true', '(true)' => true,
+			'false', '(false)' => false,
+			'null', '(null)' => null,
+			'empty', '(empty)' => '',
+			default => $value,
+		};
+	}
+}

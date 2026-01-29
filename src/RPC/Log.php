@@ -28,20 +28,21 @@ class Log {
 	function __construct()
 	{
 		$root_path = \RPC\Registry::get('root_path');
-		if( ! getenv( 'LOGS_ENABLED' ) )
+		if( ! env( 'LOGS_ENABLED' ) )
 		{
 			$this->_enabled = false;
 			return;
 		}
 
-		if ( ! getenv( 'LOG_TO_FILE' ) )
+		if ( ! env( 'LOG_TO_FILE' ) )
 		{
 			$this->_log_to_file = false;
 		}
 
-		if ( getenv( 'LOG_PATH' ) )
+		$logPath = env( 'LOG_PATH' );
+		if ( $logPath )
 		{
-			$this->log_path = getenv( 'LOG_PATH' );
+			$this->log_path = $logPath;
 		}
 		else
 		{
@@ -54,14 +55,16 @@ class Log {
 			$this->_enabled = false;
 		}
 
-		if( getenv( "LOG_THRESHOLD" ) )
+		$threshold = env( "LOG_THRESHOLD" );
+		if( $threshold )
 		{
-			$this->_threshold = (int) getenv( "LOG_THRESHOLD" );
+			$this->_threshold = (int) $threshold;
 		}
 
-		if( getenv( "LOG_DATE_FORMAT" ) )
+		$dateFormat = env( "LOG_DATE_FORMAT" );
+		if( $dateFormat )
 		{
-			$this->_date_fmt = getenv( "LOG_DATE_FORMAT" );
+			$this->_date_fmt = $dateFormat;
 		}
 	}
 

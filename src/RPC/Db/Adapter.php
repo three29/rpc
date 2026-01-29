@@ -49,6 +49,13 @@ abstract class Adapter
 	 */
 	protected static $_rpc_logging = false;
 
+	/**
+	 * Storage for executed queries when DEBUG_QUERIES is enabled
+	 *
+	 * @var array<string>
+	 */
+	protected array $_rpc_queries = [];
+
 
 	/**
 	 * Tries to connect to the database, throwing an exception if it fails
@@ -155,11 +162,7 @@ abstract class Adapter
 			return 0;
 		}
 
-		if( getenv('DEBUG_QUERIES') === "true" )
-		{
-			/** @phpstan-ignore-next-line Dynamic property for query debugging */
-			$this->getHandle()->_queries[] = $sql;
-		}
+		$this->addQuery( $sql );
 
 		$this->_rpc_affectedrows = $this->getHandle()->exec( $sql );
 
@@ -186,11 +189,7 @@ abstract class Adapter
 			return null;
 		}
 
-		if( getenv('DEBUG_QUERIES') === "true" )
-		{
-			/** @phpstan-ignore-next-line Dynamic property for query debugging */
-			$this->getHandle()->_queries[] = $sql;
-		}
+		$this->addQuery( $sql );
 
 		$res = $this->getHandle()->query( $sql, $this->getFetchMode() );
 
@@ -292,15 +291,32 @@ abstract class Adapter
 		$this->disconnect();
 	}
 
+	/**
+	 * Add a query to the debug query log
+	 *
+	 * @param string $sql
+	 * @return void
+	 */
+	public function addQuery( string $sql ): void
+	{
+		if ( env( 'DEBUG_QUERIES' ) === true ) {
+			$this->_rpc_queries[] = $sql;
+		}
+	}
 
+	/**
+	 * Get logged queries
+	 *
+	 * @param bool $all If true, return all queries; if false, return only the last query
+	 * @return mixed
+	 */
 	public function getQueries( bool $all = false ): mixed
 	{
-		if( ! getenv( 'DEBUG_QUERIES' ) )
+		if( ! env( 'DEBUG_QUERIES' ) )
 		{
 			return 'DEBUG_QUERIES variable is not defined in .env file.';
 		}
-		/** @phpstan-ignore-next-line Dynamic property for query debugging */
-		return ( $all ? $this->getHandle()->_queries : end( $this->getHandle()->_queries ) );
+		return ( $all ? $this->_rpc_queries : ( end( $this->_rpc_queries ) ?: null ) );
 	}
 
 	/**
@@ -313,7 +329,7 @@ abstract class Adapter
 	protected function logQuery( string $sql ): void
 	{
 		// Prevent infinite recursion
-		if( self::$_rpc_logging || getenv( 'LOG_QUERIES' ) !== "true" )
+		if( self::$_rpc_logging || env( 'LOG_QUERIES' ) !== true )
 		{
 			return;
 		}

@@ -69,22 +69,29 @@ class Response
 	 */
 	public function redirect( string $url = '/', bool $permanent = false ): void
 	{
+		// Sanitize URL
+		$url = str_replace( array( "\n", "\r" ), '', $url );
+
+		// Default to root if URL is empty after sanitization
+		if( empty( $url ) )
+		{
+			$url = '/';
+		}
+
 		if( ! headers_sent( $file, $line ) )
 		{
 			if( $permanent )
 			{
 				header( 'HTTP/1.0 301 Moved Permanently' );
 			}
-			
-			$url = str_replace( array( "\n", "\r" ), '', $url );
-			
+
 			header( 'Location: ' . $url );
 		}
 		else
 		{
 			die( 'Headers sent in file: ' . $file . ' on line: ' . $line );
 		}
-		
+
 		exit;
 	}
 	

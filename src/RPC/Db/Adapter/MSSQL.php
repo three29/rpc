@@ -158,15 +158,11 @@ class MSSQL extends Adapter
 			return 0;
 		}
 
-		if( getenv('DEBUG_QUERIES') === "true" )
-		{
-			/** @phpstan-ignore-next-line Dynamic property for query debugging */
-			$this->getHandle()->_queries[] = $sql;
-		}
+		$this->addQuery( $sql );
 
 		if( $sql != "select scope_identity() as n" )
 		{
-			if( getenv( 'LOG_QUERIES' ) === "true" )
+			if( env( 'LOG_QUERIES' ) === true )
 			{
 				$this->getHandle()->prepare( " insert into query_logger ( query, ip, created ) values ( ?, ?, ? ) " )->execute( array( $sql, \RPC\Util::get_client_source(), date( 'Y-m-d H:i:s' ) ) );
 			}
@@ -176,7 +172,7 @@ class MSSQL extends Adapter
 
 		if( $sql == "select scope_identity() as n" )
 		{
-			if( getenv( 'LOG_QUERIES' ) === "true" )
+			if( env( 'LOG_QUERIES' ) === true )
 			{
 				$this->getHandle()->prepare( " insert into query_logger ( query, ip, created ) values ( ?, ?, ? ) " )->execute( array( $sql, \RPC\Util::get_client_source(), date( 'Y-m-d H:i:s' ) ) );
 			}

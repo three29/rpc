@@ -149,4 +149,117 @@ class HelpersTest extends UnitTestCase
 
         $this->assertSame($event, $result);
     }
+
+    public function testEnvFunctionExists()
+    {
+        $this->assertTrue(function_exists('env'));
+    }
+
+    public function testEnvReturnsValueFromEnv()
+    {
+        $_ENV['TEST_VAR'] = 'test_value';
+
+        $this->assertEquals('test_value', env('TEST_VAR'));
+
+        unset($_ENV['TEST_VAR']);
+    }
+
+    public function testEnvReturnsValueFromServer()
+    {
+        $_SERVER['TEST_SERVER_VAR'] = 'server_value';
+
+        $this->assertEquals('server_value', env('TEST_SERVER_VAR'));
+
+        unset($_SERVER['TEST_SERVER_VAR']);
+    }
+
+    public function testEnvPrefersEnvOverServer()
+    {
+        $_ENV['TEST_PRIORITY'] = 'env_value';
+        $_SERVER['TEST_PRIORITY'] = 'server_value';
+
+        $this->assertEquals('env_value', env('TEST_PRIORITY'));
+
+        unset($_ENV['TEST_PRIORITY']);
+        unset($_SERVER['TEST_PRIORITY']);
+    }
+
+    public function testEnvReturnsDefaultWhenNotFound()
+    {
+        $this->assertEquals('default_value', env('NONEXISTENT_VAR', 'default_value'));
+        $this->assertNull(env('NONEXISTENT_VAR'));
+    }
+
+    public function testEnvConvertsTrueString()
+    {
+        $_ENV['TEST_TRUE'] = 'true';
+        $_ENV['TEST_TRUE_PAREN'] = '(true)';
+
+        $this->assertTrue(env('TEST_TRUE'));
+        $this->assertTrue(env('TEST_TRUE_PAREN'));
+
+        unset($_ENV['TEST_TRUE']);
+        unset($_ENV['TEST_TRUE_PAREN']);
+    }
+
+    public function testEnvConvertsFalseString()
+    {
+        $_ENV['TEST_FALSE'] = 'false';
+        $_ENV['TEST_FALSE_PAREN'] = '(false)';
+
+        $this->assertFalse(env('TEST_FALSE'));
+        $this->assertFalse(env('TEST_FALSE_PAREN'));
+
+        unset($_ENV['TEST_FALSE']);
+        unset($_ENV['TEST_FALSE_PAREN']);
+    }
+
+    public function testEnvConvertsNullString()
+    {
+        $_ENV['TEST_NULL'] = 'null';
+        $_ENV['TEST_NULL_PAREN'] = '(null)';
+
+        $this->assertNull(env('TEST_NULL'));
+        $this->assertNull(env('TEST_NULL_PAREN'));
+
+        unset($_ENV['TEST_NULL']);
+        unset($_ENV['TEST_NULL_PAREN']);
+    }
+
+    public function testEnvConvertsEmptyString()
+    {
+        $_ENV['TEST_EMPTY'] = 'empty';
+        $_ENV['TEST_EMPTY_PAREN'] = '(empty)';
+
+        $this->assertEquals('', env('TEST_EMPTY'));
+        $this->assertEquals('', env('TEST_EMPTY_PAREN'));
+
+        unset($_ENV['TEST_EMPTY']);
+        unset($_ENV['TEST_EMPTY_PAREN']);
+    }
+
+    public function testEnvConversionIsCaseInsensitive()
+    {
+        $_ENV['TEST_CASE_TRUE'] = 'TRUE';
+        $_ENV['TEST_CASE_FALSE'] = 'FALSE';
+        $_ENV['TEST_CASE_NULL'] = 'NULL';
+
+        $this->assertTrue(env('TEST_CASE_TRUE'));
+        $this->assertFalse(env('TEST_CASE_FALSE'));
+        $this->assertNull(env('TEST_CASE_NULL'));
+
+        unset($_ENV['TEST_CASE_TRUE']);
+        unset($_ENV['TEST_CASE_FALSE']);
+        unset($_ENV['TEST_CASE_NULL']);
+    }
+
+    public function testEnvDoesNotConvertNumericStrings()
+    {
+        $_ENV['TEST_NUMBER'] = '123';
+
+        $this->assertEquals('123', env('TEST_NUMBER'));
+        $this->assertIsString(env('TEST_NUMBER'));
+
+        unset($_ENV['TEST_NUMBER']);
+    }
 }

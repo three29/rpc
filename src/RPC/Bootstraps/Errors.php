@@ -11,7 +11,7 @@ class Errors implements Bootstrap {
 		error_reporting( E_ALL );
 		ini_set( 'display_errors', 0 );
 
-		if( getenv( "SHOW_ERRORS" ) === "true" )
+		if( env( "SHOW_ERRORS" ) === true )
 		{
 			ini_set( 'display_errors', 1 );
 			$whoops = new \Whoops\Run;
@@ -35,7 +35,7 @@ class Errors implements Bootstrap {
 			}
 
 			// Only show custom error page in production (when SHOW_ERRORS is not true)
-			if ( getenv( 'SHOW_ERRORS' ) !== 'true' ) {
+			if ( env( 'SHOW_ERRORS' ) !== true ) {
 				// Try to render custom error template
 				if ( defined( 'APP_PATH' ) && defined( 'CACHE_PATH' ) ) {
 					try {

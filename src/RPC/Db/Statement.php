@@ -86,21 +86,17 @@ class Statement
 
 		// Build debug SQL string with properly quoted parameters
 		$debugSql = $this->sql;
-		if( getenv( 'DEBUG_QUERIES' ) === "true" || getenv( 'LOG_QUERIES' ) === "true" )
+		if( env( 'DEBUG_QUERIES' ) === true || env( 'LOG_QUERIES' ) === true )
 		{
 			$debugSql = $this->buildDebugSql( $this->sql, $params );
 		}
 
-		if( getenv( 'DEBUG_QUERIES' ) === "true" )
-		{
-			/** @phpstan-ignore-next-line Dynamic property for query debugging */
-			$this->db->getHandle()->_queries[] = $debugSql;
-		}
+		$this->db->addQuery( $debugSql );
 
 		$res = $this->stmt->execute( $params );
 
 		// Use reflection to access protected logQuery method from Adapter
-		if( getenv( 'LOG_QUERIES' ) === "true" )
+		if( env( 'LOG_QUERIES' ) === true )
 		{
 			$reflection = new \ReflectionClass( $this->db );
 			$method = $reflection->getMethod( 'logQuery' );

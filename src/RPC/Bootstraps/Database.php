@@ -7,10 +7,10 @@ use RPC\Db;
 
 class Database implements Bootstrap {
 	public static function handle() {
-		// Get database configuration - use $_ENV first (Dotenv v5), fallback to getenv()
-		$dbName = $_ENV['DB_NAME'] ?? getenv('DB_NAME') ?: null;
-		$dbAdapter = $_ENV['DB_ADAPTER'] ?? getenv('DB_ADAPTER') ?: null;
-		$appEnv = $_ENV['APP_ENV'] ?? getenv('APP_ENV') ?: null;
+		// Get database configuration using env() helper
+		$dbName = env('DB_NAME');
+		$dbAdapter = env('DB_ADAPTER');
+		$appEnv = env('APP_ENV');
 
 		// Skip database setup in testing environment if DB_NAME is not set
 		// This allows tests to run without requiring a database connection
@@ -30,14 +30,14 @@ class Database implements Bootstrap {
 		}
 
 		Db::addConnection( 'default', array(
-			'adapter'  => $_ENV['DB_ADAPTER'] ?? getenv( 'DB_ADAPTER' ) ?: null,
-			'hostname' => $_ENV['DB_HOSTNAME'] ?? getenv( 'DB_HOSTNAME' ) ?: null,
+			'adapter'  => env('DB_ADAPTER'),
+			'hostname' => env('DB_HOSTNAME'),
 			'database' => $dbName,
-			'socket'   => $_ENV['DB_SOCKET'] ?? getenv( 'DB_SOCKET' ) ?: null,
-			'port'     => $_ENV['DB_PORT'] ?? getenv( 'DB_PORT' ) ?: null,
-			'username' => $_ENV['DB_USERNAME'] ?? getenv( 'DB_USERNAME' ) ?: null,
-			'password' => $_ENV['DB_PASSWORD'] ?? getenv( 'DB_PASSWORD' ) ?: null,
-			'prefix'   => $_ENV['DB_PREFIX'] ?? getenv( 'DB_PREFIX' ) ?: ''
+			'socket'   => env('DB_SOCKET'),
+			'port'     => env('DB_PORT'),
+			'username' => env('DB_USERNAME'),
+			'password' => env('DB_PASSWORD'),
+			'prefix'   => env('DB_PREFIX', '')
 		));
 	}
 }

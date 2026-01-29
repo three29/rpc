@@ -862,6 +862,7 @@ class Row implements ArrayAccess
 			}
 			else
 			{
+//				var_dump($this);exit;
 				throw new \Exception( "Field $name doesn't exist on the row object" );
 			}
 		}

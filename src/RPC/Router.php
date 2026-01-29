@@ -38,7 +38,7 @@ class Router {
 			$this->executeRoute();
 		} catch ( \Exception $e ) {
 			// Only show custom error page in production (when SHOW_ERRORS is not true)
-			if ( getenv( 'SHOW_ERRORS' ) === 'true' ) {
+			if ( env( 'SHOW_ERRORS' ) === true ) {
 				// In development, re-throw to let Whoops handle it
 				throw $e;
 			}
@@ -224,7 +224,7 @@ class Router {
 			DISABLE_CSRF undefined or false && ignore_csrf is undefined or false
 
 		*/
-		if ( empty( $command->ignore_csrf ) && ! getenv( 'DISABLE_CSRF' ) ) {
+		if ( empty( $command->ignore_csrf ) && ! env( 'DISABLE_CSRF' ) ) {
 			$this->request->validateCSRF();
 		}
 
