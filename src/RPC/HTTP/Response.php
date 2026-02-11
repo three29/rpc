@@ -290,12 +290,12 @@ class Response
 	/**
 	 * Shortcuts for json outputs
 	 */
-	public function jsonSuccess( array $data = array() ): void
+	public function jsonSuccess( mixed $data = array() ): void
 	{
 		$this->json( array( 'success' => 1, 'data' => $data ) );
 	}
 
-	public function jsonError( string $error_message = '', array $data = array() ): void
+	public function jsonError( string $error_message = '', mixed $data = array() ): void
 	{
 		$this->json( array( 'error' => 1, 'error_message' => $error_message, 'data' => $data ) );
 	}

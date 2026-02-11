@@ -74,17 +74,17 @@ class Controller
 	}
 
 
-	public function json( array $data = array() ): void
+	public function json( mixed $data = array() ): void
 	{
 		$this->response->json( $data );
 	}
 
-	public function jsonSuccess( array $data = array() ): void
+	public function jsonSuccess( mixed $data = array() ): void
 	{
 		$this->response->jsonSuccess( $data );
 	}
 
-	public function jsonError( string $error_message = '', array $data = array() ): void
+	public function jsonError( string $error_message = '', mixed $data = array() ): void
 	{
 		$this->response->jsonError( $error_message, $data );
 	}
