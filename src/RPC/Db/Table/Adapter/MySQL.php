@@ -42,7 +42,7 @@ class MySQL extends Adapter
 		}
 	}
 
-	public static function query(): array
+	public static function query(): array|bool|null
 	{
 		$args = func_get_args();
 
@@ -61,18 +61,17 @@ class MySQL extends Adapter
 			}
 		}
 
-		$t = get_called_class();
-		$t = new $t( null, true );
+		$t = new static( null, true );
 
 		if( $condition_values )
 		{
 			return $t->getDb()->prepare( $sql )->execute( $condition_values );
 		}
-	
+
 		return $t->getDb()->query( $sql );
 	}
 
-	public static function execute(): mixed
+	public static function execute(): array|bool|int|null
 	{
 		$args = func_get_args();
 
@@ -91,8 +90,7 @@ class MySQL extends Adapter
 			}
 		}
 
-		$t = get_called_class();
-		$t = new $t( null, true );
+		$t = new static( null, true );
 
 		if( $condition_values )
 		{
@@ -233,7 +231,7 @@ class MySQL extends Adapter
 	}
 
 
-	public function getBySql(): array|false
+	public function getBySql(): array|bool
 	{
 
 		$args = func_get_args();
@@ -569,7 +567,7 @@ class MySQL extends Adapter
 	}
 
 
-	protected function insertRow( \RPC\Db\Table\Row $row ): array|bool
+	protected function insertRow( \RPC\Db\Table\Row $row ): array|bool|null
 	{
 		$columns = array();
 		$values    = array();
@@ -609,7 +607,7 @@ class MySQL extends Adapter
 		return $this->getDb()->prepare( $sql )->execute( $values );
 	}
 
-	public function updateRow( \RPC\Db\Table\Row $row ): array|bool
+	public function updateRow( \RPC\Db\Table\Row $row ): array|bool|null
 	{
 		$columns = array();
 		$values  = array();
@@ -640,7 +638,7 @@ class MySQL extends Adapter
 		return $this->getDb()->prepare( $sql )->execute( $values );
 	}
 
-	public function deleteBy( string $field, mixed $value ): array|bool
+	public function deleteBy( string $field, mixed $value ): array|bool|null
 	{
 		$sql   = 'delete from `' . $this->getName() . '` where `' . $field . '`=?';
 

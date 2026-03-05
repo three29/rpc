@@ -71,8 +71,7 @@ class MSSQL extends Adapter
 		return $t->getDb()->query( $sql );
 	}
 
-	public static function execute(): mixed
-	{
+	public static function execute(): null|array|bool|int {
 		$args = func_get_args();
 
 		$sql = $args[0];
@@ -90,8 +89,7 @@ class MSSQL extends Adapter
 			}
 		}
 
-		$t = get_called_class();
-		$t = new $t( null, true );
+		$t = new static( null, true );
 
 		if( $condition_values )
 		{
@@ -232,7 +230,7 @@ class MSSQL extends Adapter
 	}
 
 
-	public function getBySql(): array|false
+	public function getBySql(): array|bool
 	{
 
 		$args = func_get_args();

@@ -85,7 +85,7 @@ abstract class Adapter
 
 	abstract public function getAll(): array;
 
-	abstract public function getBySql(): array|false;
+	abstract public function getBySql(): array|bool;
 
 	/**
 	 * Returns one row (the first in case there are more) which is returned by the query on the model's table. If no row is found, returns null
@@ -116,7 +116,7 @@ abstract class Adapter
 	 *
 	 * @return array|bool
 	 */
-	abstract public function deleteBy( string $field, mixed $value ): array|bool;
+	abstract public function deleteBy( string $field, mixed $value ): array|bool|null;
 
 	/**
 	 * Performs an insert given the supplied data
@@ -125,7 +125,7 @@ abstract class Adapter
 	 *
 	 * @return array|bool
 	 */
-	abstract protected function insertRow( \RPC\Db\Table\Row $row ): array|bool;
+	abstract protected function insertRow( \RPC\Db\Table\Row $row ): array|bool|null;
 
 	/**
 	 * Performs an update given the supplied data
@@ -134,7 +134,7 @@ abstract class Adapter
 	 *
 	 * @return array|bool
 	 */
-	abstract protected function updateRow( \RPC\Db\Table\Row $row ): array|bool;
+	abstract protected function updateRow( \RPC\Db\Table\Row $row ): array|bool|null;
 
 
 
@@ -307,6 +307,20 @@ abstract class Adapter
 	{
 		return $this->pk;
 	}
+
+	/**
+	 * Performs a raw query on the table.
+	 *
+	 * @return array|bool|null
+	 */
+	abstract static function query(): array|bool|null;
+
+	/**
+	 * Performs a raw query on the table.
+	 *
+	 * @return array|bool|null
+	 */
+	abstract static function execute(): array|bool|int|null;
 
 	/**
 	 * Create a new, empty row object
