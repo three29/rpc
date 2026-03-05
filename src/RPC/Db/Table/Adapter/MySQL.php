@@ -238,7 +238,7 @@ class MySQL extends Adapter
 
 		if( ! isset( $args[0] ) )
 		{
-			return false;
+	q		return false;
 		}
 
 		$condition_values = array();
