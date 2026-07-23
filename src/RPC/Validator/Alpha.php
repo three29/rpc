@@ -10,12 +10,12 @@ class Alpha extends Validator
 	/**
 	 * Validates if every character of $value is a letter
 	 *
-	 * @param string $value
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
-		return ctype_alpha( $value );
+		return ctype_alpha( (string) $value );
 	}
 	
 }

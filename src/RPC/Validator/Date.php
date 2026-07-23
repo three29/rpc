@@ -3,7 +3,6 @@
 namespace RPC\Validator;
 
 use RPC\Validator;
-use RPC\Date;
 
 class Date extends Validator
 {
@@ -13,12 +12,16 @@ class Date extends Validator
 	 *
 	 * @var string
 	 */
-	protected $format = 'Y-m-d';
-	
-	public function __construct( $format = 'Y-m-d', $errormessage = '' )
+	protected string $format = 'Y-m-d';
+
+	/**
+	 * @param string $format PHP Date Format String (optional)
+	 * @param string $errormessage Error message when date does not match (optional)
+	 */
+	public function __construct( string $format = 'Y-m-d', string $errormessage = '' )
 	{
+		parent::__construct( $errormessage );
 		$this->format = $format;
-		$this->setError( $errormessage );
 	}
 	
 	/**
@@ -27,9 +30,9 @@ class Date extends Validator
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
-		return RPC\Date::validDate( $value, $this->format );
+		return \RPC\Date::validDate( $value, $this->format );
 	}
 	
 }

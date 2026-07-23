@@ -30,6 +30,7 @@ class Render extends Filter
 	public function filter( $source )
 	{
 		$regex = new \RPC\Regex( '/<render>([^<]+)<\/render>/' );
+		$matches = [];
 		$regex->match( $source, $matches );
 		
 		foreach( $matches as $match )

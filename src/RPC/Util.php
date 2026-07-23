@@ -14,18 +14,18 @@ class Util
 	/**
 	 * Determines whether an IP address is in a given IP range.
 	 *
-	 * @param range A string giving the IP range. You can use semi-colons to
+	 * @param string $range A string giving the IP range. You can use semi-colons to
 	 *              seperate multiple IP's or IP ranges and you should use
 	 *              a dash to specify a range. Asterisks may be used in single IP
 	 *              addresses. Examples of valid ranges are: "127.0.0.1",
 	 *              "192.168.0.1-192.168.0.100", "192.168.0.*" and
 	 *              "192.168.0.1-192.168.0.100;127.0.0.1". If the range is an
 	 *              empty string, this function will always return @p true.
-	 * @param ip    A string giving the IP address.
+	 * @param string $ip    A string giving the IP address.
 	 *
 	 * @return bool
 	 */
-	public static function isIpInRange( $range, $ip )
+	public static function isIpInRange( string $range, string $ip ): bool
 	{
 		if( $range == '' )
 		{
@@ -34,7 +34,7 @@ class Util
 
 		$ranges   = explode(';', $range);
 		$ipFields = explode('.', $ip);
-		$ipFields[0] = (int) ( isset( $ipFields[0]) ? $ipFields[0] : 0 );
+		$ipFields[0] = (int) $ipFields[0];
 		$ipFields[1] = (int) ( isset( $ipFields[1]) ? $ipFields[1] : 0 );
 		$ipFields[2] = (int) ( isset( $ipFields[2]) ? $ipFields[2] : 0 );
 		$ipFields[3] = (int) ( isset( $ipFields[3]) ? $ipFields[3] : 0 );
@@ -109,7 +109,7 @@ class Util
 	 * are) into an array where the option values are mapped as keys and their
 	 * content as the corresponding value.
 	 *
-	 * @param array  $array Bidimensional array or array of objects
+	 * @param array<string|numeric, array|object>  $array Bidimensional array or array of objects
 	 * @param string $key   Column in every array which will represent the
 	 *                      value of the option
 	 * @param string $value Column in every array which will represent the
@@ -117,7 +117,7 @@ class Util
 	 *
 	 * @return array
 	 */
-	public static function arrayToOptions( $array, $key, $value )
+	public static function arrayToOptions( array $array, string $key, string $value ): array
 	{
 		$options = array();
 
@@ -150,7 +150,7 @@ class Util
 	 *
 	 * @author Lars B. Jensen <lars.jensen@ljweb.com>
 	 */
-	public static function generatePassword( $nice = 1, $length = 8, $allowchars = '' )
+	public static function generatePassword( int $nice = 1, int $length = 8, string $allowchars = '' ): string
 	{
 		switch( $nice )
 		{
@@ -187,7 +187,7 @@ class Util
 	 *
 	 * @author Lars B. Jensen <lars.jensen@ljweb.com>
 	 */
-	public static function generatePronouncablePassword( $length = 8 )
+	public static function generatePronouncablePassword( int $length = 8 ): string
 	{
 		$valid_consonant = 'bcdfghjkmnprstv';
 		$valid_vowel     = 'aeiouy';
@@ -218,18 +218,18 @@ class Util
 	 * the generatePassword function to ease things.
 	 *
 	 * @param int    $length
-	 * @param bool   $allow_uppercase
-	 * @param bool   $allow_lowercase
-	 * @param bool   $allow_numbers
-	 * @param bool   $allow_special
-	 * @param bool   $fix_similar
+	 * @param int    $allow_uppercase
+	 * @param int    $allow_lowercase
+	 * @param int    $allow_numbers
+	 * @param int    $allow_special
+	 * @param int    $fix_similar
 	 * @param string $valid_charset
 	 *
 	 * @return string
 	 *
 	 * @author Lars B. Jensen <lars.jensen@ljweb.com>
 	 */
-	public static function generatePasswordAdvanced( $length = 8, $allow_uppercase = 1, $allow_lowercase = 1, $allow_numbers = 1, $allow_special = 1, $fix_similar = 0, $valid_charset = '' )
+	public static function generatePasswordAdvanced( int $length = 8, int $allow_uppercase = 1, int $allow_lowercase = 1, int $allow_numbers = 1, int $allow_special = 1, int $fix_similar = 0, string $valid_charset = '' ): string
 	{
 		if( ! $valid_charset )
 		{
@@ -270,9 +270,9 @@ class Util
 	}
 
 	/**
-	 * Retrieve or set session cookie for csrf_token based on name 
+	 * Retrieve or set session cookie for csrf_token based on name
 	 */
-	public static function csrf( $name = 'general' )
+	public static function csrf( string $name = 'general' ): string
 	{
 		if( ! isset( $_SESSION['csrf_token_' . $name] ) )
 		{
@@ -291,7 +291,7 @@ class Util
 	* @access	public
 	* @return	void
 	*/
-	public static function log_message( $level = 'error', $message, $php_error = false )
+	public static function log_message( string $message, string $level = 'error', bool $php_error = false ): void
 	{
 		$log = new Log;
 
@@ -300,7 +300,7 @@ class Util
 			return;
 		}
 
-		$log->write_log( $level, $message, $php_error );
+		$log->write_log( $message, $level, $php_error );
 	}
 
     /**
@@ -308,7 +308,7 @@ class Util
      *
      * @return string
      */
-    public static function get_client_source() {
+    public static function get_client_source(): string {
 
         // Return early if CLI
         if(PHP_SAPI === 'cli') return PHP_SAPI;

@@ -19,9 +19,10 @@ use RPC\Regex;
 class Text extends Field
 {
 	
-	public function filter( $source )
-	{		
+	public function filter( string $source ): string
+	{
 		$regex = new \RPC\Regex( '/<input.*?type="text".*?(?<!\?)>/' );
+		$inputs = [];
 		$regex->match( $source, $inputs );
 		
 		foreach( $inputs as $input )

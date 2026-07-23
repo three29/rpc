@@ -46,13 +46,13 @@ class MSSQL extends Adapter
 	
 	/**
 	 * Class constructor
-	 * 
+	 *
 	 * @param string $hostname
 	 * @param string $database
 	 * @param string $socket
 	 * @param int $port
 	 */
-	public function __construct( $hostname = 'localhost', $database = null, $socket = null, $port = 3306 )
+	public function __construct( string $hostname = 'localhost', ?string $database = null, ?string $socket = null, int $port = 3306 )
 	{
 		$this->_rpc_hostname = $hostname;
 		$this->_rpc_database = $database;
@@ -62,14 +62,14 @@ class MSSQL extends Adapter
 	
 	/**
 	 * Attempts to connect to the database, throwing an exception if it fails
-	 * 
+	 *
 	 * @param string $username
 	 * @param string $password
-	 * @param int    $options
-	 * 
-	 * @return RPC_Db_Adapter_MySQL
+	 * @param mixed  $options
+	 *
+	 * @return static
 	 */
-	public function connect( $username, $password, $options = null )
+	public function connect( string $username, string $password, mixed $options = null ): static
 	{ 
 		
 		if( ! isset( $GLOBALS['dbconnection'] ) )
@@ -97,26 +97,26 @@ class MSSQL extends Adapter
 	}
 	
 	/**
-	 * Overiding the default implementation as it seems to have a bug, at least
-	 * with MySQL
-	 * 
+	 * Overriding the default implementation as it seems to have a bug, at least
+	 * with MSSQL
+	 *
 	 * @return int
 	 */
-	public function getLastId()
+	public function getLastId(): mixed
 	{
 		$sql = 'select scope_identity() as n';
 		$res = $this->query( $sql );
-		
+
 		return $res[0]['n'];
 	}
 	
 	/**
 	 * Returns the number of rows found by the last query containing the
 	 * SQL_CALC_FOUND_ROWS operator
-	 * 
+	 *
 	 * @return int
 	 */
-	public function getFoundRows()
+	public function getFoundRows(): mixed
 	{
 		$res = $this->getHandle()->query( 'select found_rows() as f' );
 		$row = $res->fetch();
@@ -125,45 +125,44 @@ class MSSQL extends Adapter
 	
 	/**
 	 * Set the default charset for the connection
-	 * 
-	 * @param string $charset
-	 * 
-	 * @return bool
+	 *
+	 * @param string|null $charset
+	 *
+	 * @return int|false
 	 */
-	public function setCharset( $charset = 'utf8' )
+	public function setCharset( ?string $charset = 'utf8' ): int|false
 	{
 		return $this->getHandle()->exec( 'set charset ' . $charset );
 	}
 	
 	/**
 	 * Prepares a query and returns a new statement
-	 * 
+	 *
 	 * @param string $sql
 	 * @param array  $options
-	 * 
-	 * @return RPC_Db_Statement
+	 *
+	 * @return \RPC\Db\Statement
 	 */
-	public function prepare( $sql, $options = array() )
+	public function prepare( string $sql, mixed $options = array() ): \RPC\Db\Statement
 	{
-		return new \RPC\Db\Statement( $sql, $options, $this );
+		return new \RPC\Db\Statement( $sql, $this, $options );
 	}
 
 
-	public function execute( $sql )
+	public function execute( string $sql ): int|false
 	{
-		if( ! \RPC\Signal::emit( array( '\RPC\Db', 'query_start' ), array( $sql, 'statement' ) ) )
-		{
+		$event = new \RPC\Events\QueryExecuting($sql, 'statement');
+		\RPC\Signal::getInstance()->dispatch($event);
+
+		if ($event->isPropagationStopped()) {
 			return 0;
 		}
 
-		if( getenv('DEBUG_QUERIES') === "true" )
-		{
-			$this->getHandle()->_queries[] = $sql;
-		}
+		$this->addQuery( $sql );
 
 		if( $sql != "select scope_identity() as n" )
 		{
-			if( getenv( 'LOG_QUERIES' ) === "true" )
+			if( env( 'LOG_QUERIES' ) === true )
 			{
 				$this->getHandle()->prepare( " insert into query_logger ( query, ip, created ) values ( ?, ?, ? ) " )->execute( array( $sql, \RPC\Util::get_client_source(), date( 'Y-m-d H:i:s' ) ) );
 			}
@@ -173,13 +172,13 @@ class MSSQL extends Adapter
 
 		if( $sql == "select scope_identity() as n" )
 		{
-			if( getenv( 'LOG_QUERIES' ) === "true" )
+			if( env( 'LOG_QUERIES' ) === true )
 			{
 				$this->getHandle()->prepare( " insert into query_logger ( query, ip, created ) values ( ?, ?, ? ) " )->execute( array( $sql, \RPC\Util::get_client_source(), date( 'Y-m-d H:i:s' ) ) );
 			}
 		}
 
-		\RPC\Signal::emit( array( '\RPC\Db', 'query_end' ), array( $sql, 'statement' ) );
+		\RPC\Signal::getInstance()->dispatch(new \RPC\Events\QueryExecuted($sql, 'statement'));
 
 		return $this->_rpc_affectedrows;
 	}

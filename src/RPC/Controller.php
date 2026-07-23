@@ -2,29 +2,33 @@
 
 namespace RPC;
 
+use RPC\Exception\InvalidArgumentException;
 use RPC\Registry;
 use RPC\View;
 use RPC\View\Cache;
 
+/**
+ * @property array|null $flash Flash message data
+ */
 class Controller
 {
-	protected $template;
-	public $current_method;
-	public $current_controller;
+	public ?string $template = null;
+	public ?string $current_method = null;
+	public ?string $current_controller = null;
 
-	protected $vars = array();
+	protected array $vars = array();
 
-	public $request;
-	public $response;
+	public ?\RPC\HTTP\Request $request = null;
+	public ?\RPC\HTTP\Response $response = null;
 
-	public function display( $template = null )
+	public function display( ?string $template = null ): void
 	{
 		$this->template = $template;
 		$this->getView( true )->display( $template );
 	}
 
 
-	public function getView( $refresh_vars = false )
+	public function getView( bool $refresh_vars = false ): View
 	{
 		if( ! Registry::registered( 'view' ) )
 		{
@@ -53,36 +57,36 @@ class Controller
 	}
 
 
-	public function setErrors( $errors = array() )
+	public function setErrors( array $errors = array() ): void
 	{
 		$this->getView()->setErrors( $errors );
 	}
 
 
-	public function param( $name = null, $default = null )
+	public function param( ?string $name = null, mixed $default = null ): mixed
 	{
 		return $this->request->getParam( $name, $default );
 	}
 
-	public function redirect( $url )
+	public function redirect( string $url ): void
 	{
-		return $this->response->redirect( $url );
+		$this->response->redirect( $url );
 	}
 
 
-	public function json( $data = array() )
+	public function json( mixed $data = array() ): void
 	{
-		return $this->response->json( $data );
+		$this->response->json( $data );
 	}
 
-	public function jsonSuccess( $data = array() )
+	public function jsonSuccess( mixed $data = array() ): void
 	{
-		return $this->response->jsonSuccess( $data );
+		$this->response->jsonSuccess( $data );
 	}
 
-	public function jsonError( $error_message = '', $data = array() )
+	public function jsonError( string $error_message = '', mixed $data = array() ): void
 	{
-		return $this->response->jsonError( $error_message, $data );
+		$this->response->jsonError( $error_message, $data );
 	}
 
 /**
@@ -91,11 +95,11 @@ class Controller
 	 * @param string $var
 	 * @param mixed  $value
 	 */
-	public function __set( $var, $value )
+	public function __set( string $var, mixed $value ): void
 	{
 		if( strpos( $var, 'template' ) === 0 )
 		{
-			throw new \Exception( 'You are trying to assign a value on an attribute which is reserved to a template name' );
+			throw new InvalidArgumentException( 'You are trying to assign a value on an attribute which is reserved to a template name' );
 		}
 
 		$this->vars[$var] = $value;
@@ -108,18 +112,17 @@ class Controller
 	 *
 	 * @return mixed
 	 */
-	public function __get( $var )
+	public function __get( string $var ): mixed
 	{
 		return isset( $this->vars[$var] ) ? $this->vars[$var] : null;
 	}
 
-	public function flash()
+	public function flash( ?string $message = null, ?string $message_type = null, ?bool $persistent = null ): ?array
     {
-    	@list( $message, $message_type, $persistent ) = func_get_args();
-
     	if( $message )
     	{
     		$_SESSION['_FLASH_'][] = array( 'message' => $message, 'message_type' => $message_type, 'persistent' => ( $persistent ? 1 : 0 ) );
+    		return null;
     	}
     	else
     	{
@@ -127,13 +130,13 @@ class Controller
 
 	        if( isset( $_SESSION['_FLASH_'] ) )
 	        {
-	            foreach( $_SESSION['_FLASH_'] as $index => $message )
+	            foreach( $_SESSION['_FLASH_'] as $index => $msg )
 	            {
-	                if ( ! $message['persistent'] )
+	                if ( ! $msg['persistent'] )
 	                {
 	                    unset( $_SESSION['_FLASH_'][$index] );
 	                }
-	                $messages[] = $message;
+	                $messages[] = $msg;
 	            }
 	        }
 

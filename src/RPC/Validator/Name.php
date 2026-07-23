@@ -2,10 +2,10 @@
 
 namespace RPC\Validator;
 
-use RPC\Validator;
 use RPC\Regex;
+use RPC\Validator;
 
-class Name extends RPC_Validator
+class Name extends Validator
 {
 	
 	/**
@@ -15,11 +15,9 @@ class Name extends RPC_Validator
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
-		return preg_match( Regex::NAME, $value );
+		return (bool) preg_match( Regex::NAME, $value );
 	}
 	
 }
-
-?>

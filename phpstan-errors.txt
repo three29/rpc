@@ -1,0 +1,2351 @@
+Note: Using configuration file /Users/bitjunkie/Documents/Websites/rpc/phpstan.neon.
+   0/104 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%[1G[2K 104/104 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Application.php                                                    
+ ------ ----------------------------------------------------------------------- 
+  19     Property RPC\Application::$bindings type has no value type specified   
+         in iterable type array.                                                
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Application.php:19                                          
+  26     Property RPC\Application::$instances type has no value type specified  
+         in iterable type array.                                                
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Application.php:26                                          
+  46     Unsafe usage of new static().                                          
+         🪪  new.static                                                         
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-error-unsafe-usage-of-new-st  
+         atic                                                                   
+         at src/RPC/Application.php:46                                          
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Controller.php                                                     
+ ------ ----------------------------------------------------------------------- 
+  16     Property RPC\Controller::$vars type has no value type specified in     
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Controller.php:16                                           
+  32     Constant APP_PATH not found.                                           
+         🪪  constant.notFound                                                  
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Controller.php:32                                           
+  32     Constant CACHE_PATH not found.                                         
+         🪪  constant.notFound                                                  
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Controller.php:32                                           
+  57     Method RPC\Controller::setErrors() has parameter $errors with no       
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Controller.php:57                                           
+  74     Method RPC\Controller::json() has parameter $data with no value type   
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Controller.php:74                                           
+  79     Method RPC\Controller::jsonSuccess() has parameter $data with no       
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Controller.php:79                                           
+  84     Method RPC\Controller::jsonError() has parameter $data with no value   
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Controller.php:84                                           
+  117    Method RPC\Controller::flash() return type has no value type           
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Controller.php:117                                          
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Datagrid.php                                                       
+ ------ ----------------------------------------------------------------------- 
+  24     Property RPC\Datagrid::$sortby type has no value type specified in     
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Datagrid.php:24                                             
+  32     Property RPC\Datagrid::$allowsort type has no value type specified in  
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Datagrid.php:32                                             
+  51     Property RPC\Datagrid::$rows type has no value type specified in       
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Datagrid.php:51                                             
+  58     Property RPC\Datagrid::$db has unknown class RPC\RPC_Database_Adapter  
+         as its type.                                                           
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Datagrid.php:58                                             
+  161    Method RPC\Datagrid::getSortBy() return type has no value type         
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Datagrid.php:161                                            
+  210    Method RPC\Datagrid::initialSortBy() has parameter $sort with no       
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Datagrid.php:210                                            
+  234    PHPDoc tag @return with type RPC\Datagrid is incompatible with native  
+         type void.                                                             
+         🪪  return.phpDocType                                                  
+         at src/RPC/Datagrid.php:234                                            
+  258    Negated boolean expression is always false.                            
+         🪪  booleanNot.alwaysFalse                                             
+         💡  Because the type is coming from a PHPDoc, you can turn off this    
+         check by setting treatPhpDocTypesAsCertain: false in your phpstan.neo  
+         n.                                                                     
+         at src/RPC/Datagrid.php:258                                            
+  260    Property RPC\Datagrid::$db (RPC\RPC_Database_Adapter) does not accept  
+         RPC\Db\Adapter.                                                        
+         🪪  assign.propertyType                                                
+         at src/RPC/Datagrid.php:260                                            
+  274    Method RPC\Datagrid::getRows() return type has no value type           
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Datagrid.php:274                                            
+  277    Call to function is_null() with array will always evaluate to false.   
+         🪪  function.impossibleType                                            
+         💡  Because the type is coming from a PHPDoc, you can turn off this    
+         check by setting treatPhpDocTypesAsCertain: false in your phpstan.neo  
+         n.                                                                     
+         at src/RPC/Datagrid.php:277                                            
+  282    Unreachable statement - code above always terminates.                  
+         🪪  deadCode.unreachable                                               
+         at src/RPC/Datagrid.php:282                                            
+  286    Method RPC\Datagrid::setRows() has parameter $rows with no value type  
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Datagrid.php:286                                            
+  301    Method RPC\Datagrid::fetchRows() return type has no value type         
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Datagrid.php:301                                            
+  429    Method RPC\Datagrid::query() has parameter $conditions with no value   
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Datagrid.php:429                                            
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Datagrid/Pager.php                                                 
+ ------ ----------------------------------------------------------------------- 
+  130    Method RPC\Datagrid\Pager::getLimits() return type has no value type   
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Datagrid/Pager.php:130                                      
+  219    Method RPC\Datagrid\Pager::getTotalPages() should return int but       
+         returns float.                                                         
+         🪪  return.type                                                        
+         at src/RPC/Datagrid/Pager.php:219                                      
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Date.php                                                           
+ ------ ----------------------------------------------------------------------- 
+  107    Method RPC\Date::getTimestamp() should return int but returns null.    
+         🪪  return.type                                                        
+         at src/RPC/Date.php:107                                                
+  134    Method RPC\Date::changeFormat() should return string but returns       
+         null.                                                                  
+         🪪  return.type                                                        
+         at src/RPC/Date.php:134                                                
+  327    Parameter #1 $hour of function mktime expects int, string given.       
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:327                                                
+  327    Parameter #2 $minute of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:327                                                
+  327    Parameter #3 $second of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:327                                                
+  327    Parameter #4 $month of function mktime expects int|null, string        
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:327                                                
+  327    Parameter #5 $day of function mktime expects int|null, string given.   
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:327                                                
+  327    Parameter #6 $year of function mktime expects int|null, float given.   
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:327                                                
+  331    Parameter #1 $hour of function mktime expects int, string given.       
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:331                                                
+  331    Parameter #2 $minute of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:331                                                
+  331    Parameter #3 $second of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:331                                                
+  331    Parameter #4 $month of function mktime expects int|null, string        
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:331                                                
+  331    Parameter #5 $day of function mktime expects int|null, string given.   
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:331                                                
+  331    Parameter #6 $year of function mktime expects int|null, float given.   
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:331                                                
+  339    Parameter #1 $hour of function mktime expects int, string given.       
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:339                                                
+  339    Parameter #2 $minute of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:339                                                
+  339    Parameter #3 $second of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:339                                                
+  339    Parameter #4 $month of function mktime expects int|null, float given.  
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:339                                                
+  339    Parameter #5 $day of function mktime expects int|null, string given.   
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:339                                                
+  339    Parameter #6 $year of function mktime expects int|null, string given.  
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:339                                                
+  341    Variable $months_difference might not be defined.                      
+         🪪  variable.undefined                                                 
+         at src/RPC/Date.php:341                                                
+  348    Parameter #1 $hour of function mktime expects int, string given.       
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:348                                                
+  348    Parameter #2 $minute of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:348                                                
+  348    Parameter #3 $second of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:348                                                
+  348    Parameter #4 $month of function mktime expects int|null, float given.  
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:348                                                
+  348    Parameter #5 $day of function mktime expects int|null, string given.   
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:348                                                
+  348    Parameter #6 $year of function mktime expects int|null, string given.  
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:348                                                
+  472    Parameter #1 $hour of function mktime expects int, string given.       
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:472                                                
+  472    Parameter #2 $minute of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:472                                                
+  472    Parameter #4 $month of function mktime expects int|null, string        
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:472                                                
+  472    Parameter #5 $day of function mktime expects int|null, string given.   
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:472                                                
+  472    Parameter #6 $year of function mktime expects int|null, string given.  
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:472                                                
+  488    Parameter #1 $hour of function mktime expects int, string given.       
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:488                                                
+  488    Parameter #3 $second of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:488                                                
+  488    Parameter #4 $month of function mktime expects int|null, string        
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:488                                                
+  488    Parameter #5 $day of function mktime expects int|null, string given.   
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:488                                                
+  488    Parameter #6 $year of function mktime expects int|null, string given.  
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:488                                                
+  504    Parameter #2 $minute of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:504                                                
+  504    Parameter #3 $second of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:504                                                
+  504    Parameter #4 $month of function mktime expects int|null, string        
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:504                                                
+  504    Parameter #5 $day of function mktime expects int|null, string given.   
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:504                                                
+  504    Parameter #6 $year of function mktime expects int|null, string given.  
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:504                                                
+  520    Parameter #1 $hour of function mktime expects int, string given.       
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:520                                                
+  520    Parameter #2 $minute of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:520                                                
+  520    Parameter #3 $second of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:520                                                
+  520    Parameter #4 $month of function mktime expects int|null, string        
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:520                                                
+  520    Parameter #6 $year of function mktime expects int|null, string given.  
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:520                                                
+  536    Parameter #1 $hour of function mktime expects int, string given.       
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:536                                                
+  536    Parameter #2 $minute of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:536                                                
+  536    Parameter #3 $second of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:536                                                
+  536    Parameter #5 $day of function mktime expects int|null, string given.   
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:536                                                
+  536    Parameter #6 $year of function mktime expects int|null, string given.  
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:536                                                
+  552    Parameter #1 $hour of function mktime expects int, string given.       
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:552                                                
+  552    Parameter #2 $minute of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:552                                                
+  552    Parameter #3 $second of function mktime expects int|null, string       
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:552                                                
+  552    Parameter #4 $month of function mktime expects int|null, string        
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:552                                                
+  552    Parameter #5 $day of function mktime expects int|null, string given.   
+         🪪  argument.type                                                      
+         at src/RPC/Date.php:552                                                
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Db.php                                                             
+ ------ ----------------------------------------------------------------------- 
+  48     Property RPC\Db::$instances type has no value type specified in        
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db.php:48                                                   
+  56     Property RPC\Db::$connections type has no value type specified in      
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db.php:56                                                   
+  63     Property RPC\Db::$tables type has no value type specified in iterable  
+         type array.                                                            
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db.php:63                                                   
+  90     PHPDoc tag @param references unknown parameter: $db_name               
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db.php:90                                                   
+  162    Method RPC\Db::addConnection() has parameter $info with no value type  
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db.php:162                                                  
+  164    Call to function is_array() with array will always evaluate to true.   
+         🪪  function.alreadyNarrowedType                                       
+         at src/RPC/Db.php:164                                                  
+  186    Method RPC\Db::addConnections() has parameter $connections with no     
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db.php:186                                                  
+  188    Call to function is_array() with array will always evaluate to true.   
+         🪪  function.alreadyNarrowedType                                       
+         at src/RPC/Db.php:188                                                  
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Db/Adapter.php                                                     
+ ------ ----------------------------------------------------------------------- 
+  22     Property RPC\Db\Adapter::$_rpc_handle has unknown class RPC\Db\PDO as  
+         its type.                                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Adapter.php:22                                           
+  60     Method RPC\Db\Adapter::connect() has parameter $options with no value  
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Adapter.php:60                                           
+  74     Method RPC\Db\Adapter::getHandle() has invalid return type             
+         RPC\Db\PDO.                                                            
+         🪪  class.notFound                                                     
+         at src/RPC/Db/Adapter.php:74                                           
+  74     PHPDoc tag @return with type RPC\Db\PDO is not subtype of native type  
+         PDO|null.                                                              
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Adapter.php:74                                           
+  76     Method RPC\Db\Adapter::getHandle() should return PDO|null but returns  
+         RPC\Db\PDO.                                                            
+         🪪  return.type                                                        
+         at src/RPC/Db/Adapter.php:76                                           
+  84     PHPDoc tag @param for parameter $handle with type RPC\Db\PDO is not    
+         subtype of native type PDO.                                            
+         🪪  parameter.phpDocType                                               
+         at src/RPC/Db/Adapter.php:84                                           
+  84     Parameter $handle of method RPC\Db\Adapter::setHandle() has invalid    
+         type RPC\Db\PDO.                                                       
+         🪪  class.notFound                                                     
+         at src/RPC/Db/Adapter.php:84                                           
+  86     Property RPC\Db\Adapter::$_rpc_handle (RPC\Db\PDO) does not accept     
+         PDO.                                                                   
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Adapter.php:86                                           
+  160    Access to an undefined property PDO::$_queries.                        
+         🪪  property.notFound                                                  
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-und  
+         efined-property                                                        
+         at src/RPC/Db/Adapter.php:160                                          
+  179    Method RPC\Db\Adapter::query() return type has no value type           
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Adapter.php:179                                          
+  185    Method RPC\Db\Adapter::query() should return array but returns null.   
+         🪪  return.type                                                        
+         at src/RPC/Db/Adapter.php:185                                          
+  190    Access to an undefined property PDO::$_queries.                        
+         🪪  property.notFound                                                  
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-und  
+         efined-property                                                        
+         at src/RPC/Db/Adapter.php:190                                          
+  262    PHPDoc tag @return with type int is incompatible with native type      
+         string|null.                                                           
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Adapter.php:262                                          
+  272    Method RPC\Db\Adapter::getErrorInfo() return type has no value type    
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Adapter.php:272                                          
+  282    Property RPC\Db\Adapter::$_rpc_handle (RPC\Db\PDO) does not accept     
+         null.                                                                  
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Adapter.php:282                                          
+  300    Access to an undefined property PDO::$_queries.                        
+         🪪  property.notFound                                                  
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-und  
+         efined-property                                                        
+         at src/RPC/Db/Adapter.php:300                                          
+  300    Access to an undefined property PDO::$_queries.                        
+         🪪  property.notFound                                                  
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-und  
+         efined-property                                                        
+         at src/RPC/Db/Adapter.php:300                                          
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Db/Adapter/MSSQL.php                                               
+ ------ ----------------------------------------------------------------------- 
+  72     PHPDoc tag @return with type RPC\Db\Adapter\MSSQL is not subtype of    
+         native type static(RPC\Db\Adapter\MSSQL).                              
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Adapter/MSSQL.php:72                                     
+  72     Parameter #3 $options (int) of method RPC\Db\Adapter\MSSQL::connect()  
+         should be compatible with parameter $options (array) of method         
+         RPC\Db\Adapter::connect()                                              
+         🪪  method.childParameterType                                          
+         at src/RPC/Db/Adapter/MSSQL.php:72                                     
+  133    PHPDoc tag @return with type bool is not subtype of native type        
+         int|false.                                                             
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Adapter/MSSQL.php:133                                    
+  146    Method RPC\Db\Adapter\MSSQL::prepare() has parameter $options with no  
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Adapter/MSSQL.php:146                                    
+  148    Parameter #2 $db of class RPC\Db\Statement constructor expects         
+         RPC\Db\Adapter, array given.                                           
+         🪪  argument.type                                                      
+         at src/RPC/Db/Adapter/MSSQL.php:148                                    
+  148    Parameter #3 $options of class RPC\Db\Statement constructor expects    
+         array, $this(RPC\Db\Adapter\MSSQL) given.                              
+         🪪  argument.type                                                      
+         at src/RPC/Db/Adapter/MSSQL.php:148                                    
+  163    Access to an undefined property PDO::$_queries.                        
+         🪪  property.notFound                                                  
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-und  
+         efined-property                                                        
+         at src/RPC/Db/Adapter/MSSQL.php:163                                    
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Db/Adapter/MySQL.php                                               
+ ------ ----------------------------------------------------------------------- 
+  52     Property RPC\Db\Adapter\MySQL::$_rpc_credentials type has no value     
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Adapter/MySQL.php:52                                     
+  86     Method RPC\Db\Adapter\MySQL::connect() has parameter $options with no  
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Adapter/MySQL.php:86                                     
+  86     PHPDoc tag @return with type RPC\Db\Adapter\MySQL is not subtype of    
+         native type static(RPC\Db\Adapter\MySQL).                              
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Adapter/MySQL.php:86                                     
+  197    PHPDoc tag @return with type bool is not subtype of native type        
+         int|false.                                                             
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Adapter/MySQL.php:197                                    
+  210    Method RPC\Db\Adapter\MySQL::prepare() has parameter $options with no  
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Adapter/MySQL.php:210                                    
+  212    Parameter #2 $db of class RPC\Db\Statement constructor expects         
+         RPC\Db\Adapter, array given.                                           
+         🪪  argument.type                                                      
+         at src/RPC/Db/Adapter/MySQL.php:212                                    
+  212    Parameter #3 $options of class RPC\Db\Statement constructor expects    
+         array, $this(RPC\Db\Adapter\MySQL) given.                              
+         🪪  argument.type                                                      
+         at src/RPC/Db/Adapter/MySQL.php:212                                    
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------- 
+  Line   RPC/Db/Migration.php                                            
+ ------ ---------------------------------------------------------------- 
+  29     Call to an undefined method RPC\Db\Table\Row::name().           
+         🪪  method.notFound                                             
+         at src/RPC/Db/Migration.php:29                                  
+  30     Call to an undefined method RPC\Db\Table\Row::value().          
+         🪪  method.notFound                                             
+         at src/RPC/Db/Migration.php:30                                  
+  39     Call to an undefined method RPC\Db\Table\Row::value().          
+         🪪  method.notFound                                             
+         at src/RPC/Db/Migration.php:39                                  
+  49     Offset 2 on array{non-falsy-string, string, numeric-string} in  
+         isset() always exists and is not nullable.                      
+         🪪  isset.offset                                                
+         at src/RPC/Db/Migration.php:49                                  
+  50     Call to an undefined method RPC\Db\Table\Row::value().          
+         🪪  method.notFound                                             
+         at src/RPC/Db/Migration.php:50                                  
+  59     Call to an undefined method RPC\Db\Table\Row::value().          
+         🪪  method.notFound                                             
+         at src/RPC/Db/Migration.php:59                                  
+  65     Call to an undefined method RPC\Db\Table\Row::value().          
+         🪪  method.notFound                                             
+         at src/RPC/Db/Migration.php:65                                  
+ ------ ---------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Db/Statement.php                                                   
+ ------ ----------------------------------------------------------------------- 
+  24     Property RPC\Db\Statement::$db has unknown class                       
+         RPC\Db\RPC_Db_Adapter as its type.                                     
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Statement.php:24                                         
+  38     Property RPC\Db\Statement::$stmt has unknown class                     
+         RPC\Db\PDOStatement as its type.                                       
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Statement.php:38                                         
+  47     Method RPC\Db\Statement::__construct() has parameter $options with no  
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Statement.php:47                                         
+  49     Property RPC\Db\Statement::$db (RPC\Db\RPC_Db_Adapter) does not        
+         accept RPC\Db\Adapter.                                                 
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Statement.php:49                                         
+  52     Property RPC\Db\Statement::$stmt (RPC\Db\PDOStatement) does not        
+         accept (PDOStatement|false).                                           
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Statement.php:52                                         
+  65     Call to method setFetchMode() on an unknown class                      
+         RPC\Db\PDOStatement.                                                   
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Statement.php:65                                         
+  76     Method RPC\Db\Statement::execute() has parameter $params with no       
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Statement.php:76                                         
+  76     Method RPC\Db\Statement::execute() return type has no value type       
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Statement.php:76                                         
+  82     Method RPC\Db\Statement::execute() should return array|bool but        
+         returns null.                                                          
+         🪪  return.type                                                        
+         at src/RPC/Db/Statement.php:82                                         
+  94     Call to method getHandle() on an unknown class RPC\Db\RPC_Db_Adapter.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Statement.php:94                                         
+  97     Call to method execute() on an unknown class RPC\Db\PDOStatement.      
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Statement.php:97                                         
+  114    Call to method fetchAll() on an unknown class RPC\Db\PDOStatement.     
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Statement.php:114                                        
+  115    Call to method closeCursor() on an unknown class RPC\Db\PDOStatement.  
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Statement.php:115                                        
+  134    Method RPC\Db\Statement::buildDebugSql() has parameter $params with    
+         no value type specified in iterable type array.                        
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Statement.php:134                                        
+  174    PHPDoc tag @param references unknown parameter: $column                
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Statement.php:174                                        
+  176    Call to method bindParam() on an unknown class RPC\Db\PDOStatement.    
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Statement.php:176                                        
+  190    PHPDoc tag @param references unknown parameter: $column                
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Statement.php:190                                        
+  192    Call to method bindValue() on an unknown class RPC\Db\PDOStatement.    
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Statement.php:192                                        
+  206    PHPDoc tag @param references unknown parameter: $value                 
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Statement.php:206                                        
+  208    Call to method bindColumn() on an unknown class RPC\Db\PDOStatement.   
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Statement.php:208                                        
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Db/Table/Adapter.php                                               
+ ------ ----------------------------------------------------------------------- 
+  38     Property RPC\Db\Table\Adapter::$db has unknown class RPC\Db_Adapter    
+         as its type.                                                           
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Table/Adapter.php:38                                     
+  73     Property RPC\Db\Table\Adapter::$fields type has no value type          
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter.php:73                                     
+  84     Method RPC\Db\Table\Adapter::get() return type has no value type       
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter.php:84                                     
+  86     Method RPC\Db\Table\Adapter::getAll() return type has no value type    
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter.php:86                                     
+  88     Method RPC\Db\Table\Adapter::getBySql() return type has no value type  
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter.php:88                                     
+  98     PHPDoc tag @param references unknown parameter: $condition_sql         
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Table/Adapter.php:98                                     
+  98     PHPDoc tag @param references unknown parameter: $condition_values      
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Table/Adapter.php:98                                     
+  108    Method RPC\Db\Table\Adapter::findAll() return type has no value type   
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter.php:108                                    
+  108    PHPDoc tag @param references unknown parameter: $condition_sql         
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Table/Adapter.php:108                                    
+  108    PHPDoc tag @param references unknown parameter: $condition_values      
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Table/Adapter.php:108                                    
+  108    PHPDoc tag @return with type RPC\Db\Table\Row is incompatible with     
+         native type array.                                                     
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Table/Adapter.php:108                                    
+  118    Method RPC\Db\Table\Adapter::findBySql() return type has no value      
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter.php:118                                    
+  118    PHPDoc tag @param references unknown parameter: $condition_sql         
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Table/Adapter.php:118                                    
+  118    PHPDoc tag @param references unknown parameter: $condition_values      
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Table/Adapter.php:118                                    
+  118    PHPDoc tag @return with type RPC\Db\Table\Row is incompatible with     
+         native type array|false.                                               
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Table/Adapter.php:118                                    
+  128    Method RPC\Db\Table\Adapter::deleteBy() return type has no value type  
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter.php:128                                    
+  128    PHPDoc tag @param for parameter $field with type int is incompatible   
+         with native type string.                                               
+         🪪  parameter.phpDocType                                               
+         at src/RPC/Db/Table/Adapter.php:128                                    
+  128    PHPDoc tag @return with type int is incompatible with native type      
+         array|bool.                                                            
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Table/Adapter.php:128                                    
+  137    Method RPC\Db\Table\Adapter::insertRow() return type has no value      
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter.php:137                                    
+  137    PHPDoc tag @param references unknown parameter: $array                 
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Table/Adapter.php:137                                    
+  146    Method RPC\Db\Table\Adapter::updateRow() return type has no value      
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter.php:146                                    
+  146    PHPDoc tag @param references unknown parameter: $array                 
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Table/Adapter.php:146                                    
+  146    PHPDoc tag @return with type RPC\Db\Table\Row is incompatible with     
+         native type array|bool.                                                
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Table/Adapter.php:146                                    
+  155    PHPDoc tag @return with type bool is incompatible with native type     
+         void.                                                                  
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Table/Adapter.php:155                                    
+  162    PHPDoc tag @return with type bool is incompatible with native type     
+         void.                                                                  
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Table/Adapter.php:162                                    
+  241    PHPDoc tag @param references unknown parameter: $database              
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Table/Adapter.php:241                                    
+  243    Property RPC\Db\Table\Adapter::$db (RPC\Db_Adapter) does not accept    
+         RPC\Db\Adapter.                                                        
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Table/Adapter.php:243                                    
+  251    Method RPC\Db\Table\Adapter::getDb() has invalid return type           
+         RPC\Db_Adapter.                                                        
+         🪪  class.notFound                                                     
+         at src/RPC/Db/Table/Adapter.php:251                                    
+  251    PHPDoc tag @return with type RPC\Db_Adapter is not subtype of native   
+         type RPC\Db\Adapter.                                                   
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Table/Adapter.php:251                                    
+  253    Method RPC\Db\Table\Adapter::getDb() should return RPC\Db\Adapter but  
+         returns RPC\Db_Adapter.                                                
+         🪪  return.type                                                        
+         at src/RPC/Db/Table/Adapter.php:253                                    
+  327    Method RPC\Db\Table\Adapter::create() has parameter $data with no      
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter.php:327                                    
+  329    Call to function is_array() with array will always evaluate to true.   
+         🪪  function.alreadyNarrowedType                                       
+         at src/RPC/Db/Table/Adapter.php:329                                    
+  329    Result of || is always true.                                           
+         🪪  booleanOr.alwaysTrue                                               
+         💡  Because the type is coming from a PHPDoc, you can turn off this    
+         check by setting treatPhpDocTypesAsCertain: false in your phpstan.neo  
+         n.                                                                     
+         at src/RPC/Db/Table/Adapter.php:329                                    
+  330    Call to function is_object() with *NEVER* will always evaluate to      
+         true.                                                                  
+         🪪  function.alreadyNarrowedType                                       
+         at src/RPC/Db/Table/Adapter.php:330                                    
+  330    Result of && is always false.                                          
+         🪪  booleanAnd.alwaysFalse                                             
+         at src/RPC/Db/Table/Adapter.php:330                                    
+  331    Instanceof between *NEVER* and ArrayAccess will always evaluate to     
+         false.                                                                 
+         🪪  instanceof.alwaysFalse                                             
+         at src/RPC/Db/Table/Adapter.php:331                                    
+  370    Method RPC\Db\Table\Adapter::getFields() return type has no value      
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter.php:370                                    
+  443    Call to an undefined method RPC\Db\Table\Row::created().               
+         🪪  method.notFound                                                    
+         at src/RPC/Db/Table/Adapter.php:443                                    
+  444    Call to an undefined method RPC\Db\Table\Row::modified().              
+         🪪  method.notFound                                                    
+         at src/RPC/Db/Table/Adapter.php:444                                    
+  449    Call to an undefined method RPC\Db\Table\Row::status().                
+         🪪  method.notFound                                                    
+         at src/RPC/Db/Table/Adapter.php:449                                    
+  451    Call to an undefined method RPC\Db\Table\Row::status().                
+         🪪  method.notFound                                                    
+         at src/RPC/Db/Table/Adapter.php:451                                    
+  454    Call to an undefined method RPC\Db\Table\Row::deleted().               
+         🪪  method.notFound                                                    
+         at src/RPC/Db/Table/Adapter.php:454                                    
+  457    Method RPC\Db\Table\Adapter::onBeforeInsert() should return bool but   
+         returns RPC\Db\Table\Row.                                              
+         🪪  return.type                                                        
+         at src/RPC/Db/Table/Adapter.php:457                                    
+  490    PHPDoc tag @return with type int is incompatible with native type      
+         bool.                                                                  
+         🪪  return.phpDocType                                                  
+         at src/RPC/Db/Table/Adapter.php:490                                    
+  510    Caught class RPC\Db\Table\Exception not found.                         
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Table/Adapter.php:510                                    
+  546    Call to an undefined method RPC\Db\Table\Row::modified().              
+         🪪  method.notFound                                                    
+         at src/RPC/Db/Table/Adapter.php:546                                    
+  549    Call to an undefined method RPC\Db\Table\Row::status().                
+         🪪  method.notFound                                                    
+         at src/RPC/Db/Table/Adapter.php:549                                    
+  552    Call to an undefined method RPC\Db\Table\Row::deleted().               
+         🪪  method.notFound                                                    
+         at src/RPC/Db/Table/Adapter.php:552                                    
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Db/Table/Adapter/MSSQL.php                                         
+ ------ ----------------------------------------------------------------------- 
+  44     Method RPC\Db\Table\Adapter\MSSQL::query() return type has no value    
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MSSQL.php:44                               
+  104    Method RPC\Db\Table\Adapter\MSSQL::get() return type has no value      
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MSSQL.php:104                              
+  168    Method RPC\Db\Table\Adapter\MSSQL::getAll() return type has no value   
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MSSQL.php:168                              
+  235    Method RPC\Db\Table\Adapter\MSSQL::getBySql() return type has no       
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MSSQL.php:235                              
+  305    Method RPC\Db\Table\Adapter\MSSQL::find() should return                
+         RPC\Db\Table\Row|null but returns false.                               
+         🪪  return.type                                                        
+         at src/RPC/Db/Table/Adapter/MSSQL.php:305                              
+  384    Method RPC\Db\Table\Adapter\MSSQL::findAll() return type has no value  
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MSSQL.php:384                              
+  480    Method RPC\Db\Table\Adapter\MSSQL::findBySql() return type has no      
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MSSQL.php:480                              
+  571    Method RPC\Db\Table\Adapter\MSSQL::insertRow() return type has no      
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MSSQL.php:571                              
+  611    Method RPC\Db\Table\Adapter\MSSQL::updateRow() return type has no      
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MSSQL.php:611                              
+  642    Method RPC\Db\Table\Adapter\MSSQL::deleteBy() return type has no       
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MSSQL.php:642                              
+  669    Constant CACHE_PATH not found.                                         
+         🪪  constant.notFound                                                  
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Table/Adapter/MSSQL.php:669                              
+  684    Method RPC\Db\Table\Adapter\MSSQL::newObject() has parameter $row      
+         with no value type specified in iterable type array.                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MSSQL.php:684                              
+  690    Method RPC\Db\Table\Adapter\MSSQL::__callStatic() has parameter        
+         $arguments with no value type specified in iterable type array.        
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MSSQL.php:690                              
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Db/Table/Adapter/MySQL.php                                         
+ ------ ----------------------------------------------------------------------- 
+  45     Method RPC\Db\Table\Adapter\MySQL::query() return type has no value    
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MySQL.php:45                               
+  105    Method RPC\Db\Table\Adapter\MySQL::get() return type has no value      
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MySQL.php:105                              
+  169    Method RPC\Db\Table\Adapter\MySQL::getAll() return type has no value   
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MySQL.php:169                              
+  236    Method RPC\Db\Table\Adapter\MySQL::getBySql() return type has no       
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MySQL.php:236                              
+  306    Method RPC\Db\Table\Adapter\MySQL::find() should return                
+         RPC\Db\Table\Row|null but returns false.                               
+         🪪  return.type                                                        
+         at src/RPC/Db/Table/Adapter/MySQL.php:306                              
+  385    Method RPC\Db\Table\Adapter\MySQL::findAll() return type has no value  
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MySQL.php:385                              
+  481    Method RPC\Db\Table\Adapter\MySQL::findBySql() return type has no      
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MySQL.php:481                              
+  572    Method RPC\Db\Table\Adapter\MySQL::insertRow() return type has no      
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MySQL.php:572                              
+  612    Method RPC\Db\Table\Adapter\MySQL::updateRow() return type has no      
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MySQL.php:612                              
+  643    Method RPC\Db\Table\Adapter\MySQL::deleteBy() return type has no       
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MySQL.php:643                              
+  670    Constant CACHE_PATH not found.                                         
+         🪪  constant.notFound                                                  
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Table/Adapter/MySQL.php:670                              
+  685    Method RPC\Db\Table\Adapter\MySQL::newObject() has parameter $row      
+         with no value type specified in iterable type array.                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MySQL.php:685                              
+  691    Method RPC\Db\Table\Adapter\MySQL::__callStatic() has parameter        
+         $arguments with no value type specified in iterable type array.        
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Adapter/MySQL.php:691                              
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Db/Table/Row.php                                                   
+ ------ ----------------------------------------------------------------------- 
+  16     Class RPC\Db\Table\Row implements generic interface ArrayAccess but    
+         does not specify its types: TKey, TValue                               
+         🪪  missingType.generics                                               
+         at src/RPC/Db/Table/Row.php:16                                         
+  24     Property RPC\Db\Table\Row::$table has unknown class                    
+         RPC\Db\Table\RPC\Db\Table\Adapter as its type.                         
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Db/Table/Row.php:24                                         
+  31     Property RPC\Db\Table\Row::$errors type has no value type specified    
+         in iterable type array.                                                
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:31                                         
+  38     Property RPC\Db\Table\Row::$clean type has no value type specified in  
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:38                                         
+  45     Property RPC\Db\Table\Row::$changedfields type has no value type       
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:45                                         
+  52     Property RPC\Db\Table\Row::$row type has no value type specified in    
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:52                                         
+  66     Property RPC\Db\Table\Row::$extrafields type has no value type         
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:66                                         
+  74     Default value of the parameter #2 $row (array) of method               
+         RPC\Db\Table\Row::__construct() is incompatible with type object.      
+         🪪  parameter.defaultValue                                             
+         at src/RPC/Db/Table/Row.php:74                                         
+  78     Property RPC\Db\Table\Row::$clean (array) does not accept object.      
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Table/Row.php:78                                         
+  79     Property RPC\Db\Table\Row::$row (array) does not accept object.        
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Table/Row.php:79                                         
+  99     Property RPC\Db\Table\Row::$table (RPC\Db\Table\RPC\Db\Table\Adapter)  
+         does not accept RPC\Db\Table\Adapter.                                  
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Table/Row.php:99                                         
+  109    Method RPC\Db\Table\Row::getTable() should return                      
+         RPC\Db\Table\Adapter but returns RPC\Db\Table\RPC\Db\Table\Adapter.    
+         🪪  return.type                                                        
+         at src/RPC/Db/Table/Row.php:109                                        
+  117    Method RPC\Db\Table\Row::getFields() return type has no value type     
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:117                                        
+  128    Method RPC\Db\Table\Row::getChangedFields() return type has no value   
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:128                                        
+  138    Method RPC\Db\Table\Row::getExtraFields() return type has no value     
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:138                                        
+  173    Method RPC\Db\Table\Row::getCleanArray() return type has no value      
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:173                                        
+  197    PHPDoc tag @implements has invalid value (ArrayAccess): Unexpected     
+         token "\n\t ", expected '<' at offset 170 on line 7                    
+         🪪  phpDoc.parseError                                                  
+         at src/RPC/Db/Table/Row.php:197                                        
+  240    PHPDoc tag @implements has invalid value (ArrayAccess): Unexpected     
+         token "\n\t ", expected '<' at offset 72 on line 6                     
+         🪪  phpDoc.parseError                                                  
+         at src/RPC/Db/Table/Row.php:240                                        
+  253    PHPDoc tag @implements has invalid value (ArrayAccess): Unexpected     
+         token "\n\t ", expected '<' at offset 119 on line 6                    
+         🪪  phpDoc.parseError                                                  
+         at src/RPC/Db/Table/Row.php:253                                        
+  268    PHPDoc tag @implements has invalid value (ArrayAccess): Unexpected     
+         token "\n\t ", expected '<' at offset 142 on line 8                    
+         🪪  phpDoc.parseError                                                  
+         at src/RPC/Db/Table/Row.php:268                                        
+  298    Access to an undefined property RPC\Db\Table\Row::$force_pk.           
+         🪪  property.notFound                                                  
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-und  
+         efined-property                                                        
+         at src/RPC/Db/Table/Row.php:298                                        
+  338    Method RPC\Db\Table\Row::setErrors() has parameter $errors with no     
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:338                                        
+  350    Method RPC\Db\Table\Row::getErrors() return type has no value type     
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:350                                        
+  390    Method RPC\Db\Table\Row::populate() has parameter $values with no      
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:390                                        
+  390    PHPDoc tag @param references unknown parameter: $field_exists          
+         🪪  parameter.notFound                                                 
+         at src/RPC/Db/Table/Row.php:390                                        
+  477    Method RPC\Db\Table\Row::_validate_required() has parameter $column    
+         with no type specified.                                                
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:477                                        
+  477    Method RPC\Db\Table\Row::_validate_required() has parameter $msg with  
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:477                                        
+  477    Method RPC\Db\Table\Row::_validate_required() has parameter $value     
+         with no type specified.                                                
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:477                                        
+  486    Method RPC\Db\Table\Row::_validate_email() has parameter $column with  
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:486                                        
+  486    Method RPC\Db\Table\Row::_validate_email() has parameter $msg with no  
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:486                                        
+  486    Method RPC\Db\Table\Row::_validate_email() has parameter $value with   
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:486                                        
+  495    Method RPC\Db\Table\Row::_validate_phone() has parameter $column with  
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:495                                        
+  495    Method RPC\Db\Table\Row::_validate_phone() has parameter $msg with no  
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:495                                        
+  495    Method RPC\Db\Table\Row::_validate_phone() has parameter $value with   
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:495                                        
+  504    Method RPC\Db\Table\Row::_validate_zip() has parameter $column with    
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:504                                        
+  504    Method RPC\Db\Table\Row::_validate_zip() has parameter $msg with no    
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:504                                        
+  504    Method RPC\Db\Table\Row::_validate_zip() has parameter $value with no  
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:504                                        
+  513    Method RPC\Db\Table\Row::_validate_numeric() has parameter $column     
+         with no type specified.                                                
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:513                                        
+  513    Method RPC\Db\Table\Row::_validate_numeric() has parameter $msg with   
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:513                                        
+  513    Method RPC\Db\Table\Row::_validate_numeric() has parameter $value      
+         with no type specified.                                                
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:513                                        
+  522    Method RPC\Db\Table\Row::_validate_max() has parameter $column with    
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:522                                        
+  522    Method RPC\Db\Table\Row::_validate_max() has parameter $max with no    
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:522                                        
+  522    Method RPC\Db\Table\Row::_validate_max() has parameter $msg with no    
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:522                                        
+  522    Method RPC\Db\Table\Row::_validate_max() has parameter $value with no  
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:522                                        
+  531    Method RPC\Db\Table\Row::_validate_min() has parameter $column with    
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:531                                        
+  531    Method RPC\Db\Table\Row::_validate_min() has parameter $min with no    
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:531                                        
+  531    Method RPC\Db\Table\Row::_validate_min() has parameter $msg with no    
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:531                                        
+  531    Method RPC\Db\Table\Row::_validate_min() has parameter $value with no  
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:531                                        
+  540    Method RPC\Db\Table\Row::_validate_password() has parameter $column    
+         with no type specified.                                                
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:540                                        
+  540    Method RPC\Db\Table\Row::_validate_password() has parameter $msg with  
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:540                                        
+  540    Method RPC\Db\Table\Row::_validate_password() has parameter $value     
+         with no type specified.                                                
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:540                                        
+  549    Method RPC\Db\Table\Row::_parseValidateRules() has parameter $rule     
+         with no type specified.                                                
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:549                                        
+  571    If condition is always true.                                           
+         🪪  if.alwaysTrue                                                      
+         💡  Because the type is coming from a PHPDoc, you can turn off this    
+         check by setting treatPhpDocTypesAsCertain: false in your phpstan.neo  
+         n.                                                                     
+         at src/RPC/Db/Table/Row.php:571                                        
+  586    Method RPC\Db\Table\Row::_validateField() has parameter $field with    
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:586                                        
+  586    Method RPC\Db\Table\Row::_validateField() has parameter $rules with    
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:586                                        
+  676    Method RPC\Db\Table\Row::validate() has parameter $options with no     
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:676                                        
+  716    Variable $field might not be defined.                                  
+         🪪  variable.undefined                                                 
+         at src/RPC/Db/Table/Row.php:716                                        
+  829    Property RPC\Db\Table\Row::$table (RPC\Db\Table\RPC\Db\Table\Adapter)  
+         does not accept null.                                                  
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Table/Row.php:829                                        
+  830    Property RPC\Db\Table\Row::$row (array) does not accept null.          
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Table/Row.php:830                                        
+  831    Property RPC\Db\Table\Row::$clean (array) does not accept null.        
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Table/Row.php:831                                        
+  832    Property RPC\Db\Table\Row::$dirty (bool) does not accept null.         
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Table/Row.php:832                                        
+  833    Property RPC\Db\Table\Row::$errors (array) does not accept null.       
+         🪪  assign.propertyType                                                
+         at src/RPC/Db/Table/Row.php:833                                        
+  840    Method RPC\Db\Table\Row::__call() has parameter $arguments with no     
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:840                                        
+  840    Method RPC\Db\Table\Row::__call() has parameter $name with no type     
+         specified.                                                             
+         🪪  missingType.parameter                                              
+         at src/RPC/Db/Table/Row.php:840                                        
+  867    Method RPC\Db\Table\Row::getData() return type has no value type       
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row.php:867                                        
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Db/Table/Row/Map.php                                               
+ ------ ----------------------------------------------------------------------- 
+  20     Property RPC\Db\Table\Row\Map::$map type has no value type specified   
+         in iterable type array.                                                
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Db/Table/Row/Map.php:20                                     
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/HTTP/Cookie.php                                                    
+ ------ ----------------------------------------------------------------------- 
+  81     Method RPC\HTTP\Cookie::__construct() has parameter $httponly with no  
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/HTTP/Cookie.php:81                                          
+  85     Method RPC\HTTP\Cookie::decode() invoked with 1 parameter, 0           
+         required.                                                              
+         🪪  arguments.count                                                    
+         at src/RPC/HTTP/Cookie.php:85                                          
+  283    PHPDoc tag @param references unknown parameter: $domain                
+         🪪  parameter.notFound                                                 
+         at src/RPC/HTTP/Cookie.php:283                                         
+  283    PHPDoc tag @param references unknown parameter: $httponly              
+         🪪  parameter.notFound                                                 
+         at src/RPC/HTTP/Cookie.php:283                                         
+  283    PHPDoc tag @param references unknown parameter: $path                  
+         🪪  parameter.notFound                                                 
+         at src/RPC/HTTP/Cookie.php:283                                         
+  283    PHPDoc tag @param references unknown parameter: $secure                
+         🪪  parameter.notFound                                                 
+         at src/RPC/HTTP/Cookie.php:283                                         
+  283    PHPDoc tag @param references unknown parameter: $value                 
+         🪪  parameter.notFound                                                 
+         at src/RPC/HTTP/Cookie.php:283                                         
+  296    Method RPC\HTTP\Cookie::decode() return type has no value type         
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/HTTP/Cookie.php:296                                         
+  296    PHPDoc tag @param references unknown parameter: $name                  
+         🪪  parameter.notFound                                                 
+         at src/RPC/HTTP/Cookie.php:296                                         
+  298    Undefined variable: $name                                              
+         🪪  variable.undefined                                                 
+         at src/RPC/HTTP/Cookie.php:298                                         
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/HTTP/Request.php                                                   
+ ------ ----------------------------------------------------------------------- 
+  43     Property RPC\HTTP\Request::$headers type has no value type specified   
+         in iterable type array.                                                
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/HTTP/Request.php:43                                         
+  49     Property RPC\HTTP\Request::$params type has no value type specified    
+         in iterable type array.                                                
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/HTTP/Request.php:49                                         
+  61     Property RPC\HTTP\Request::$get type has no value type specified in    
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/HTTP/Request.php:61                                         
+  68     Property RPC\HTTP\Request::$post type has no value type specified in   
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/HTTP/Request.php:68                                         
+  75     Property RPC\HTTP\Request::$files type has no value type specified in  
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/HTTP/Request.php:75                                         
+  94     PHPDoc tag @return with type RPC\HTTP\Request is not subtype of        
+         native type static(RPC\HTTP\Request).                                  
+         🪪  return.phpDocType                                                  
+         at src/RPC/HTTP/Request.php:94                                         
+  141    Parameter #3 $length of function substr expects int|null, false        
+         given.                                                                 
+         🪪  argument.type                                                      
+         at src/RPC/HTTP/Request.php:141                                        
+  168    Method RPC\HTTP\Request::getHeaders() return type has no value type    
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/HTTP/Request.php:168                                        
+  217    PHPDoc tag @param for parameter $router with type object is not        
+         subtype of native type RPC\Router.                                     
+         🪪  parameter.phpDocType                                               
+         at src/RPC/HTTP/Request.php:217                                        
+  217    PHPDoc tag @return with type RPC\HTTP\Request is not subtype of        
+         native type static(RPC\HTTP\Request).                                  
+         🪪  return.phpDocType                                                  
+         at src/RPC/HTTP/Request.php:217                                        
+  419    Method RPC\HTTP\Request::json() return type has no value type          
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/HTTP/Request.php:419                                        
+  425    Caught class RPC\HTTP\Exception not found.                             
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Request.php:425                                        
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/HTTP/Response.php                                                  
+ ------ ----------------------------------------------------------------------- 
+  54     PHPDoc tag @return with type RPC\HTTP\Response is not subtype of       
+         native type static(RPC\HTTP\Response).                                 
+         🪪  return.phpDocType                                                  
+         at src/RPC/HTTP/Response.php:54                                        
+  106    PHPDoc tag @param for parameter $cookie with type RPC\HTTP\Cookie is   
+         not subtype of native type RPC\HTTP\RPC\HTTP\Cookie.                   
+         🪪  parameter.phpDocType                                               
+         at src/RPC/HTTP/Response.php:106                                       
+  106    Parameter $cookie of method RPC\HTTP\Response::setCookie() has         
+         invalid type RPC\HTTP\RPC\HTTP\Cookie.                                 
+         🪪  class.notFound                                                     
+         at src/RPC/HTTP/Response.php:106                                       
+  113    Call to method getName() on an unknown class                           
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:113                                       
+  118    Call to method getName() on an unknown class                           
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:118                                       
+  119    Call to method getValue() on an unknown class                          
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:119                                       
+  120    Call to method getExpire() on an unknown class                         
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:120                                       
+  121    Call to method getPath() on an unknown class                           
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:121                                       
+  122    Call to method getDomain() on an unknown class                         
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:122                                       
+  123    Call to method isSecure() on an unknown class                          
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:123                                       
+  124    Call to method isHTTPOnly() on an unknown class                        
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:124                                       
+  135    PHPDoc tag @param for parameter $cookie with type RPC\HTTP\Cookie is   
+         not subtype of native type RPC\HTTP\RPC\HTTP\Cookie.                   
+         🪪  parameter.phpDocType                                               
+         at src/RPC/HTTP/Response.php:135                                       
+  135    Parameter $cookie of method RPC\HTTP\Response::unsetCookie() has       
+         invalid type RPC\HTTP\RPC\HTTP\Cookie.                                 
+         🪪  class.notFound                                                     
+         at src/RPC/HTTP/Response.php:135                                       
+  143    Call to method setExpire() on an unknown class                         
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:143                                       
+  145    Call to method getName() on an unknown class                           
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:145                                       
+  146    Call to method getValue() on an unknown class                          
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:146                                       
+  147    Call to method getExpire() on an unknown class                         
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:147                                       
+  148    Call to method getPath() on an unknown class                           
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:148                                       
+  149    Call to method getDomain() on an unknown class                         
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:149                                       
+  150    Call to method isSecure() on an unknown class                          
+         RPC\HTTP\RPC\HTTP\Cookie.                                              
+         🪪  class.notFound                                                     
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/HTTP/Response.php:150                                       
+  218    PHPDoc tag @return with type RPC\HTTP\Response is not subtype of       
+         native type static(RPC\HTTP\Response).                                 
+         🪪  return.phpDocType                                                  
+         at src/RPC/HTTP/Response.php:218                                       
+  232    PHPDoc tag @return with type RPC\HTTP\Response is not subtype of       
+         native type static(RPC\HTTP\Response).                                 
+         🪪  return.phpDocType                                                  
+         at src/RPC/HTTP/Response.php:232                                       
+  246    PHPDoc tag @return with type RPC\HTTP\Response is not subtype of       
+         native type static(RPC\HTTP\Response).                                 
+         🪪  return.phpDocType                                                  
+         at src/RPC/HTTP/Response.php:246                                       
+  276    Method RPC\HTTP\Response::json() has parameter $output with no value   
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/HTTP/Response.php:276                                       
+  286    Method RPC\HTTP\Response::jsonSuccess() has parameter $data with no    
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/HTTP/Response.php:286                                       
+  291    Method RPC\HTTP\Response::jsonError() has parameter $data with no      
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/HTTP/Response.php:291                                       
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Image.php                                                          
+ ------ ----------------------------------------------------------------------- 
+  53     Unreachable statement - code above always terminates.                  
+         🪪  deadCode.unreachable                                               
+         at src/RPC/Image.php:53                                                
+  82     Method RPC\Image::getDimensions() return type has no value type        
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Image.php:82                                                
+  110    Variable $optimalHeight might not be defined.                          
+         🪪  variable.undefined                                                 
+         at src/RPC/Image.php:110                                               
+  110    Variable $optimalWidth might not be defined.                           
+         🪪  variable.undefined                                                 
+         at src/RPC/Image.php:110                                               
+  129    Method RPC\Image::getSizeByAuto() return type has no value type        
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Image.php:129                                               
+  164    Method RPC\Image::getOptimalCrop() return type has no value type       
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Image.php:164                                               
+  229    Parameter #3 $quality of function imagepng expects int, float given.   
+         🪪  argument.type                                                      
+         at src/RPC/Image.php:229                                               
+  238    Unreachable statement - code above always terminates.                  
+         🪪  deadCode.unreachable                                               
+         at src/RPC/Image.php:238                                               
+  280    Parameter #3 $quality of function imagepng expects int, float given.   
+         🪪  argument.type                                                      
+         at src/RPC/Image.php:280                                               
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Log.php                                                            
+ ------ ----------------------------------------------------------------------- 
+  21     Property RPC\Log::$_levels type has no value type specified in         
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Log.php:21                                                  
+  34     Method RPC\Log::__construct() with return type void returns false but  
+         should not return anything.                                            
+         🪪  return.void                                                        
+         at src/RPC/Log.php:34                                                  
+  59     Property RPC\Log::$_threshold (int) does not accept string|false.      
+         🪪  assign.propertyType                                                
+         at src/RPC/Log.php:59                                                  
+  76     PHPDoc tag @param has invalid value (string	the error message):        
+         Unexpected token "the", expected variable at offset 151 on line 7      
+         🪪  phpDoc.parseError                                                  
+         at src/RPC/Log.php:76                                                  
+  77     PHPDoc tag @param has invalid value (string	the error level):          
+         Unexpected token "the", expected variable at offset 187 on line 8      
+         🪪  phpDoc.parseError                                                  
+         at src/RPC/Log.php:77                                                  
+  78     PHPDoc tag @param has invalid value (bool	whether the error is a       
+         native PHP error): Unexpected token "whether", expected variable at    
+         offset 219 on line 9                                                   
+         🪪  phpDoc.parseError                                                  
+         at src/RPC/Log.php:78                                                  
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Regex.php                                                          
+ ------ ----------------------------------------------------------------------- 
+  156    Method RPC\Regex::match() has parameter $matches with no value type    
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Regex.php:156                                               
+  171    Method RPC\Regex::replace() has parameter $replacement with no value   
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Regex.php:171                                               
+  171    Method RPC\Regex::replace() has parameter $subject with no value type  
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Regex.php:171                                               
+  171    Method RPC\Regex::replace() return type has no value type specified    
+         in iterable type array.                                                
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Regex.php:171                                               
+  171    PHPDoc tag @param references unknown parameter: $string                
+         🪪  parameter.notFound                                                 
+         at src/RPC/Regex.php:171                                               
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Router.php                                                         
+ ------ ----------------------------------------------------------------------- 
+  11     Property RPC\Router::$rewrite_rules type has no value type specified   
+         in iterable type array.                                                
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Router.php:11                                               
+  19     Property RPC\Router::$params type has no value type specified in       
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Router.php:19                                               
+  32     Method RPC\Router::setRewriteRules() has parameter $rules with no      
+         value type specified in iterable type array.                           
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Router.php:32                                               
+  53     Constant APP_PATH not found.                                           
+         🪪  constant.notFound                                                  
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Router.php:53                                               
+  53     Constant CACHE_PATH not found.                                         
+         🪪  constant.notFound                                                  
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Router.php:53                                               
+  56     Constant APP_PATH not found.                                           
+         🪪  constant.notFound                                                  
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Router.php:56                                               
+  58     Constant APP_PATH not found.                                           
+         🪪  constant.notFound                                                  
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Router.php:58                                               
+  160    Constant APP_PATH not found.                                           
+         🪪  constant.notFound                                                  
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Router.php:160                                              
+  160    Constant CACHE_PATH not found.                                         
+         🪪  constant.notFound                                                  
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Router.php:160                                              
+  163    Constant APP_PATH not found.                                           
+         🪪  constant.notFound                                                  
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Router.php:163                                              
+  165    Constant APP_PATH not found.                                           
+         🪪  constant.notFound                                                  
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols   
+         at src/RPC/Router.php:165                                              
+  177    Call to function is_object() with object will always evaluate to       
+         true.                                                                  
+         🪪  function.alreadyNarrowedType                                       
+         at src/RPC/Router.php:177                                              
+  253    Access to an undefined property RPC\Controller::$flash.                
+         🪪  property.notFound                                                  
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-und  
+         efined-property                                                        
+         at src/RPC/Router.php:253                                              
+  255    Access to protected property RPC\Controller::$template.                
+         🪪  property.protected                                                 
+         at src/RPC/Router.php:255                                              
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Session.php                                                        
+ ------ ----------------------------------------------------------------------- 
+  42     Property RPC\Session::$_rpc_secure (bool) does not accept default      
+         value of type int.                                                     
+         🪪  property.defaultValue                                              
+         at src/RPC/Session.php:42                                              
+  74     Static property RPC\Session::$_rpc_instance (RPC\Session) in isset()   
+         is not nullable.                                                       
+         🪪  isset.property                                                     
+         at src/RPC/Session.php:74                                              
+  96     PHPDoc tag @param has invalid value (string name): Unexpected token    
+         "name", expected variable at offset 146 on line 5                      
+         🪪  phpDoc.parseError                                                  
+         at src/RPC/Session.php:96                                              
+  100    Method RPC\Session::setName() has parameter $name with no type         
+         specified.                                                             
+         🪪  missingType.parameter                                              
+         at src/RPC/Session.php:100                                             
+  123    Method RPC\Session::setSavePath() has parameter $path with no type     
+         specified.                                                             
+         🪪  missingType.parameter                                              
+         at src/RPC/Session.php:123                                             
+  209    Parameter #1 $value of function session_cache_expire expects           
+         int|null, float given.                                                 
+         🪪  argument.type                                                      
+         at src/RPC/Session.php:209                                             
+  245    Method RPC\Session::setEntropyFile() has parameter $path with no type  
+         specified.                                                             
+         🪪  missingType.parameter                                              
+         at src/RPC/Session.php:245                                             
+  261    Method RPC\Session::setEntropyLength() has parameter $length with no   
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Session.php:261                                             
+  276    Method RPC\Session::setHashFunction() has parameter $function with no  
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Session.php:276                                             
+  290    Method RPC\Session::useOnlyCookies() has parameter $value with no      
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Session.php:290                                             
+  305    PHPDoc tag @param for parameter $adapter with type                     
+         RPC\Session\Adapter is not subtype of native type                      
+         RPC\RPC\Session\Adapter.                                               
+         🪪  parameter.phpDocType                                               
+         at src/RPC/Session.php:305                                             
+  305    Parameter $adapter of method RPC\Session::setAdapter() has invalid     
+         type RPC\RPC\Session\Adapter.                                          
+         🪪  class.notFound                                                     
+         at src/RPC/Session.php:305                                             
+  305    Parameter $adapter of method RPC\Session::setAdapter() has invalid     
+         type RPC\Session\Adapter.                                              
+         🪪  class.notFound                                                     
+         at src/RPC/Session.php:305                                             
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Util.php                                                           
+ ------ ----------------------------------------------------------------------- 
+  17     PHPDoc tag @param has invalid value (range A string giving the IP      
+         range. You can use semi-colons to                                      
+                      seperate multiple IP's or IP ranges and you should use    
+                      a dash to specify a range. Asterisks may be used in       
+         single IP                                                              
+                      addresses. Examples of valid ranges are: "127.0.0.1",     
+                      "192.168.0.1-192.168.0.100", "192.168.0.*" and            
+                      "192.168.0.1-192.168.0.100;127.0.0.1". If the range is    
+         an                                                                     
+                      empty string, this function will always return @p         
+         true.): Unexpected token "A", expected variable at offset 86 on line   
+         4                                                                      
+         🪪  phpDoc.parseError                                                  
+         at src/RPC/Util.php:17                                                 
+  24     PHPDoc tag @param has invalid value (ip    A string giving the IP      
+         address.): Unexpected token "A", expected variable at offset 594 on    
+         line 11                                                                
+         🪪  phpDoc.parseError                                                  
+         at src/RPC/Util.php:24                                                 
+  37     Offset 0 on non-empty-list<string> in isset() always exists and is no  
+         t nullable.                                                            
+         🪪  isset.offset                                                       
+         at src/RPC/Util.php:37                                                 
+  120    Method RPC\Util::arrayToOptions() has parameter $array with no value   
+         type specified in iterable type array.                                 
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Util.php:120                                                
+  120    Method RPC\Util::arrayToOptions() return type has no value type        
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Util.php:120                                                
+  232    PHPDoc tag @param for parameter $allow_lowercase with type bool is     
+         incompatible with native type int.                                     
+         🪪  parameter.phpDocType                                               
+         at src/RPC/Util.php:232                                                
+  232    PHPDoc tag @param for parameter $allow_numbers with type bool is       
+         incompatible with native type int.                                     
+         🪪  parameter.phpDocType                                               
+         at src/RPC/Util.php:232                                                
+  232    PHPDoc tag @param for parameter $allow_special with type bool is       
+         incompatible with native type int.                                     
+         🪪  parameter.phpDocType                                               
+         at src/RPC/Util.php:232                                                
+  232    PHPDoc tag @param for parameter $allow_uppercase with type bool is     
+         incompatible with native type int.                                     
+         🪪  parameter.phpDocType                                               
+         at src/RPC/Util.php:232                                                
+  232    PHPDoc tag @param for parameter $fix_similar with type bool is         
+         incompatible with native type int.                                     
+         🪪  parameter.phpDocType                                               
+         at src/RPC/Util.php:232                                                
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------------- 
+  Line   RPC/Validator/Alternation.php                                         
+ ------ ---------------------------------------------------------------------- 
+  15     Property RPC\Validator\Alternation::$alternates                       
+         (RPC\Validator\RPC_Validator) does not accept default value of type   
+         array.                                                                
+         🪪  property.defaultValue                                             
+         at src/RPC/Validator/Alternation.php:15                               
+  15     Property RPC\Validator\Alternation::$alternates has unknown class     
+         RPC\Validator\RPC_Validator as its type.                              
+         🪪  class.notFound                                                    
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols  
+         at src/RPC/Validator/Alternation.php:15                               
+  24     Property RPC\Validator\Alternation::$alternates                       
+         (RPC\Validator\RPC_Validator) does not accept list<mixed>.            
+         🪪  assign.propertyType                                               
+         at src/RPC/Validator/Alternation.php:24                               
+  36     Access to an offset on an unknown class RPC\Validator\RPC_Validator.  
+         🪪  class.notFound                                                    
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols  
+         at src/RPC/Validator/Alternation.php:36                               
+  36     Method RPC\Validator\Alternation::add() should return                 
+         RPC\Validator\Alternation but return statement is missing.            
+         🪪  return.missing                                                    
+         at src/RPC/Validator/Alternation.php:36                               
+  49     Iterating over an object of an unknown class                          
+         RPC\Validator\RPC_Validator.                                          
+         🪪  class.notFound                                                    
+         💡  Learn more at https://phpstan.org/user-guide/discovering-symbols  
+         at src/RPC/Validator/Alternation.php:49                               
+ ------ ---------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Validator/Between.php                                              
+ ------ ----------------------------------------------------------------------- 
+  33     Call to function is_numeric() with int will always evaluate to true.   
+         🪪  function.alreadyNarrowedType                                       
+         💡  Because the type is coming from a PHPDoc, you can turn off this    
+         check by setting treatPhpDocTypesAsCertain: false in your phpstan.neo  
+         n.                                                                     
+         at src/RPC/Validator/Between.php:33                                    
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Validator/Chain.php                                                
+ ------ ----------------------------------------------------------------------- 
+  29     PHPDoc tag @param for parameter $validator with type                   
+         RPC\Validator\Interface is not subtype of native type RPC\Validator.   
+         🪪  parameter.phpDocType                                               
+         at src/RPC/Validator/Chain.php:29                                      
+  29     Parameter $validator of method RPC\Validator\Chain::add() has invalid  
+         type RPC\Validator\Interface.                                          
+         🪪  class.notFound                                                     
+         at src/RPC/Validator/Chain.php:29                                      
+ ------ ----------------------------------------------------------------------- 
+
+ ------ --------------------------------------------------------------------- 
+  Line   RPC/Validator/Date.php                                               
+ ------ --------------------------------------------------------------------- 
+  17     Method RPC\Validator\Date::__construct() has parameter $format with  
+         no type specified.                                                   
+         🪪  missingType.parameter                                            
+         at src/RPC/Validator/Date.php:17                                     
+ ------ --------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------- 
+  Line   RPC/Validator/GT.php                                               
+ ------ ------------------------------------------------------------------- 
+  12     Method RPC\Validator\GT::__construct() has parameter $min with no  
+         type specified.                                                    
+         🪪  missingType.parameter                                          
+         at src/RPC/Validator/GT.php:12                                     
+ ------ ------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------- 
+  Line   RPC/Validator/LT.php                                               
+ ------ ------------------------------------------------------------------- 
+  13     Method RPC\Validator\LT::__construct() has parameter $max with no  
+         type specified.                                                    
+         🪪  missingType.parameter                                          
+         at src/RPC/Validator/LT.php:13                                     
+ ------ ------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Validator/Length.php                                               
+ ------ ----------------------------------------------------------------------- 
+  16     Method RPC\Validator\Length::__construct() has parameter $max with no  
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Validator/Length.php:16                                     
+  16     Method RPC\Validator\Length::__construct() has parameter $min with no  
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/Validator/Length.php:16                                     
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/Validator/OneOf.php                                                
+ ------ ----------------------------------------------------------------------- 
+  14     Method RPC\Validator\OneOf::__construct() has parameter $values with   
+         no value type specified in iterable type array.                        
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/Validator/OneOf.php:14                                      
+  16     Result of && is always false.                                          
+         🪪  booleanAnd.alwaysFalse                                             
+         💡  Because the type is coming from a PHPDoc, you can turn off this    
+         check by setting treatPhpDocTypesAsCertain: false in your phpstan.neo  
+         n.                                                                     
+         at src/RPC/Validator/OneOf.php:16                                      
+  17     Call to function is_object() with object will always evaluate to       
+         true.                                                                  
+         🪪  function.alreadyNarrowedType                                       
+         at src/RPC/Validator/OneOf.php:17                                      
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/View.php                                                           
+ ------ ----------------------------------------------------------------------- 
+  27     Property RPC\View::$_view_vars type has no value type specified in     
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/View.php:27                                                 
+  53     Property RPC\View::$_view_defaultfilters type has no value type        
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/View.php:53                                                 
+  68     Property RPC\View::$_view_registeredfilters type has no value type     
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/View.php:68                                                 
+  102    Call to function is_object() with RPC\View\Cache will always evaluate  
+         to true.                                                               
+         🪪  function.alreadyNarrowedType                                       
+         at src/RPC/View.php:102                                                
+  155    PHPDoc tag @param references unknown parameter: $response              
+         🪪  parameter.notFound                                                 
+         at src/RPC/View.php:155                                                
+  175    PHPDoc tag @param references unknown parameter: $request               
+         🪪  parameter.notFound                                                 
+         at src/RPC/View.php:175                                                
+  197    Method RPC\View::getVars() return type has no value type specified in  
+         iterable type array.                                                   
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/View.php:197                                                
+  211    PHPDoc tag @param references unknown parameter: $filter                
+         🪪  parameter.notFound                                                 
+         at src/RPC/View.php:211                                                
+  211    PHPDoc tag @param references unknown parameter: $name                  
+         🪪  parameter.notFound                                                 
+         at src/RPC/View.php:211                                                
+  242    Method RPC\View::unregisterFilter() has invalid return type RPC_View.  
+         🪪  class.notFound                                                     
+         at src/RPC/View.php:242                                                
+  242    PHPDoc tag @return with type RPC_View is not subtype of native type    
+         RPC\View.                                                              
+         🪪  return.phpDocType                                                  
+         at src/RPC/View.php:242                                                
+  272    Method RPC\View::setVars() has parameter $vars with no value type      
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/View.php:272                                                
+  482    Access to an undefined property RPC\View::$_rpc_filters.               
+         🪪  property.notFound                                                  
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-und  
+         efined-property                                                        
+         at src/RPC/View.php:482                                                
+  485    Access to an undefined property RPC\View::$_rpc_filters.               
+         🪪  property.notFound                                                  
+         💡  Learn more: https://phpstan.org/blog/solving-phpstan-access-to-und  
+         efined-property                                                        
+         at src/RPC/View.php:485                                                
+  495    Method RPC\View::getFilters() return type has no value type specified  
+         in iterable type array.                                                
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/View.php:495                                                
+  534    Method RPC\View::setErrors() has parameter $errors with no value type  
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/View.php:534                                                
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------- 
+  Line   RPC/View/Cache.php                                                 
+ ------ ------------------------------------------------------------------- 
+  76     Method RPC\View\Cache::get() has parameter $template_name with no  
+         type specified.                                                    
+         🪪  missingType.parameter                                          
+         at src/RPC/View/Cache.php:76                                       
+ ------ ------------------------------------------------------------------- 
+
+ ------ -------------------------------------------------------------------- 
+  Line   RPC/View/Filter/Datagrid.php                                        
+ ------ -------------------------------------------------------------------- 
+  19     Method RPC\View\Filter\Datagrid::addFilter() has parameter $filter  
+         with no type specified.                                             
+         🪪  missingType.parameter                                           
+         at src/RPC/View/Filter/Datagrid.php:19                              
+ ------ -------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/View/Filter/Error.php                                              
+ ------ ----------------------------------------------------------------------- 
+  22     Property RPC\View\Filter\Error::$_view_errors type has no value type   
+         specified in iterable type array.                                      
+         🪪  missingType.iterableValue                                          
+         💡  See:                                                               
+         https://phpstan.org/blog/solving-phpstan-no-value-type-specified-in-i  
+         terable-type                                                           
+         at src/RPC/View/Filter/Error.php:22                                    
+  61     Call to function is_array() with string will always evaluate to        
+         false.                                                                 
+         🪪  function.impossibleType                                            
+         💡  Because the type is coming from a PHPDoc, you can turn off this    
+         check by setting treatPhpDocTypesAsCertain: false in your phpstan.neo  
+         n.                                                                     
+         at src/RPC/View/Filter/Error.php:61                                    
+  102    Method RPC\View\Filter\Error::__get() has parameter $error with no     
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Error.php:102                                   
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ----------------------------------------------------------------------- 
+  Line   RPC/View/Filter/Form.php                                               
+ ------ ----------------------------------------------------------------------- 
+  50     Method RPC\View\Filter\Form::addFilter() has parameter $filter with    
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:50                                     
+  87     Method RPC\View\Filter\Form::setMethod() has parameter $method with    
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:87                                     
+  99     Method RPC\View\Filter\Form::text() has parameter $name with no type   
+         specified.                                                             
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:99                                     
+  99     Method RPC\View\Filter\Form::text() has parameter $value with no type  
+         specified.                                                             
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:99                                     
+  105    Method RPC\View\Filter\Form::hidden() has parameter $name with no      
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:105                                    
+  105    Method RPC\View\Filter\Form::hidden() has parameter $value with no     
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:105                                    
+  114    Method RPC\View\Filter\Form::checkbox() has parameter $checked with    
+         no type specified.                                                     
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:114                                    
+  114    Method RPC\View\Filter\Form::checkbox() has parameter $name with no    
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:114                                    
+  114    Method RPC\View\Filter\Form::checkbox() has parameter $value with no   
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:114                                    
+  143    Method RPC\View\Filter\Form::radio() has parameter $checked with no    
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:143                                    
+  143    Method RPC\View\Filter\Form::radio() has parameter $name with no type  
+         specified.                                                             
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:143                                    
+  143    Method RPC\View\Filter\Form::radio() has parameter $value with no      
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:143                                    
+  160    Method RPC\View\Filter\Form::textarea() has parameter $name with no    
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:160                                    
+  160    Method RPC\View\Filter\Form::textarea() has parameter $value with no   
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:160                                    
+  165    Method RPC\View\Filter\Form::select() has parameter $name with no      
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:165                                    
+  165    Method RPC\View\Filter\Form::select() has parameter $selected with no  
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:165                                    
+  165    Method RPC\View\Filter\Form::select() has parameter $source with no    
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:165                                    
+  232    Method RPC\View\Filter\Form::getValue() has parameter $name with no    
+         type specified.                                                        
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:232                                    
+  268    Method RPC\View\Filter\Form::escape() has parameter $str with no type  
+         specified.                                                             
+         🪪  missingType.parameter                                              
+         at src/RPC/View/Filter/Form.php:268                                    
+ ------ ----------------------------------------------------------------------- 
+
+ ------ ------------------------------------------------------------------ 
+  Line   RPC/View/Filter/Form/Field/Hidden.php                             
+ ------ ------------------------------------------------------------------ 
+  22     Method RPC\View\Filter\Form\Field\Hidden::filter() has parameter  
+         $source with no type specified.                                   
+         🪪  missingType.parameter                                         
+         at src/RPC/View/Filter/Form/Field/Hidden.php:22                   
+ ------ ------------------------------------------------------------------ 
+
+ ------ ---------------------------------------------------------------- 
+  Line   RPC/View/Filter/Form/Field/Pass.php                             
+ ------ ---------------------------------------------------------------- 
+  22     Method RPC\View\Filter\Form\Field\Pass::filter() has parameter  
+         $source with no type specified.                                 
+         🪪  missingType.parameter                                       
+         at src/RPC/View/Filter/Form/Field/Pass.php:22                   
+ ------ ---------------------------------------------------------------- 
+
+ ------ ---------------------------------------------------------------- 
+  Line   RPC/View/Filter/Form/Field/Text.php                             
+ ------ ---------------------------------------------------------------- 
+  22     Method RPC\View\Filter\Form\Field\Text::filter() has parameter  
+         $source with no type specified.                                 
+         🪪  missingType.parameter                                       
+         at src/RPC/View/Filter/Form/Field/Text.php:22                   
+ ------ ---------------------------------------------------------------- 
+
+ [ERROR] Found 456 errors                                                       
+

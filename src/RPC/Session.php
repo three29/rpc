@@ -2,12 +2,12 @@
 
 namespace RPC;
 
-
+use RPC\Exception\RuntimeException;
 
 /**
  * Session class which provides a few convenience methods. It is
  * designed to allow users to work with $_SESSION.
- * 
+ *
  * @package Core
  */
 class Session
@@ -36,10 +36,10 @@ class Session
 	
 	/**
 	 * Whether the session should be sent only over a HTTPS connection
-	 * 
+	 *
 	 * @var bool
 	 */
-	protected $_rpc_secure = 0;
+	protected $_rpc_secure = false;
 	
 	/**
 	 * Whether the session will be available only over HTTP connections
@@ -50,50 +50,52 @@ class Session
 	
 	/**
 	 * Class instance
-	 * 
-	 * @var RPC_Session
+	 *
+	 * @var \RPC\Session|null
 	 */
-	protected static $_rpc_instance = null;
+	protected static ?\RPC\Session $_rpc_instance = null;
 	
 	/**
-	 * Class cannot be instantiated using the new operator
-	 * 
-	 * @see self::getInstance()
+	 * Class constructor
+	 * Now supports dependency injection while maintaining getInstance() for backward compatibility
 	 */
-	public function __construct() {}
-	
+	public function __construct()
+	{
+		$this->setDefaultCookieParams();
+	}
+
 	/**
-	 * Singleton
-	 * 
-	 * @return RPC_Session
+	 * Get singleton instance (backward compatibility)
+	 *
+	 * @return \RPC\Session
 	 */
 	public static function getInstance()
 	{
-		if( ! isset( self::$instance ) )
+		if( ! isset( self::$_rpc_instance ) )
 		{
-			$c = __CLASS__;
-			self::$_rpc_instance = new $c;
-			self::$_rpc_instance->setDefaultCookieParams();
+			self::$_rpc_instance = new self();
 		}
-		
+
 		return self::$_rpc_instance;
 	}
-	
+
 	/**
-	 * Singleton
+	 * Prevent session from being cloned
+	 *
+	 * @throws \Exception
 	 */
 	public function __clone()
 	{
-		throw new \Exception( 'Singletons can\'t be cloned' );
+		throw new RuntimeException("Singletons can't be cloned");
 	}
 	
 	/**
 	 * Sets a name for the current's application session cookie
 	 * Each application should have a different session name
 	 * 
-	 * @param string name
+	 * @param string $name
 	 * 
-	 * @return RPC_Session
+	 * @return \RPC\Session
 	 */
 	public function setName( $name )
 	{
@@ -116,7 +118,7 @@ class Session
 	 * Specifies the folder where sessions will be stored, when a file system
 	 * adapter is used
 	 * 
-	 * @return RPC_Session
+	 * @return \RPC\Session
 	 */
 	public function setSavePath( $path )
 	{
@@ -130,7 +132,7 @@ class Session
 	 * 
 	 * @param int $expire
 	 * 
-	 * @return RPC_Session
+	 * @return \RPC\Session
 	 */
 	public function setExpire( $expire )
 	{
@@ -144,7 +146,7 @@ class Session
 	 * 
 	 * @param string $path
 	 * 
-	 * @return RPC_Session
+	 * @return \RPC\Session
 	 */
 	public function setPath( $path )
 	{
@@ -158,7 +160,7 @@ class Session
 	 * 
 	 * @param string $domain
 	 * 
-	 * @return RPC_Session
+	 * @return \RPC\Session
 	 */
 	public function setDomain( $domain )
 	{
@@ -172,7 +174,7 @@ class Session
 	 * 
 	 * @param bool $secure
 	 * 
-	 * @return RPC_Session
+	 * @return \RPC\Session
 	 */
 	public function setSecure( $secure )
 	{
@@ -186,7 +188,7 @@ class Session
 	 * 
 	 * @param bool $httponly
 	 * 
-	 * @return RPC_Session
+	 * @return \RPC\Session
 	 */
 	public function setHTTPOnly( $httponly )
 	{
@@ -200,12 +202,12 @@ class Session
 	 * 
 	 * @param int $expire Expire time in seconds
 	 * 
-	 * @return RPC_Session
+	 * @return \RPC\Session
 	 */
 	public function setCacheExpire( $expire )
 	{
-		session_cache_expire( round( $expire / 60 ) );
-		
+		session_cache_expire( (int) round( $expire / 60 ) );
+
 		return $this;
 	}
 	
@@ -225,7 +227,7 @@ class Session
 	 * 
 	 * @param string $limiter
 	 * 
-	 * @return RPC_Session
+	 * @return \RPC\Session
 	 */
 	public function setCacheLimiter( $limiter )
 	{
@@ -238,44 +240,52 @@ class Session
 	 * Gives a path to an external resource (file) which will be used as an
 	 * additional entropy source in the session id creation process
 	 * 
-	 * @return RPC_Session
+	 * @return \RPC\Session
 	 */
 	public function setEntropyFile( $path )
 	{
-		ini_set( 'session.entropy_file', $path );
-		
+		// session.entropy_file was removed in PHP 7.1
+		// PHP now uses a secure random number generator by default
+		// This method is kept for backwards compatibility but does nothing
+
 		return $this;
 	}
 	
 	/**
 	 * Specifies the number of bytes which will be read from the file specified by
 	 * the entropy file
-	 * 
-	 * @return RPC_Session
+	 *
+	 * @deprecated Removed in PHP 7.1 - session.entropy_length no longer exists
+	 * @return \RPC\Session
 	 */
 	public function setEntropyLength( $length )
 	{
-		ini_set( 'session.entropy_length', $length );
-		
+		// session.entropy_length was removed in PHP 7.1
+		// PHP now uses a secure random number generator by default
+		// This method is kept for backwards compatibility but does nothing
+
 		return $this;
 	}
 	
 	/**
 	 * Allows you to specify the hash algorithm used to generate the session IDs. '0' means MD5 (128 bits) and '1' means SHA-1 (160 bits)
-	 * 
-	 * @return RPC_Session
+	 *
+	 * @deprecated Removed in PHP 7.1 - session.hash_function no longer exists
+	 * @return \RPC\Session
 	 */
 	public function setHashFunction( $function )
 	{
-		ini_set( 'session.hash_function', $function );
-		
+		// session.hash_function was removed in PHP 7.1
+		// Use session.sid_length and session.sid_bits_per_character instead
+		// This method is kept for backwards compatibility but does nothing
+
 		return $this;
 	}
 	
 	/**
 	 * Session will not be available if cookies are not allowed
 	 * 
-	 * @return RPC_Session
+	 * @return \RPC\Session
 	 */
 	public function useOnlyCookies( $value )
 	{
@@ -287,12 +297,13 @@ class Session
 	/**
 	 * Sets a save adapter for the session. The object will provide a
 	 * medium to keep the session data.
-	 * 
-	 * @param RPC_Session_Adapter $adapter
-	 * 
-	 * @return RPC_Session
+	 *
+	 * @param \RPC\Session\Adapter $adapter
+	 *
+	 * @return \RPC\Session
+	 * @phpstan-ignore-next-line Session\Adapter class not yet implemented
 	 */
-	public function setAdapter( RPC\Session\Adapter $adapter )
+	public function setAdapter( \RPC\Session\Adapter $adapter )
 	{
 		session_set_save_handler( array( $adapter, 'open' ),
 		                          array( $adapter, 'close' ),
@@ -307,7 +318,7 @@ class Session
 	/**
 	 * Generates a new session id and removes the old session file
 	 * 
-	 * @retun RPC_Session
+	 * @retun \RPC\Session
 	 */
 	public function regenerateId()
 	{
@@ -318,13 +329,28 @@ class Session
 	
 	/**
 	 * Initializes the session
-	 * 
-	 * @return RPC_Session
+	 *
+	 * @return \RPC\Session
 	 */
 	public function start()
 	{
-		session_set_cookie_params( $this->_rpc_expire, $this->_rpc_path, $this->_rpc_domain, $this->_rpc_secure, $this->_rpc_httponly );
-		
+		// PHP 7.3+ supports array format with samesite option
+		if( PHP_VERSION_ID >= 70300 )
+		{
+			session_set_cookie_params([
+				'lifetime' => $this->_rpc_expire,
+				'path' => $this->_rpc_path,
+				'domain' => $this->_rpc_domain,
+				'secure' => $this->_rpc_secure,
+				'httponly' => $this->_rpc_httponly,
+				'samesite' => 'Lax'
+			]);
+		}
+		else
+		{
+			session_set_cookie_params( $this->_rpc_expire, $this->_rpc_path, $this->_rpc_domain, $this->_rpc_secure, $this->_rpc_httponly );
+		}
+
 		session_start();
 
 		//fixation attacks
@@ -337,7 +363,7 @@ class Session
 		//session hijacking
 		if( isset( $_SESSION['HTTP_USER_AGENT'] ) )
 		{
-		    if( $_SESSION['HTTP_USER_AGENT'] != md5( @$_SERVER['HTTP_USER_AGENT'] . 'three29framework' ) )
+		    if( ! hash_equals( $_SESSION['HTTP_USER_AGENT'], hash_hmac( 'sha256', @$_SERVER['HTTP_USER_AGENT'], session_id() ) ) )
 		    {
 		        /* Prompt for password */
 		        $this->destroy();
@@ -346,7 +372,7 @@ class Session
 		}
 		else
 		{
-		    $_SESSION['HTTP_USER_AGENT'] = md5( @$_SERVER['HTTP_USER_AGENT'] . 'three29framework' );
+		    $_SESSION['HTTP_USER_AGENT'] = hash_hmac( 'sha256', @$_SERVER['HTTP_USER_AGENT'], session_id() );
 		}
 		
 		return $this;

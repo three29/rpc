@@ -175,7 +175,7 @@ class Cookie
 	 * 
 	 * @param string $name
 	 * 
-	 * @return RPC_HTTP_Cookie
+	 * @return \RPC\HTTP\Cookie
 	 */
 	public function setName( $name )
 	{
@@ -189,7 +189,7 @@ class Cookie
 	 * 
 	 * @param string $value
 	 * 
-	 * @return RPC_HTTP_Cookie
+	 * @return \RPC\HTTP\Cookie
 	 */
 	public function setValue( $value )
 	{
@@ -203,7 +203,7 @@ class Cookie
 	 * 
 	 * @param int $expire
 	 * 
-	 * @return RPC_HTTP_Cookie
+	 * @return \RPC\HTTP\Cookie
 	 */
 	public function setExpire( $expire )
 	{
@@ -217,7 +217,7 @@ class Cookie
 	 * 
 	 * @param string $path
 	 * 
-	 * @return RPC_HTTP_Cookie
+	 * @return \RPC\HTTP\Cookie
 	 */
 	public function setPath( $path )
 	{
@@ -231,7 +231,7 @@ class Cookie
 	 * 
 	 * @param string $domain
 	 * 
-	 * @return RPC_HTTP_Cookie
+	 * @return \RPC\HTTP\Cookie
 	 */
 	public function setDomain( $domain )
 	{
@@ -245,7 +245,7 @@ class Cookie
 	 * 
 	 * @param bool $secure
 	 * 
-	 * @return RPC_HTTP_Cookie
+	 * @return \RPC\HTTP\Cookie
 	 */
 	public function setSecure( $secure )
 	{
@@ -259,9 +259,9 @@ class Cookie
 	 * 
 	 * @param bool $httponly
 	 * 
-	 * @return RPC_HTTP_Cookie
+	 * @return \RPC\HTTP\Cookie
 	 */
-	public function setSecure( $httponly )
+	public function setHTTPOnly( $httponly )
 	{
 		$this->httponly = (bool)$httponly;
 		
@@ -271,13 +271,7 @@ class Cookie
 	/**
 	 * Stores extra information in the value so that the cookie can be
 	 * removed easily
-	 * 
-	 * @param string $value
-	 * @param string $path
-	 * @param string $domain
-	 * @param bool   $secure
-	 * @param bool   $httponly
-	 * 
+	 *
 	 * @return string
 	 */
 	protected function encode()
@@ -293,7 +287,7 @@ class Cookie
 	 * 
 	 * @return array
 	 */
-	protected function decode()
+	protected function decode(string $name)
 	{
 		$value = $_COOKIE[$name];
 		$pos   = strrpos( $value, '#' );

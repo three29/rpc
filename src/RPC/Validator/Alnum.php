@@ -10,10 +10,10 @@ class Alnum extends Validator
 	/**
 	 * Validates if every characther is either a letter or a number
 	 *
-	 * @param string $value
+	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		return ctype_alnum( $value );
 	}

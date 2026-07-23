@@ -17,7 +17,7 @@ abstract class Adapter
 	/**
 	 * Resource holding the connections to the database
 	 *
-	 * @var PDO
+	 * @var \PDO|null
 	 */
 	protected $_rpc_handle = null;
 
@@ -42,6 +42,20 @@ abstract class Adapter
 	 */
 	protected $_rpc_affectedrows = 0;
 
+	/**
+	 * Flag to prevent infinite recursion during query logging
+	 *
+	 * @var bool
+	 */
+	protected static $_rpc_logging = false;
+
+	/**
+	 * Storage for executed queries when DEBUG_QUERIES is enabled
+	 *
+	 * @var array<string>
+	 */
+	protected array $_rpc_queries = [];
+
 
 	/**
 	 * Tries to connect to the database, throwing an exception if it fails
@@ -50,21 +64,21 @@ abstract class Adapter
 	 * @param string $password
 	 * @param array  $options
 	 */
-	abstract public function connect( $username, $password, $options = null );
+	abstract public function connect( string $username, string $password, mixed $options = null ): mixed;
 
 	/**
 	 * Return the last autoincremented values
 	 *
 	 * @return int
 	 */
-	abstract public function getLastId();
+	abstract public function getLastId(): mixed;
 
 	/**
 	 * Returns the database handle
 	 *
-	 * @return PDO
+	 * @return \PDO|null
 	 */
-	public function getHandle()
+	public function getHandle(): ?\PDO
 	{
 		return $this->_rpc_handle;
 	}
@@ -72,9 +86,9 @@ abstract class Adapter
 	/**
 	 * Sets the database handle
 	 *
-	 * @param PDO $handle
+	 * @param \PDO $handle
 	 */
-	protected function setHandle( \PDO $handle )
+	protected function setHandle( \PDO $handle ): void
 	{
 		$this->_rpc_handle = $handle;
 	}
@@ -87,7 +101,7 @@ abstract class Adapter
 	 *
 	 * @return bool
 	 */
-	public function setAttribute( $attribute, $value )
+	public function setAttribute( int $attribute, mixed $value ): bool
 	{
 		return $this->getHandle()->setAttribute( $attribute, $value );
 	}
@@ -97,7 +111,7 @@ abstract class Adapter
 	 *
 	 * @param string $prefix
 	 */
-	public function setPrefix( $prefix )
+	public function setPrefix( string $prefix ): void
 	{
 		$this->_rpc_prefix = $prefix;
 	}
@@ -107,7 +121,7 @@ abstract class Adapter
 	 *
 	 * @return string
 	 */
-	public function getPrefix()
+	public function getPrefix(): string
 	{
 		return $this->_rpc_prefix;
 	}
@@ -117,7 +131,7 @@ abstract class Adapter
 	 *
 	 * @param int $mode
 	 */
-	public function setFetchMode( $mode )
+	public function setFetchMode( int $mode ): void
 	{
 		$this->_rpc_fetchmode = $mode;
 	}
@@ -127,7 +141,7 @@ abstract class Adapter
 	 *
 	 * @return int
 	 */
-	public function getFetchMode()
+	public function getFetchMode(): int
 	{
 		return $this->_rpc_fetchmode;
 	}
@@ -139,37 +153,22 @@ abstract class Adapter
 	 *
 	 * @return int
 	 */
-	public function execute( $sql )
+	public function execute( string $sql ): int|false
 	{
-		if( ! \RPC\Signal::emit( array( '\RPC\Db', 'query_start' ), array( $sql, 'statement' ) ) )
-		{
+		$event = new \RPC\Events\QueryExecuting($sql, 'statement');
+		\RPC\Signal::getInstance()->dispatch($event);
+
+		if ($event->isPropagationStopped()) {
 			return 0;
 		}
 
-		if( getenv('DEBUG_QUERIES') === "true" )
-		{
-			$this->getHandle()->_queries[] = $sql;
-		}
-
-		if( $sql != "select last_insert_id() as n" )
-		{
-			if( getenv( 'LOG_QUERIES' ) === "true" )
-			{
-				$this->getHandle()->prepare( " insert into query_logger ( query, ip, created ) values ( ?, ?, ? ) " )->execute( array( $sql, \RPC\Util::get_client_source(), date( 'Y-m-d H:i:s' ) ) );
-			}
-		}
+		$this->addQuery( $sql );
 
 		$this->_rpc_affectedrows = $this->getHandle()->exec( $sql );
 
-		if( $sql == "select last_insert_id() as n" )
-		{
-			if( getenv( 'LOG_QUERIES' ) === "true" )
-			{
-				$this->getHandle()->prepare( " insert into query_logger ( query, ip, created ) values ( ?, ?, ? ) " )->execute( array( $sql, \RPC\Util::get_client_source(), date( 'Y-m-d H:i:s' ) ) );
-			}
-		}
+		$this->logQuery( $sql );
 
-		\RPC\Signal::emit( array( '\RPC\Db', 'query_end' ), array( $sql, 'statement' ) );
+		\RPC\Signal::getInstance()->dispatch(new \RPC\Events\QueryExecuted($sql, 'statement'));
 
 		return $this->_rpc_affectedrows;
 	}
@@ -179,39 +178,24 @@ abstract class Adapter
 	 *
 	 * @param string $sql
 	 *
-	 * @return array
+	 * @return array|null
 	 */
-	public function query( $sql )
+	public function query( string $sql ): ?array
 	{
-		if( ! \RPC\Signal::emit( array( '\RPC\Db', 'query_start' ), array( $sql, 'query' ) ) )
-		{
+		$event = new \RPC\Events\QueryExecuting($sql, 'query');
+		\RPC\Signal::getInstance()->dispatch($event);
+
+		if ($event->isPropagationStopped()) {
 			return null;
 		}
 
-		if( getenv('DEBUG_QUERIES') === "true" )
-		{
-			$this->getHandle()->_queries[] = $sql;
-		}
-
-		if( $sql != "select last_insert_id() as n" )
-		{
-			if( getenv( 'LOG_QUERIES' ) === "true" )
-			{
-				$this->getHandle()->prepare( " insert into query_logger ( query, ip, created ) values ( ?, ?, ? ) " )->execute( array( $sql, \RPC\Util::get_client_source(), date( 'Y-m-d H:i:s' ) ) );
-			}
-		}
+		$this->addQuery( $sql );
 
 		$res = $this->getHandle()->query( $sql, $this->getFetchMode() );
 
-		if( $sql == "select last_insert_id() as n" )
-		{
-			if( getenv( 'LOG_QUERIES' ) === "true" )
-			{
-				$this->getHandle()->prepare( " insert into query_logger ( query, ip, created ) values ( ?, ?, ? ) " )->execute( array( $sql, \RPC\Util::get_client_source(), date( 'Y-m-d H:i:s' ) ) );
-			}
-		}
+		$this->logQuery( $sql );
 
-		\RPC\Signal::emit( array( '\RPC\Db', 'query_end' ), array( $sql, 'query' ) );
+		\RPC\Signal::getInstance()->dispatch(new \RPC\Events\QueryExecuted($sql, 'query'));
 
 		return $res->fetchAll();
 	}
@@ -222,7 +206,7 @@ abstract class Adapter
 	 *
 	 * @return int
 	 */
-	public function getAffectedRows()
+	public function getAffectedRows(): int
 	{
 		 return $this->_rpc_affectedrows;
 	}
@@ -232,21 +216,21 @@ abstract class Adapter
 	 *
 	 * @param string $charset
 	 */
-	abstract public function setCharset( $charset = null );
+	abstract public function setCharset( ?string $charset = null ): mixed;
 
 	/**
 	 * Prepares a query for execution. Returns a statement
 	 *
-	 * @return RPC_Db_Statement
+	 * @return \RPC\Db\Statement
 	 */
-	abstract public function prepare( $sql, $options = null );
+	abstract public function prepare( string $sql, mixed $options = null ): \RPC\Db\Statement;
 
 	/**
 	 * Starts a new transaction
 	 *
 	 * @return bool
 	 */
-	public function beginTransaction()
+	public function beginTransaction(): bool
 	{
 		return $this->getHandle()->beginTransaction();
 	}
@@ -256,7 +240,7 @@ abstract class Adapter
 	 *
 	 * @return bool
 	 */
-	public function commit()
+	public function commit(): bool
 	{
 		return $this->getHandle()->commit();
 	}
@@ -266,7 +250,7 @@ abstract class Adapter
 	 *
 	 * @return bool
 	 */
-	public function rollback()
+	public function rollback(): bool
 	{
 		return $this->getHandle()->rollBack();
 	}
@@ -274,9 +258,9 @@ abstract class Adapter
 	/**
 	 * Returns the code of the last error
 	 *
-	 * @return int
+	 * @return string|null
 	 */
-	public function getErrorCode()
+	public function getErrorCode(): ?string
 	{
 		return $this->getHandle()->errorCode();
 	}
@@ -286,7 +270,7 @@ abstract class Adapter
 	 *
 	 * @return array
 	 */
-	public function getErrorInfo()
+	public function getErrorInfo(): array
 	{
 		return $this->getHandle()->errorInfo();
 	}
@@ -294,7 +278,7 @@ abstract class Adapter
 	/**
 	 * Disconnects from the server, freeing up resources
 	 */
-	public function disconnect()
+	public function disconnect(): void
 	{
 		$this->_rpc_handle = null;
 	}
@@ -307,14 +291,71 @@ abstract class Adapter
 		$this->disconnect();
 	}
 
-
-	public function getQueries( $all = false )
+	/**
+	 * Add a query to the debug query log
+	 *
+	 * @param string $sql
+	 * @return void
+	 */
+	public function addQuery( string $sql ): void
 	{
-		if( ! getenv( 'DEBUG_QUERIES' ) )
+		if ( env( 'DEBUG_QUERIES' ) === true ) {
+			$this->_rpc_queries[] = $sql;
+		}
+	}
+
+	/**
+	 * Get logged queries
+	 *
+	 * @param bool $all If true, return all queries; if false, return only the last query
+	 * @return mixed
+	 */
+	public function getQueries( bool $all = false ): mixed
+	{
+		if( ! env( 'DEBUG_QUERIES' ) )
 		{
 			return 'DEBUG_QUERIES variable is not defined in .env file.';
 		}
-		return ( $all ? $this->getHandle()->_queries : end( $this->getHandle()->_queries ) );
+		return ( $all ? $this->_rpc_queries : ( end( $this->_rpc_queries ) ?: null ) );
+	}
+
+	/**
+	 * Log a query to the query_logger table
+	 * Protected against infinite recursion
+	 *
+	 * @param string $sql
+	 * @return void
+	 */
+	protected function logQuery( string $sql ): void
+	{
+		// Prevent infinite recursion
+		if( self::$_rpc_logging || env( 'LOG_QUERIES' ) !== true )
+		{
+			return;
+		}
+
+		// Don't log the query logger inserts themselves
+		if( stripos( $sql, 'query_logger' ) !== false )
+		{
+			return;
+		}
+
+		try
+		{
+			self::$_rpc_logging = true;
+			$this->getHandle()
+				->prepare( "INSERT INTO query_logger (query, ip, created) VALUES (?, ?, ?)" )
+				->execute( array( $sql, \RPC\Util::get_client_source(), date( 'Y-m-d H:i:s' ) ) );
+		}
+		catch( \Exception $e )
+		{
+			// Silently fail if logging fails - we don't want to break the application
+			// due to query logging issues
+		}
+		finally
+		{
+			self::$_rpc_logging = false;
+		}
 	}
 
 }

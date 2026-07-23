@@ -2,10 +2,12 @@
 
 namespace RPC;
 
-
+use RPC\Exception\ViewException;
+use RPC\Exception\InvalidArgumentException;
+use RPC\Exception\NotFoundException;
+use RPC\HTTP\Response;
 use RPC\View\Cache;
 use RPC\View\Filter\Form;
-
 use RPC\Signal;
 
 
@@ -75,14 +77,14 @@ class View
 	/**
 	 * HTTP Request object
 	 *
-	 * @var RPC_HTTP_Request
+	 * @var \RPC\HTTP\Request
 	 */
 	public $request;
 
 	/**
 	 * HTTP Response object
 	 *
-	 * @var RPC_HTTP_Response
+	 * @var \RPC\HTTP\Response
 	 */
 	public $response;
 
@@ -90,16 +92,11 @@ class View
 	 * Class constructor which adds the default filters and some needed
 	 * variables
 	 */
-	public function __construct( $dir, \RPC\View\Cache $cache )
+	public function __construct( string $dir, \RPC\View\Cache $cache )
 	{
 		if( ! is_dir( $dir ) )
 		{
-			throw new \Exception( 'The given path does not point to a directory' );
-		}
-
-		if( ! is_object( $cache ) )
-		{
-			throw new \Exception( 'You must set a cache object' );
+			throw new ViewException( 'The given path does not point to a directory' );
 		}
 
 		$this->_view_tpldir = realpath( $dir );
@@ -107,7 +104,7 @@ class View
 
 
 		$this->setRequest( \RPC\HTTP\Request::getInstance() );
-		$this->setResponse( \RPC\HTTP\Response::getInstance() );
+		$this->setResponse( Response::getInstance() );
 
 		foreach( $this->_view_defaultfilters as $v )
 		{
@@ -120,7 +117,7 @@ class View
 	 *
 	 * @return string
 	 */
-	public function getTemplateDirectory()
+	public function getTemplateDirectory(): string
 	{
 		return $this->_view_tpldir;
 	}
@@ -130,7 +127,7 @@ class View
 	 *
 	 * @param string $dir template directory path
 	 */
-	public function setTemplateDirectory($dir)
+	public function setTemplateDirectory(string $dir): void
 	{
 		$this->_view_tpldir = realpath($dir);
 	}
@@ -138,19 +135,19 @@ class View
 	/**
 	 * Set the HTTP Response object
 	 *
-	 * @param RPC_HTTP_Response $response
+	 * @param Response $response
 	 */
-	public function setResponse( $response )
+	public function setResponse( Response $response ): void
 	{
 		$this->response = $response;
 	}
 
 	/**
-	 * Set the HTTP Response object
+	 * Get the HTTP Response object
 	 *
-	 * @param RPC_HTTP_Response $response
+	 * @return Response
 	 */
-	public function getResponse( $response )
+	public function getResponse(): Response
 	{
 		return $this->response;
 	}
@@ -158,19 +155,19 @@ class View
 	/**
 	 * Set the HTTP Request object
 	 *
-	 * @param RPC_HTTP_Request $request
+	 * @param \RPC\HTTP\Request $request
 	 */
-	public function setRequest( $request )
+	public function setRequest( \RPC\HTTP\Request $request ): void
 	{
 		$this->request = $request;
 	}
 
 	/**
-	 * Returnt the HTTP Request object
+	 * Returns the HTTP Request object
 	 *
-	 * @param RPC_HTTP_Request $request
+	 * @return \RPC\HTTP\Request
 	 */
-	public function getRequest()
+	public function getRequest(): \RPC\HTTP\Request
 	{
 		return $this->request;
 	}
@@ -182,9 +179,9 @@ class View
 	 *
 	 * @return string Escaped string
 	 */
-	public function escape( $str )
+	public function escape( string|null $str ): string
 	{
-		return htmlentities( $str, ENT_QUOTES, 'UTF-8', false );
+		return htmlentities( (string)$str, ENT_QUOTES, 'UTF-8', false );
 	}
 
 	/**
@@ -192,21 +189,22 @@ class View
 	 *
 	 * @return array
 	 */
-	public function getVars()
+	public function getVars(): array
 	{
 		return $this->_view_vars;
 	}
 
 	/**
 	 * Registers a filter with the view, and in case the filter has external
-	 * functionality (for example, the RPC_View_Error filter has to be accessed
+	 * functionality (for example, the \RPC\View\Error filter has to be accessed
 	 * from outside, so that errors can be set and fetched) provides a name
 	 * which will allow access to the object
 	 *
-	 * @param string $filter
-	 * @param string $name
+	 * @param string $class_name
+	 *
+	 * @return self
 	 */
-	public function registerFilter( $class_name )
+	public function registerFilter( string $class_name ): self
 	{
 		$name = explode( '\\', $class_name );
 		$name = strtolower( end( $name ) );
@@ -219,7 +217,7 @@ class View
 	/**
 	 * Removes all filters registered in the constructor
 	 */
-	public function removeDefaultFilters()
+	public function removeDefaultFilters(): void
 	{
 		foreach( $this->_view_defaultfilters as $v )
 		{
@@ -235,9 +233,9 @@ class View
 	 *
 	 * @param string $filter
 	 *
-	 * @return RPC_View
+	 * @return self
 	 */
-	public function unregisterFilter( $filter )
+	public function unregisterFilter( string $filter ): self
 	{
 		$name = explode( '\\', $filter );
 		$name = end( $name );
@@ -250,9 +248,9 @@ class View
 	/**
 	 * Returns the parser's cache object
 	 *
-	 * @return RPC_View_Cache
+	 * @return\RPC\View\Cache
 	 */
-	public function getCache()
+	public function getCache(): Cache
 	{
 		return $this->_view_cache;
 	}
@@ -260,14 +258,14 @@ class View
 	/**
 	 * Set the view cache
 	 *
-	 * @param RPC_View_Cache $cache the parser's cache object
+	 * @param \RPC\View\Cache $cache the parser's cache object
 	 */
-	public function setCache($cache)
+	public function setCache( Cache $cache ): void
 	{
 		$this->_view_cache = $cache;
 	}
 
-	public function setVars( $vars )
+	public function setVars( array $vars ): void
 	{
 		$this->_view_vars = $vars;
 	}
@@ -278,11 +276,11 @@ class View
 	 * @param string $var
 	 * @param mixed  $value
 	 */
-	public function __set( $var, $value )
+	public function __set( string $var, mixed $value ): void
 	{
 		if( strpos( $var, 'plugin_' ) === 0 )
 		{
-			throw new \Exception( 'You are trying to assign a value on an attribute which is reserved to a filter' );
+			throw new ViewException( 'You are trying to assign a value on an attribute which is reserved to a filter' );
 		}
 
 		$this->_view_vars[$var] = $value;
@@ -295,7 +293,7 @@ class View
 	 *
 	 * @return mixed
 	 */
-	public function __get( $var )
+	public function __get( string $var ): mixed
 	{
 		if( strpos( $var, 'plugin_' ) === 0 )
 		{
@@ -320,7 +318,7 @@ class View
 	 *
 	 * @return bool
 	 */
-	public function __isset( $var )
+	public function __isset( string $var ): bool
 	{
 		return isset( $this->_view_vars[$var] );
 	}
@@ -332,7 +330,7 @@ class View
 	 *
 	 * @see self::display
 	 */
-	public function render( $template )
+	public function render( string $template ): string
 	{
 		ob_start();
 		$this->display( $template );
@@ -349,7 +347,7 @@ class View
 	 *
 	 * @param string $template Path to template
 	 */
-	public function display( $template = null )
+	public function display( ?string $template = null ): mixed
 	{
 		if( $this->current_template )
 		{
@@ -366,7 +364,7 @@ class View
 			//check if folder exits
 			if( ! is_dir( $this->_view_tpldir . '/' . $class ) )
 			{
-				throw new \Exception( "Template Folder doesn't exists: " . $this->_view_tpldir . '/' . $class );
+				throw new NotFoundException( "Template Folder doesn't exists: " . $this->_view_tpldir . '/' . $class );
 			}
 
 			$template = $class . '/' . $this->controller->current_method . '.php';
@@ -374,12 +372,14 @@ class View
 			//check if template exists based on the method called;
 			if( ! is_file( $this->_view_tpldir . '/' . $class . '/' . $this->controller->current_method . '.php' ) )
 			{
-				throw new \Exception( "Template doesn't exists: " . $this->_view_tpldir . '/' . $class . '/' . $this->controller->current_method . '.php' );
+				throw new NotFoundException( "Template doesn't exists: " . $this->_view_tpldir . '/' . $class . '/' . $this->controller->current_method . '.php' );
 			}
 		}
 
-		if( ! \RPC\Signal::emit( array( '\RPC\View', 'onBeforeRender' ), array( $this, $template ) ) )
-		{
+		$event = new \RPC\Events\ViewRendering($this, $template);
+		\RPC\Signal::getInstance()->dispatch($event);
+
+		if ($event->isPropagationStopped()) {
 			return '';
 		}
 
@@ -396,7 +396,9 @@ class View
 		*/
 		require $this->getFilteredFile( $template );
 
-		\RPC\Signal::emit( array( '\RPC\View', 'onAfterRender' ), array( $this, $template ) );
+		\RPC\Signal::getInstance()->dispatch(new \RPC\Events\ViewRendered($this, $template));
+
+		return null;
 	}
 
 	/**
@@ -404,13 +406,13 @@ class View
 	 *
 	 * @return string
 	 */
-	public function getFilteredFile( $template )
+	public function getFilteredFile( string $template ): string
 	{
 		$file = $this->getTemplateDirectory() . DIRECTORY_SEPARATOR . $template;
 
 		if( ! file_exists( $file ) )
 		{
-			throw new \Exception( 'File "' . $file . '" does not exist' );
+			throw new NotFoundException( 'File "' . $file . '" does not exist' );
 		}
 
 		if( ! $this->getCache()->get( $file, $template ) )
@@ -434,18 +436,18 @@ class View
 		return $this->getCache()->get( $file, $template );
 	}
 
-	public function getCurrentTemplate( )
+	public function getCurrentTemplate(): string
 	{
 		return $this->current_template;
 	}
 
-	public function setCurrentTemplate( $tpl )
+	public function setCurrentTemplate( ?string $tpl ): self
 	{
 		$this->current_template = $tpl;
 		return $this;
 	}
 
-	public function setController( $obj )
+	public function setController( object $obj ): void
 	{
 		$this->controller = $obj;
 	}
@@ -453,11 +455,11 @@ class View
 	/**
 	 * Adds a new filter to the queue
 	 *
-	 * @param RPC_View_Filter $filter
+	 * @param \RPC\View\Filter $filter
 	 *
 	 * @return self
 	 */
-	public function addFilter( \RPC\View\Filter $filter )
+	public function addFilter( \RPC\View\Filter $filter ): self
 	{
 		$this->_view_filters[] = $filter;
 
@@ -467,16 +469,16 @@ class View
 	/**
 	 * Removes a filter from the queue
 	 *
-	 * @param RPC_View_Filter $filter
+	 * @param \RPC\View\Filter $filter
 	 *
-	 * @return RPC_View
+	 * @return \RPC\View
 	 */
-	public function removeFilter( \RPC\View\Filter $filter )
+	public function removeFilter( \RPC\View\Filter $filter ): self
 	{
-		$key = array_search( $filter, $this->_rpc_filters );
+		$key = array_search( $filter, $this->_view_filters );
 		if( $key !== false )
 		{
-			unset( $this->_rpc_filters[$key] );
+			unset( $this->_view_filters[$key] );
 		}
 		return $this;
 	}
@@ -486,7 +488,7 @@ class View
 	 *
 	 * @return array
 	 */
-	public function getFilters()
+	public function getFilters(): array
 	{
 		return $this->_view_filters;
 	}
@@ -498,7 +500,7 @@ class View
 	 *
 	 * @return string
 	 */
-	public function filter( $source )
+	public function filter( string $source ): string
 	{
 		foreach( $this->_view_filters as $filter )
 		{
@@ -509,13 +511,13 @@ class View
 	}
 
 
-	public function newForm()
+	public function newForm(): Form
 	{
 		return new \RPC\View\Filter\Form();
 	}
 
 
-	public function getError( $id = '' )
+	public function getError( string $id = '' ): string
 	{
 		if( isset( $this->_view_errors[$id] ) )
 		{
@@ -525,7 +527,7 @@ class View
 		return '';
 	}
 
-	public function setErrors( $errors = array() )
+	public function setErrors( array $errors = array() ): void
 	{
 		if( count( $errors ) )
 		{

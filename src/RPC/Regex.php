@@ -89,36 +89,36 @@ class Regex
 	
 	/**
 	 * Regular expression against which all values will be matched
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $regex = null;
-	
+
 	/**
 	 * Class constructor which sets the regex
-	 * 
+	 *
 	 * @param string $regex
 	 */
-	public function __construct( $regex )
+	public function __construct( string $regex )
 	{
 		$this->regex = $regex;
 	}
-	
+
 	/**
 	 * Returns the interal regex
-	 * 
+	 *
 	 * @return string
 	 */
-	public function getRegex()
+	public function getRegex(): string
 	{
 		return $this->regex;
 	}
 	
 	/**
 	 * Matches the given value against the regex
-	 * 
+	 *
 	 * Parameters are the same as with <code>preg_match_all</code>
-	 * 
+	 *
 	 * $matches[0] is an array of first set of matches, $matches[1] is an array
 	 * of second set of matches, and so on. For every occurring match the
 	 * appendant string offset will also be returned:
@@ -146,39 +146,39 @@ class Regex
 	 *     .
 	 * )
 	 * </code>
-	 * 
+	 *
 	 * @param string $subject
 	 * @param array  $matches
 	 * @param int    $offset
-	 * 
-	 * @return bool
+	 *
+	 * @return int|false
 	 */
-	public function match( $subject, & $matches = array(), $offset = 0 )
+	public function match( string $subject, array &$matches = array(), int $offset = 0 ): int|false
 	{
 		return preg_match_all( $this->regex, $subject, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE, $offset );
 	}
 	
 	/**
 	 * Replaces portions of the string which match the regex with $replacement
-	 * 
-	 * @param string $string
-	 * @param string $replacement
-	 * @param int    $limit
-	 * @param int    $count
-	 * 
-	 * @return string
+	 *
+	 * @param string|array $subject
+	 * @param string|array $replacement
+	 * @param int          $limit
+	 * @param int          $count
+	 *
+	 * @return string|array|null
 	 */
-	public function replace( $subject, $replacement, $limit = -1, & $count = 0 )
+	public function replace( string|array $subject, string|array $replacement, int $limit = -1, int &$count = 0 ): string|array|null
 	{
 		return preg_replace( $this->regex, $replacement, $subject, $limit, $count );
 	}
-	
+
 	/**
-	 * Returns the object's regex 
-	 * 
+	 * Returns the object's regex
+	 *
 	 * @return string
 	 */
-	public function __toString()
+	public function __toString(): string
 	{
 		return $this->regex;
 	}
