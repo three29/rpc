@@ -2,13 +2,26 @@
 
 namespace RPC;
 
+use RPC\Contracts\ExceptionHandler;
+use RPC\Exception\Handler;
+use RPC\Exception\HttpExceptionInterface;
+use RPC\Exception\MethodNotAllowedException;
+use RPC\Exception\RouteNotFoundException;
 use RPC\Exception\RoutingException;
 use RPC\HTTP\Request;
 use RPC\HTTP\Response;
 use RPC\Regex;
 
 class Router {
+	/**
+	 * Request methods that can be dispatched to an action, e.g. editGET, editDELETE.
+	 * HEAD requests are dispatched to the GET handler.
+	 */
+	const DISPATCHABLE_METHODS = array( 'GET', 'POST', 'PUT', 'PATCH', 'DELETE' );
+
 	protected array $rewrite_rules = array();
+
+	protected ?ExceptionHandler $exception_handler = null;
 
 	protected string $controller;
 	protected string $action;
@@ -33,41 +46,45 @@ class Router {
 		$this->rewrite_rules = array_replace( $this->rewrite_rules, $rules );
 	}
 
+	public function setExceptionHandler( ExceptionHandler $handler ): void {
+		$this->exception_handler = $handler;
+	}
+
+	/**
+	 * The handler bound in the application container, or the default one
+	 */
+	public function getExceptionHandler(): ExceptionHandler {
+		if ( $this->exception_handler ) {
+			return $this->exception_handler;
+		}
+
+		$handler = Application::$app ? Application::$app->make( ExceptionHandler::class ) : null;
+
+		return $this->exception_handler = ( $handler instanceof ExceptionHandler ) ? $handler : new Handler();
+	}
+
 	public function run(): void {
 		try {
 			$this->executeRoute();
-		} catch ( \Exception $e ) {
-			// Only show custom error page in production (when SHOW_ERRORS is not true)
-			if ( env( 'SHOW_ERRORS' ) === true ) {
-				// In development, re-throw to let Whoops handle it
-				throw $e;
-			}
-
-			// Production: show custom 500 error page
-			if ( ! headers_sent() ) {
-				$this->response->setStatus( '500 Internal Server Error' );
-			}
-
-			// Try to render custom error template
-			try {
-				$view = new \RPC\View( APP_PATH . '/View', new \RPC\View\Cache( CACHE_PATH . '/view' ) );
-
-				// Try specific error template first, then fallback templates
-				if ( file_exists( APP_PATH . '/View/errors/500.php' ) ) {
-					$view->display( 'errors/500.php' );
-				} elseif ( file_exists( APP_PATH . '/View/errors/5xx.php' ) ) {
-					$view->display( 'errors/5xx.php' );
-				} else {
-					// Generic fallback if no templates exist
-					echo '500 - Internal Server Error';
-				}
-			} catch ( \Exception $viewException ) {
-				// If view rendering fails, show generic message
-				echo 'Something went wrong. Our amazing team of developers have been notified. Please try again later.';
-			}
-
-			exit;
+		} catch ( \Throwable $e ) {
+			$this->handleException( $e );
 		}
+	}
+
+	/**
+	 * Report and render an exception thrown while handling the request.
+	 * With SHOW_ERRORS enabled, server errors are re-thrown so Whoops can show them.
+	 */
+	protected function handleException( \Throwable $e ): void {
+		$is_client_error = $e instanceof HttpExceptionInterface && $e->getStatusCode() < 500;
+
+		if ( env( 'SHOW_ERRORS' ) === true && ! $is_client_error ) {
+			throw $e;
+		}
+
+		$handler = $this->getExceptionHandler();
+		$handler->report( $e );
+		$handler->render( $e );
 	}
 
 	protected function executeRoute(): void {
@@ -77,15 +94,15 @@ class Router {
 		 * If the requested URI does not have a path info, then the default
 		 * command and action will be returned
 		 */
-		if ( $uri && $this->rewrite_rules ) {
-			/**
-			 * If the string has some GET parameters, they will be ignored during
-			 * the routing process
-			 */
-			if ( ( $pos = strpos( $uri, '?' ) ) !== false ) {
-				$uri = substr( $uri, 0, $pos );
-			}
+		/**
+		 * If the string has some GET parameters, they will be ignored during
+		 * the routing process
+		 */
+		if ( ( $pos = strpos( $uri, '?' ) ) !== false ) {
+			$uri = substr( $uri, 0, $pos );
+		}
 
+		if ( $uri && $this->rewrite_rules ) {
 			foreach ( $this->rewrite_rules as $rule => $arr ) {
 				$matches = array();
 
@@ -153,23 +170,7 @@ class Router {
 		}
 
 		if ( ! class_exists( $command ) ) {
-			// Handle 404 - Laravel-style error page lookup
-			$this->response->setStatus( '404 Not Found' );
-
-			// Create view instance for error template
-			$view = new \RPC\View( APP_PATH . '/View', new \RPC\View\Cache( CACHE_PATH . '/view' ) );
-
-			// Try specific error template first, then fallback templates
-			if ( file_exists( APP_PATH . '/View/errors/404.php' ) ) {
-				$view->display( 'errors/404.php' );
-			} elseif ( file_exists( APP_PATH . '/View/errors/4xx.php' ) ) {
-				$view->display( 'errors/4xx.php' );
-			} else {
-				// Generic fallback if no templates exist
-				echo '404 - Page Not Found';
-			}
-
-			exit;
+			throw new RouteNotFoundException( 'No controller found for "' . $this->request->getURI() . '"' );
 		}
 
 		$command = new $command;
@@ -177,17 +178,29 @@ class Router {
 			throw new RoutingException( 'Class "' . get_class( $command ) . '" has to inherit from \RPC\Command' );
 		}
 
-		if ( ! in_array( $_SERVER['REQUEST_METHOD'], array( 'GET', 'POST', 'PUT' ) ) ) {
-			return;
-		}
+		$request = strtoupper( $_SERVER['REQUEST_METHOD'] ?? 'GET' );
 
-		$request = $_SERVER['REQUEST_METHOD'];
+		// HEAD is answered by the GET handler; the SAPI drops the body
+		$dispatch_method = $request === 'HEAD' ? 'GET' : $request;
 
+		$methodname = $this->action . $dispatch_method;
 
-		$methodname = $this->action . $request;
+		if ( ! in_array( $dispatch_method, self::DISPATCHABLE_METHODS, true ) || ! is_callable( array( $command, $methodname ), false ) ) {
+			$allowed = array();
+			foreach ( self::DISPATCHABLE_METHODS as $method ) {
+				if ( is_callable( array( $command, $this->action . $method ), false ) ) {
+					$allowed[] = $method;
+					if ( $method === 'GET' ) {
+						$allowed[] = 'HEAD';
+					}
+				}
+			}
 
-		if ( ! is_callable( array( $command, $methodname ), false ) ) {
-			throw new RoutingException( 'Class "' . get_class( $command ) . '" was found but method "' . $methodname . '" could not be executed' );
+			if ( ! $allowed ) {
+				throw new RouteNotFoundException( 'Class "' . get_class( $command ) . '" has no action "' . $this->action . '"' );
+			}
+
+			throw new MethodNotAllowedException( $allowed, 'Class "' . get_class( $command ) . '" was found but method "' . $methodname . '" could not be executed' );
 		}
 
 		/*

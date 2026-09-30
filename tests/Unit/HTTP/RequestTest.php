@@ -281,4 +281,37 @@ class RequestTest extends UnitTestCase
         $this->assertInstanceOf(Request::class, $result);
         $this->assertSame($this->request, $result);
     }
+
+    public function testInvalidCsrfTokenThrowsTokenMismatchWithoutEchoingToken()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['csrf_token'] = 'attacker_supplied-value';
+
+        $request = new \RPC\HTTP\Request();
+
+        try {
+            $request->validateCSRF();
+            $this->fail('Expected TokenMismatchException');
+        } catch (\RPC\Exception\TokenMismatchException $e) {
+            $this->assertInstanceOf(\RPC\Exception\SecurityException::class, $e);
+            $this->assertSame(419, $e->getStatusCode());
+            $this->assertStringNotContainsString('attacker_supplied', $e->getMessage());
+        }
+    }
+
+    public function testGetQueryStringWhenServerOmitsIt()
+    {
+        unset($_SERVER['QUERY_STRING']);
+
+        $this->assertSame('', (new \RPC\HTTP\Request())->getQueryString());
+    }
+
+    public function testMissingCsrfTokenThrowsTokenMismatch()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = [];
+
+        $this->expectException(\RPC\Exception\TokenMismatchException::class);
+        (new \RPC\HTTP\Request())->validateCSRF();
+    }
 }

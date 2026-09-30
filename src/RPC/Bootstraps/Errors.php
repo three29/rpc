@@ -3,6 +3,8 @@
 namespace RPC\Bootstraps;
 
 use RPC\Contracts\Bootstrap;
+use RPC\Contracts\ExceptionHandler;
+use RPC\Exception\Handler;
 
 class Errors implements Bootstrap {
 	public static function handle()
@@ -15,12 +17,32 @@ class Errors implements Bootstrap {
 		{
 			ini_set( 'display_errors', 1 );
 			$whoops = new \Whoops\Run;
-			if( strpos( php_sapi_name(), 'cli' ) === false ) {
+			if( php_sapi_name() !== 'cli' ) {
 				$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 			} else {
 				$whoops->pushHandler(new \Whoops\Handler\PlainTextHandler);
 			}
 			$whoops->register();
+		}
+		else
+		{
+			// Exceptions thrown outside the router (bootstraps, CLI scripts).
+			// Don't stack a second copy if handle() runs more than once.
+			$handler  = array( static::class, 'handleUncaught' );
+			$previous = set_exception_handler( $handler );
+			if ( $previous === $handler ) {
+				restore_exception_handler();
+			}
+		}
+	}
+
+	public static function handleUncaught( \Throwable $e ): void
+	{
+		$handler = static::exceptionHandler();
+		$handler->report( $e );
+
+		if ( php_sapi_name() !== 'cli' ) {
+			$handler->render( $e );
 		}
 	}
 
@@ -29,36 +51,22 @@ class Errors implements Bootstrap {
 
 		// Check if this was a fatal error
 		if ( $error && in_array( $error['type'], array( E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR ) ) ) {
-			// Set 500 status code
-			if ( ! headers_sent() ) {
-				header( 'HTTP/1.0 500 Internal Server Error' );
+			// PHP has already written the fatal error to its log; only render here.
+			// With SHOW_ERRORS on, Whoops handles fatals itself.
+			if ( env( 'SHOW_ERRORS' ) === true || php_sapi_name() === 'cli' ) {
+				return;
 			}
 
-			// Only show custom error page in production (when SHOW_ERRORS is not true)
-			if ( env( 'SHOW_ERRORS' ) !== true ) {
-				// Try to render custom error template
-				if ( defined( 'APP_PATH' ) && defined( 'CACHE_PATH' ) ) {
-					try {
-						$view = new \RPC\View( APP_PATH . '/View', new \RPC\View\Cache( CACHE_PATH . '/view' ) );
-
-						// Try specific error template first, then fallback templates
-						if ( file_exists( APP_PATH . '/View/errors/500.php' ) ) {
-							$view->display( 'errors/500.php' );
-						} elseif ( file_exists( APP_PATH . '/View/errors/5xx.php' ) ) {
-							$view->display( 'errors/5xx.php' );
-						} else {
-							// Generic fallback if no templates exist
-							echo '500 - Internal Server Error';
-						}
-						return;
-					} catch ( \Exception $e ) {
-						// If view rendering fails, fall through to generic message
-					}
-				}
-
-				// Fallback generic message
-				echo 'Something went wrong. Our amazing team of developers have been notified. Please try again later.';
-			}
+			static::exceptionHandler()->render(
+				new \ErrorException( $error['message'], 0, $error['type'], $error['file'], $error['line'] )
+			);
 		}
+	}
+
+	protected static function exceptionHandler(): ExceptionHandler
+	{
+		$handler = \RPC\Application::$app ? \RPC\Application::$app->make( ExceptionHandler::class ) : null;
+
+		return $handler instanceof ExceptionHandler ? $handler : new Handler();
 	}
 }

@@ -2,7 +2,7 @@
 
 namespace RPC\HTTP;
 
-use RPC\Exception\SecurityException;
+use RPC\Exception\TokenMismatchException;
 use RPC\HTTP\Cookie;
 
 /**
@@ -340,7 +340,8 @@ class Request
 	 */
 	public function getQueryString(): string
 	{
-		return $_SERVER['QUERY_STRING'];
+		// Not every SAPI sets it (php -S, CLI) when there is no query string
+		return $_SERVER['QUERY_STRING'] ?? '';
 	}
 
 	/**
@@ -403,10 +404,10 @@ class Request
 	{
 		if( $this->getMethod() == $method )
 		{
-			$csrf_token_pieces = explode( '_', @$this->{$method}['csrf_token'] );
+			$csrf_token_pieces = explode( '_', (string) ( $this->{$method}['csrf_token'] ?? '' ) );
 			if( count( $csrf_token_pieces ) != 2 ||
 				! hash_equals( $csrf_token_pieces[1], \RPC\Util::csrf( $csrf_token_pieces[0] ) ) ) {
-            	throw new SecurityException( 'Token was not found. Please go back and refresh your page. Token: ' . @$this->{$method}['csrf_token'] );
+            	throw new TokenMismatchException( 'CSRF token missing or invalid. Please go back and refresh your page.' );
         	}
 		}
 

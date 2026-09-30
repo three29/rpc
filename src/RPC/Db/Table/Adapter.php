@@ -393,7 +393,16 @@ abstract class Adapter
 			return false;
 		}
 
-		$this->insertRow( $row );
+		try
+		{
+			$this->insertRow( $row );
+		}
+		catch( \Throwable $e )
+		{
+			// Don't leave the transaction open for the rest of the request
+			$this->getDb()->rollback();
+			throw $e;
+		}
 
 		$pk = $this->getPkField();
 		if( isset( $row->force_pk ) && $row->force_pk )
@@ -602,7 +611,17 @@ abstract class Adapter
 			return false;
 		}
 
-		if( ! (bool) $this->deleteBy( $this->getPkField(), $row->getPk() ) )
+		try
+		{
+			$deleted = (bool) $this->deleteBy( $this->getPkField(), $row->getPk() );
+		}
+		catch( \Throwable $e )
+		{
+			$this->getDb()->rollback();
+			throw $e;
+		}
+
+		if( ! $deleted )
 		{
 			$this->getDb()->rollback();
 			return false;

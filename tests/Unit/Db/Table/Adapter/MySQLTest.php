@@ -181,10 +181,10 @@ class MySQLTest extends UnitTestCase
         $reflection = new \ReflectionClass(MySQL::class);
 
         // Verify critical method return types
-        $this->assertEquals('array', $reflection->getMethod('query')->getReturnType()?->getName());
-        $this->assertEquals('mixed', $reflection->getMethod('execute')->getReturnType()?->getName());
-        $this->assertEquals('mixed', $reflection->getMethod('cacheQuery')->getReturnType()?->getName());
-        $this->assertEquals('object', $reflection->getMethod('__callStatic')->getReturnType()?->getName());
+        $this->assertEquals('array|bool|null', (string) $reflection->getMethod('query')->getReturnType());
+        $this->assertEquals('array|int|bool|null', (string) $reflection->getMethod('execute')->getReturnType());
+        $this->assertEquals('mixed', (string) $reflection->getMethod('cacheQuery')->getReturnType());
+        $this->assertEquals('object', (string) $reflection->getMethod('__callStatic')->getReturnType());
     }
 
     public function testImplementsAllAbstractMethods()

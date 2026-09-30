@@ -17,7 +17,7 @@ class DatabaseTest extends UnitTestCase
 
         // Save original environment variables
         $envVars = ['DB_NAME', 'DB_ADAPTER', 'APP_ENV', 'DB_HOSTNAME', 'DB_SOCKET',
-                    'DB_PORT', 'DB_USERNAME', 'DB_PASSWORD', 'DB_PREFIX'];
+                    'DB_PORT', 'DB_USERNAME', 'DB_PASSWORD', 'DB_PREFIX', 'SQL_MODE', 'DB_CHARSET'];
 
         foreach ($envVars as $var) {
             $this->originalEnv[$var] = [
@@ -174,5 +174,72 @@ class DatabaseTest extends UnitTestCase
 
         $this->assertTrue($reflection->isStatic());
         $this->assertTrue($reflection->isPublic());
+    }
+
+    private function defaultConnectionInfo(): array
+    {
+        $property = (new \ReflectionClass(Db::class))->getProperty('connections');
+
+        return $property->getValue()['default'];
+    }
+
+    private function setMinimalDbEnv(): void
+    {
+        $_ENV['DB_NAME'] = 'test_db';
+        $_ENV['DB_ADAPTER'] = 'MySQL';
+        $_ENV['DB_HOSTNAME'] = 'localhost';
+        $_ENV['DB_USERNAME'] = 'root';
+        $_ENV['DB_PASSWORD'] = 'password';
+    }
+
+    public function testHandlePassesSqlModeAndCharset()
+    {
+        $this->setMinimalDbEnv();
+        $_ENV['SQL_MODE'] = 'TRADITIONAL';
+        $_ENV['DB_CHARSET'] = 'utf8mb4';
+
+        DatabaseBootstrap::handle();
+
+        $info = $this->defaultConnectionInfo();
+        $this->assertSame('TRADITIONAL', $info['sql_mode']);
+        $this->assertSame('utf8mb4', $info['charset']);
+    }
+
+    public function testHandleLeavesSqlModeAndCharsetUnsetByDefault()
+    {
+        $this->setMinimalDbEnv();
+
+        DatabaseBootstrap::handle();
+
+        $info = $this->defaultConnectionInfo();
+        $this->assertNull($info['sql_mode']);
+        $this->assertNull($info['charset']);
+    }
+
+    public function testHandleDefaultsPortWhenUnset()
+    {
+        $this->setMinimalDbEnv();
+
+        DatabaseBootstrap::handle();
+        $this->assertSame(3306, $this->defaultConnectionInfo()['port']);
+
+        $_ENV['DB_PORT'] = '3307';
+        DatabaseBootstrap::handle();
+        $this->assertSame(3307, $this->defaultConnectionInfo()['port']);
+    }
+
+    public function testSqlModeAndCharsetReachTheAdapter()
+    {
+        $this->setMinimalDbEnv();
+        $_ENV['SQL_MODE'] = 'TRADITIONAL';
+        $_ENV['DB_CHARSET'] = 'utf8mb4';
+
+        DatabaseBootstrap::handle();
+
+        // factory() builds the adapter lazily, so no real connection is made
+        $adapter = Db::factory();
+        $credentials = (new \ReflectionProperty($adapter, '_rpc_credentials'))->getValue($adapter);
+
+        $this->assertSame(['sql_mode' => 'TRADITIONAL', 'charset' => 'utf8mb4'], $credentials['options']);
     }
 }
