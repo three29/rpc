@@ -123,11 +123,7 @@ class MySQL extends Adapter
 		{
 			$dsn = $this->buildDsn( is_array( $options ) ? $options : array() );
 
-			$dboptions = [];
-
-			if( ! empty( $options['sql_mode'] ) ) {
-				$dboptions[\PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET sql_mode="' . $options['sql_mode'] . '"';
-			}
+			$dboptions = $this->pdoOptions( is_array( $options ) ? $options : array() );
 
 			$pdo = new \PDO( $dsn, $username, $password, $dboptions );
 			\RPC\Registry::set( $connection_key, $pdo );
@@ -140,6 +136,28 @@ class MySQL extends Adapter
 		$handle->setAttribute( \PDO::ATTR_AUTOCOMMIT, true );
 
 		$this->_rpc_connected = true;
+	}
+
+	/**
+	 * Driver options for new \PDO(): runs SET sql_mode when one is configured
+	 *
+	 * @param array $options Connection options
+	 *
+	 * @return array
+	 */
+	protected function pdoOptions( array $options = array() ): array
+	{
+		$pdo_options = array();
+
+		if( ! empty( $options['sql_mode'] ) )
+		{
+			// PHP 8.4 added Pdo\Mysql::ATTR_INIT_COMMAND and 8.5 deprecates
+			// PDO::MYSQL_ATTR_INIT_COMMAND; look the name up so neither warns
+			$init_command = defined( 'Pdo\\Mysql::ATTR_INIT_COMMAND' ) ? 'Pdo\\Mysql::ATTR_INIT_COMMAND' : 'PDO::MYSQL_ATTR_INIT_COMMAND';
+			$pdo_options[ constant( $init_command ) ] = 'SET sql_mode="' . $options['sql_mode'] . '"';
+		}
+
+		return $pdo_options;
 	}
 
 	/**
