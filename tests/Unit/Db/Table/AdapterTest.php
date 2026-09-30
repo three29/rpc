@@ -96,6 +96,8 @@ class AdapterTest extends UnitTestCase
             protected function updateRow(\RPC\Db\Table\Row $row): array|bool { return true; }
             public function lock(): void {}
             public function unlock(): void {}
+            public static function query(): array|bool|null { return []; }
+            public static function execute(): array|bool|int|null { return true; }
         };
 
         $this->assertInstanceOf(Adapter::class, $adapter);
@@ -261,6 +263,8 @@ class AdapterTest extends UnitTestCase
             protected function updateRow(\RPC\Db\Table\Row $row): array|bool { return true; }
             public function lock(): void {}
             public function unlock(): void {}
+            public static function query(): array|bool|null { return []; }
+            public static function execute(): array|bool|int|null { return true; }
         };
     }
 }
