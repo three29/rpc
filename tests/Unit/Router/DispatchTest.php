@@ -48,6 +48,12 @@ class DispatchTest extends UnitTestCase
         $this->assertSame([], $this->handler->rendered);
     }
 
+    public function testQueryStringIsIgnoredWithoutRewriteRules(): void
+    {
+        $this->assertSame('widgets:save:post', $this->dispatch('POST', '/widgets/save?x=1'));
+        $this->assertSame('widgets:save:post', $this->dispatch('POST', '/widgets/save/?x=1'));
+    }
+
     public function testHeadIsDispatchedToGetHandler(): void
     {
         $this->assertSame('widgets:save:get', $this->dispatch('HEAD', '/widgets/save'));

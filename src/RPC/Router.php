@@ -94,15 +94,15 @@ class Router {
 		 * If the requested URI does not have a path info, then the default
 		 * command and action will be returned
 		 */
-		if ( $uri && $this->rewrite_rules ) {
-			/**
-			 * If the string has some GET parameters, they will be ignored during
-			 * the routing process
-			 */
-			if ( ( $pos = strpos( $uri, '?' ) ) !== false ) {
-				$uri = substr( $uri, 0, $pos );
-			}
+		/**
+		 * If the string has some GET parameters, they will be ignored during
+		 * the routing process
+		 */
+		if ( ( $pos = strpos( $uri, '?' ) ) !== false ) {
+			$uri = substr( $uri, 0, $pos );
+		}
 
+		if ( $uri && $this->rewrite_rules ) {
 			foreach ( $this->rewrite_rules as $rule => $arr ) {
 				$matches = array();
 

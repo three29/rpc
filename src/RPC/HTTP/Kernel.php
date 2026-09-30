@@ -54,7 +54,7 @@ class Kernel {
 		$routes = [];
 
 		//if this is not cli call initiate routes and session
-		if( strpos( php_sapi_name(), 'cli' ) === false )
+		if( php_sapi_name() !== 'cli' )
 		{
 			$root_path = \RPC\Registry::get('root_path');
 

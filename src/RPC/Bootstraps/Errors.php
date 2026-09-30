@@ -17,7 +17,7 @@ class Errors implements Bootstrap {
 		{
 			ini_set( 'display_errors', 1 );
 			$whoops = new \Whoops\Run;
-			if( strpos( php_sapi_name(), 'cli' ) === false ) {
+			if( php_sapi_name() !== 'cli' ) {
 				$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 			} else {
 				$whoops->pushHandler(new \Whoops\Handler\PlainTextHandler);
@@ -41,7 +41,7 @@ class Errors implements Bootstrap {
 		$handler = static::exceptionHandler();
 		$handler->report( $e );
 
-		if ( strpos( php_sapi_name(), 'cli' ) === false ) {
+		if ( php_sapi_name() !== 'cli' ) {
 			$handler->render( $e );
 		}
 	}
@@ -53,7 +53,7 @@ class Errors implements Bootstrap {
 		if ( $error && in_array( $error['type'], array( E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR ) ) ) {
 			// PHP has already written the fatal error to its log; only render here.
 			// With SHOW_ERRORS on, Whoops handles fatals itself.
-			if ( env( 'SHOW_ERRORS' ) === true || strpos( php_sapi_name(), 'cli' ) !== false ) {
+			if ( env( 'SHOW_ERRORS' ) === true || php_sapi_name() === 'cli' ) {
 				return;
 			}
 
