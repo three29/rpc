@@ -121,14 +121,7 @@ class MySQL extends Adapter
 
 		if( ! \RPC\Registry::registered( $connection_key ) )
 		{
-			if( $this->_rpc_socket )
-			{
-				$dsn = 'mysql:unix_socket=' . $this->_rpc_socket . ';dname=' . $this->_rpc_database;
-			}
-			else
-			{
-				$dsn = 'mysql:host=' . $this->_rpc_hostname . ';dbname=' . $this->_rpc_database;
-			}
+			$dsn = $this->buildDsn( is_array( $options ) ? $options : array() );
 
 			$dboptions = [];
 
@@ -147,6 +140,32 @@ class MySQL extends Adapter
 		$handle->setAttribute( \PDO::ATTR_AUTOCOMMIT, true );
 
 		$this->_rpc_connected = true;
+	}
+
+	/**
+	 * Builds the PDO DSN for this connection
+	 *
+	 * @param array $options Connection options; 'charset' is appended when set
+	 *
+	 * @return string
+	 */
+	protected function buildDsn( array $options = array() ): string
+	{
+		if( $this->_rpc_socket )
+		{
+			$dsn = 'mysql:unix_socket=' . $this->_rpc_socket . ';dbname=' . $this->_rpc_database;
+		}
+		else
+		{
+			$dsn = 'mysql:host=' . $this->_rpc_hostname . ';port=' . $this->_rpc_port . ';dbname=' . $this->_rpc_database;
+		}
+
+		if( ! empty( $options['charset'] ) )
+		{
+			$dsn .= ';charset=' . $options['charset'];
+		}
+
+		return $dsn;
 	}
 
 	/**

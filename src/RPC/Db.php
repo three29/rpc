@@ -133,6 +133,10 @@ class Db
 			$options['sql_mode'] = $info['sql_mode'];
 		}
 
+		if (! empty( $info['charset'] ) ) {
+			$options['charset'] = $info['charset'];
+		}
+
 		$database->connect( $info['username'], $info['password'], $options );
 		$database->setPrefix( $info['prefix'] );
 		

@@ -34,10 +34,14 @@ class Database implements Bootstrap {
 			'hostname' => env('DB_HOSTNAME'),
 			'database' => $dbName,
 			'socket'   => env('DB_SOCKET'),
-			'port'     => env('DB_PORT'),
+			'port'     => (int) ( env('DB_PORT') ?: 3306 ),
 			'username' => env('DB_USERNAME'),
 			'password' => env('DB_PASSWORD'),
-			'prefix'   => env('DB_PREFIX', '')
+			'prefix'   => env('DB_PREFIX', ''),
+			// Session sql_mode, e.g. TRADITIONAL. Unset keeps the server default.
+			'sql_mode' => env('SQL_MODE'),
+			// Connection charset, e.g. utf8mb4. Unset keeps the client default.
+			'charset'  => env('DB_CHARSET'),
 		));
 	}
 }

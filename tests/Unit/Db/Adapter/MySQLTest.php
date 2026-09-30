@@ -157,4 +157,35 @@ class MySQLTest extends UnitTestCase
         // getLastId() returns last insert ID
         $this->assertTrue(method_exists($adapter, 'getLastId'));
     }
+
+    private function dsn(MySQL $adapter, array $options = []): string
+    {
+        $method = new \ReflectionMethod(MySQL::class, 'buildDsn');
+
+        return $method->invoke($adapter, $options);
+    }
+
+    public function testDsnForHostIncludesPort()
+    {
+        $this->assertSame(
+            'mysql:host=db.example.com;port=3307;dbname=shop',
+            $this->dsn(new MySQL('db.example.com', 'shop', null, 3307))
+        );
+    }
+
+    public function testDsnForSocketSelectsDatabase()
+    {
+        $this->assertSame(
+            'mysql:unix_socket=/var/run/mysqld/mysqld.sock;dbname=shop',
+            $this->dsn(new MySQL('localhost', 'shop', '/var/run/mysqld/mysqld.sock'))
+        );
+    }
+
+    public function testDsnIncludesCharsetWhenConfigured()
+    {
+        $this->assertSame(
+            'mysql:host=localhost;port=3306;dbname=shop;charset=utf8mb4',
+            $this->dsn(new MySQL('localhost', 'shop'), ['charset' => 'utf8mb4'])
+        );
+    }
 }
