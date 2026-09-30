@@ -404,7 +404,7 @@ class Request
 	{
 		if( $this->getMethod() == $method )
 		{
-			$csrf_token_pieces = explode( '_', @$this->{$method}['csrf_token'] );
+			$csrf_token_pieces = explode( '_', (string) ( $this->{$method}['csrf_token'] ?? '' ) );
 			if( count( $csrf_token_pieces ) != 2 ||
 				! hash_equals( $csrf_token_pieces[1], \RPC\Util::csrf( $csrf_token_pieces[0] ) ) ) {
             	throw new TokenMismatchException( 'CSRF token missing or invalid. Please go back and refresh your page.' );

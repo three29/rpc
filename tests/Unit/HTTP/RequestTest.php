@@ -305,4 +305,13 @@ class RequestTest extends UnitTestCase
 
         $this->assertSame('', (new \RPC\HTTP\Request())->getQueryString());
     }
+
+    public function testMissingCsrfTokenThrowsTokenMismatch()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = [];
+
+        $this->expectException(\RPC\Exception\TokenMismatchException::class);
+        (new \RPC\HTTP\Request())->validateCSRF();
+    }
 }
