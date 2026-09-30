@@ -340,7 +340,8 @@ class Request
 	 */
 	public function getQueryString(): string
 	{
-		return $_SERVER['QUERY_STRING'];
+		// Not every SAPI sets it (php -S, CLI) when there is no query string
+		return $_SERVER['QUERY_STRING'] ?? '';
 	}
 
 	/**

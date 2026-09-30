@@ -298,4 +298,11 @@ class RequestTest extends UnitTestCase
             $this->assertStringNotContainsString('attacker_supplied', $e->getMessage());
         }
     }
+
+    public function testGetQueryStringWhenServerOmitsIt()
+    {
+        unset($_SERVER['QUERY_STRING']);
+
+        $this->assertSame('', (new \RPC\HTTP\Request())->getQueryString());
+    }
 }
