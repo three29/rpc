@@ -188,4 +188,35 @@ class MySQLTest extends UnitTestCase
             $this->dsn(new MySQL('localhost', 'shop'), ['charset' => 'utf8mb4'])
         );
     }
+
+    private function pdoOptions(array $options): array
+    {
+        $method = new \ReflectionMethod(MySQL::class, 'pdoOptions');
+
+        return $method->invoke(new MySQL('localhost', 'shop'), $options);
+    }
+
+    public function testSqlModeBecomesInitCommandWithoutDeprecation()
+    {
+        $deprecations = [];
+        set_error_handler(function (int $errno, string $message) use (&$deprecations) {
+            $deprecations[] = $message;
+            return true;
+        }, E_DEPRECATED | E_USER_DEPRECATED);
+
+        try {
+            $options = $this->pdoOptions(['sql_mode' => 'TRADITIONAL']);
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertSame([], $deprecations);
+        $this->assertSame([1002 => 'SET sql_mode="TRADITIONAL"'], $options, 'MySQL init-command driver option');
+    }
+
+    public function testNoDriverOptionsWithoutSqlMode()
+    {
+        $this->assertSame([], $this->pdoOptions([]));
+        $this->assertSame([], $this->pdoOptions(['sql_mode' => '']));
+    }
 }
