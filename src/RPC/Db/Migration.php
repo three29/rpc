@@ -4,20 +4,20 @@ namespace RPC\Db;
 
 use RPC\Db;
 use RPC\Db\Table\Adapter\MySQL;
-use Exception;
+use RPC\Exception\ConfigurationException;
 
 class Migration
 {
 	
 	protected $model;
 
-	public function construct()
+	public function construct(): void
 	{
 		$this->model = new \RPC\Db\Table\Adapter\MySQL();
 	}
 
 
-	public function run()
+	public function run(): void
 	{
 		echo "Initializing migration...\n";
 		$model = new  \RPC\Db\Table\Adapter\MySQL( 'system' );
@@ -33,8 +33,7 @@ class Migration
 
 		if( ! defined( 'MIGRATION_FILES_PATH' ) )
 		{
-			throw new \Exception( "MIGRATION_FILES_PATH is not defined" );
-			
+			throw new ConfigurationException( "MIGRATION_FILES_PATH is not defined" );
 		}
 
 		echo "Current db_scheme number: " . $db_scheme->value() . "\n";
@@ -47,8 +46,7 @@ class Migration
 			{
 				if( preg_match( '/^(.*)?_([0-9]+)\.php/', $file, $matches ) )
 				{
-					if( isset( $matches[2] ) &&
-						(int)$matches[2] > (int)$db_scheme->value() )
+					if( (int)$matches[2] > (int)$db_scheme->value() )
 					{
 						require_once MIGRATION_FILES_PATH . '/' . $file;
 

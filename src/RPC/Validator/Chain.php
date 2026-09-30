@@ -4,7 +4,7 @@ namespace RPC\Validator;
 
 use RPC\Validator;
 
-class Chain2 extends Validator
+class Chain extends Validator
 {
 	
 	protected $chain = array();
@@ -23,10 +23,10 @@ class Chain2 extends Validator
 	/**
 	 * Adds a new rule to the chain
 	 *
-	 * @param RPC_Validator_Interface $validator
-	 * @return RPC_Validator_Chain
+	 * @param \RPC\Validator $validator
+	 * @return \RPC\Validator\Chain
 	 */
-	public function add( RPC\Validator $validator )
+	public function add( \RPC\Validator $validator )
 	{
 		$this->chain[] = $validator;
 		return $this;
@@ -39,7 +39,7 @@ class Chain2 extends Validator
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		foreach( $this->chain as $validator )
 		{
@@ -49,7 +49,7 @@ class Chain2 extends Validator
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 	

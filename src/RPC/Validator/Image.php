@@ -7,9 +7,9 @@ use RPC\Validator;
 class Image extends Validator
 {
 	
-	public function validate( $filename )
+	public function validate( mixed $filename ): bool
 	{
-		return getimagesize( $filename );
+		return (bool) getimagesize( $filename );
 	}
 	
 }

@@ -25,7 +25,8 @@ class Echoo extends Filter
 	public function filter( $source )
 	{
 		$regex = new \RPC\Regex( '/<\?=(.+?)\?>/' );
-		
+		$matches = [];
+
 		if( $regex->match( $source, $matches ) )
 		{
 			foreach( $matches as $match )

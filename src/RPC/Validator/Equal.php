@@ -40,10 +40,10 @@ class Equal extends Validator
 	 * Returns true if it is equal to <var>$this->value</var>, false otherwise
 	 *
 	 * @param mixed $value
-	 * 
+	 *
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		return $this->strict ? $value === $this->value : $value == $this->value;
 	}

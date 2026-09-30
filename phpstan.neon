@@ -1,0 +1,17 @@
+parameters:
+    level: 4
+    paths:
+        - src
+    excludePaths:
+        - src/RPC/helpers.php
+    phpVersion: 80500
+    reportUnmatchedIgnoredErrors: false
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+
+    # Ignore third-party issues
+    ignoreErrors:
+        # Allow mixed types for now during migration
+        - '#Parameter .* has no type specified#'
+        - '#Method .* has no return type specified#'
+        - '#Property .* has no type specified#'

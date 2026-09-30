@@ -33,6 +33,7 @@ class Error extends Filter
 	public function filter( $source )
 	{
 		$regex = new \RPC\Regex( '/<error id="([a-zA-Z0-9_\-]+)"(.*)?(?<!\?)><\/error>/' );
+		$matches = [];
 		if( $regex->match( $source, $matches ) )
 		{
 			foreach( $matches as $match )
@@ -52,8 +53,8 @@ class Error extends Filter
 	/**
 	 * Sets an error for a specified field
 	 *
-	 * @param string $error
-	 * @param string $value
+	 * @param string|array $error
+	 * @param string|null $value
 	 */
 	public function set( $error, $value = null )
 	{

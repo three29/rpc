@@ -1,27 +1,89 @@
 {
-    "name": "jwele329/rpc",
-    "version": "1.1.6",
-    "license": "MIT",
-    "description": "Reusable PHP Components",
-    "authors": [
-        {
-            "name": "Justin Welenofsky",
-            "email": "jwelenofsky@three29.com"
-        }
-    ],
-    "require": {
-        "php": ">=5.6.0",
-        "vlucas/phpdotenv": "2.*",
-        "filp/whoops": "2.*",
-        "kint-php/kint": "2.*"
-    },
-    "require-dev" : {
-        "php": ">=5.6.0"
-    },
-    "autoload": {
-        "psr-0": {
-            "RPC": "src/"
-        },
-        "files": ["src/RPC/init.php"]
+  "name": "jwele329/rpc",
+  "version": "2.0.0-beta.3",
+  "license": "MIT",
+  "description": "Reusable PHP Components",
+  "authors": [
+    {
+      "name": "Justin Welenofsky",
+      "email": "jwelenofsky@three29.com"
     }
+  ],
+  "config": {
+    "platform": {
+      "php": "8.3.0"
+    }
+  },
+  "require": {
+    "php": ">=8.3.0",
+    "vlucas/phpdotenv": "^5.6.2",
+    "filp/whoops": "^2.18",
+    "kint-php/kint": "^6.1",
+    "ext-gd": "*",
+    "psr/container": "^2.0",
+    "psr/event-dispatcher": "^1.0",
+    "ext-pdo": "*"
+  },
+  "require-dev": {
+    "php": ">=8.3.0",
+    "phpunit/phpunit": "^12.4.5",
+    "phpcompatibility/php-compatibility": "^9.3",
+    "phpstan/phpstan": "^2.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "RPC\\": "src/RPC/"
+    },
+    "files": [
+      "src/RPC/helpers.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "test:unit": "phpunit tests/Unit",
+    "test:feature": "phpunit tests/Feature",
+    "test:coverage": "phpunit --coverage-html coverage",
+    "test:coverage-text": "phpunit --coverage-text",
+    "compat": "phpcs --standard=phpcs.xml",
+    "compat:summary": "phpcs --standard=phpcs.xml --report=summary",
+    "compat:full": "phpcs --standard=phpcs.xml -s",
+    "phpstan": "phpstan analyze --level=5 --memory-limit=512M",
+    "phpstan:baseline": "phpstan analyze --level=5 --memory-limit=512M --generate-baseline",
+    "static": "@phpstan",
+    "lint": [
+      "@compat",
+      "@phpstan",
+      "@test"
+    ],
+    "check": [
+      "@compat:summary",
+      "@test"
+    ],
+    "ci": [
+      "@compat",
+      "@phpstan",
+      "@test"
+    ]
+  },
+  "scripts-descriptions": {
+    "test": "Run all tests",
+    "test:unit": "Run unit tests only",
+    "test:feature": "Run feature tests only",
+    "test:coverage": "Run tests with HTML coverage report (output to coverage/)",
+    "test:coverage-text": "Run tests with text coverage report",
+    "compat": "Check PHP 8.3-8.5 compatibility (syntax/functions)",
+    "compat:summary": "Check PHP compatibility (summary only)",
+    "compat:full": "Check PHP compatibility (detailed with error codes)",
+    "phpstan": "Run PHPStan static analysis (catches type errors)",
+    "phpstan:baseline": "Generate PHPStan baseline for existing issues",
+    "static": "Alias for phpstan",
+    "lint": "Full check: compatibility + static analysis + tests",
+    "check": "Quick check: compatibility summary + tests",
+    "ci": "CI pipeline: full compatibility + static analysis + tests"
+  }
 }

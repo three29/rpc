@@ -30,6 +30,7 @@ class Checkbox extends Field
 	public function filter( $source )
 	{
 		$regex = new \RPC\Regex( '/<input.*?type="checkbox".*?(?<!\?)>>/' );
+		$inputs = [];
 		$regex->match( $source, $inputs );
 		
 		foreach( $inputs as $input )

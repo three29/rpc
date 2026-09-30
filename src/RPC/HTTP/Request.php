@@ -2,8 +2,7 @@
 
 namespace RPC\HTTP;
 
-
-
+use RPC\Exception\SecurityException;
 use RPC\HTTP\Cookie;
 
 /**
@@ -34,54 +33,52 @@ class Request
 	 */
 	const METHOD_PUT  = 'put';
 
-	protected $uri;
+	protected ?string $uri = null;
 
 	/**
 	 * All the headers
 	 *
-	 * @var null
+	 * @var array|null
 	 */
-	protected $headers = null;
+	protected ?array $headers = null;
 
 	/*
 	 * All params
 	 */
 
-	protected $params = null;
+	protected ?array $params = null;
 
     /*
      * Current router
      */
-	protected $router = null;
+	protected ?\RPC\Router $router = null;
 
 	/**
 	 * Hash containing all the get variables sent with the request
 	 *
 	 * @var array
 	 */
-	public $get = array();
+	public array $get = array();
 
 	/**
 	 * Hash containing all the post variables sent with the request
 	 *
 	 * @var array
 	 */
-	public $post = array();
+	public array $post = array();
 
 	/**
 	 * Hash containing all the file variables sent with the request
 	 *
 	 * @var array
 	 */
-	public $files = array();
+	public array $files = array();
 
 	/**
-	 * Class constructor. The request is a singleton so this method is protected
-	 * and the objects can't be initialized using the "new" operator
-	 *
-	 * @see self::create()
+	 * Class constructor
+	 * Now supports dependency injection while maintaining getInstance() for backward compatibility
 	 */
-	protected function __construct()
+	public function __construct()
 	{
 		$this->post  = $_POST;
 		$this->get   = $_GET;
@@ -89,17 +86,12 @@ class Request
 	}
 
 	/**
-	 * Singletons can't be cloned
-	 */
-	protected function __clone() {}
-
-	/**
-	 * Returns an instance of RPC_HTTP_Response. Subsequent calls to this method
+	 * Returns an instance of \RPC\HTTP\Response. Subsequent calls to this method
 	 * will return the same object
 	 *
-	 * @return RPC_HTTP_Request
+	 * @return static
 	 */
-	public static function getInstance()
+	public static function getInstance(): static
 	{
 		if( ! isset( $GLOBALS['_RPC_']['singleton']['request'] ) )
 		{
@@ -115,9 +107,9 @@ class Request
 	 *
 	 * @param string $name
 	 *
-	 * @return RPC_HTTP_Cookie
+	 * @return \RPC\HTTP\Cookie
 	 */
-	public function getCookie( $name )
+	public function getCookie( string $name ): Cookie
 	{
 		return new \RPC\HTTP\Cookie( $name );
 	}
@@ -137,16 +129,17 @@ class Request
 	 *
 	 * @return string The context path or null if there is none
 	 */
-	public function getContextPath()
+	public function getContextPath(): string
 	{
 		$pathinfo = $this->getPathInfo();
 
-		if( $pos = strpos( $pathinfo, '/params' ) !== false )
+		$pos = strpos( $pathinfo, '/params' );
+		if( $pos !== false )
 		{
-			return '/';
+			return substr( $pathinfo, 0, $pos );
 		}
 
-		return substr( $pathinfo, 0, $pos );
+		return '/';
 	}
 
 	/**
@@ -157,19 +150,14 @@ class Request
 	 *
 	 * @return string The value of the specified header
 	 */
-	public function getHeader( $name )
+	public function getHeader( string $name ): ?string
 	{
-		if( empty( $this->headers ) )
+		if( is_null( $this->headers ) )
 		{
-			$this->headers = $this->getAllHeaders();
+			$this->headers = $this->getHeaders();
 		}
 
-		if( isset( $this->headers[$name] ) )
-		{
-			return $this->headers[$name];
-		}
-
-		return null;
+		return $this->headers[$name] ?? null;
 	}
 
 	/**
@@ -178,7 +166,7 @@ class Request
 	 *
 	 * @return array
 	 */
-	public function getHeaders()
+	public function getHeaders(): array
 	{
 		if( is_null( $this->headers ) )
 		{
@@ -188,29 +176,30 @@ class Request
 			}
 			else
 			{
-				/*
-					Map so that the variables gotten from the environment when
-					running as CGI have the same names as when PHP is an apache
-					module
-				*/
-				$map = array
-				(
-					'HTTP_ACCEPT'           =>  'Accept',
-					'HTTP_ACCEPT_CHARSET'   =>  'Accept-Charset',
-					'HTTP_ACCEPT_ENCODING'  =>  'Accept-Encoding',
-					'HTTP_ACCEPT_LANGUAGE'  =>  'Accept-Language',
-					'HTTP_CONNECTION'       =>  'Connection',
-					'HTTP_HOST'             =>  'Host',
-					'HTTP_KEEP_ALIVE'       =>  'Keep-Alive',
-					'HTTP_USER_AGENT'       =>  'User-Agent'
-				);
+				// PERFORMANCE: Parse headers from $_SERVER more efficiently
+				$this->headers = [];
 
 				foreach( $_SERVER as $k => $v )
 				{
-					if( substr( $k, 0, 5 ) === 'HTTP_' )
+					// Only process HTTP_ headers
+					if( strncmp( $k, 'HTTP_', 5 ) !== 0 )
 					{
-						$this->headers[$map[$k]] = $v;
+						continue;
 					}
+
+					// Convert HTTP_ACCEPT_LANGUAGE -> Accept-Language
+					$header_name = str_replace( ' ', '-', ucwords( strtolower( str_replace( '_', ' ', substr( $k, 5 ) ) ) ) );
+					$this->headers[$header_name] = $v;
+				}
+
+				// Add CONTENT_TYPE and CONTENT_LENGTH if present (not prefixed with HTTP_)
+				if( isset( $_SERVER['CONTENT_TYPE'] ) )
+				{
+					$this->headers['Content-Type'] = $_SERVER['CONTENT_TYPE'];
+				}
+				if( isset( $_SERVER['CONTENT_LENGTH'] ) )
+				{
+					$this->headers['Content-Length'] = $_SERVER['CONTENT_LENGTH'];
 				}
 			}
 		}
@@ -222,11 +211,11 @@ class Request
 	 * Sets the router on the request, which will allow the request
 	 * to have a callable getParam method
 	 *
-	 * @param object $router
+	 * @param \RPC\Router $router
 	 *
-	 * @return RPC_HTTP_Request
+	 * @return static
 	 */
-	public function setRouter( \RPC\Router $router )
+	public function setRouter( \RPC\Router $router ): static
 	{
 		$this->router = $router;
 		return $this;
@@ -241,7 +230,7 @@ class Request
 	 *
 	 * @return mixed
 	 */
-	public function getParam( $param, $default = null )
+	public function getParam( ?string $param, mixed $default = null ): mixed
 	{
 		if( is_null( $this->params ) )
 		{
@@ -260,7 +249,7 @@ class Request
 	 *
 	 * @return string The ip address
 	 */
-	public function getIP()
+	public function getIP(): ?string
 	{
 		$ip = null;
 
@@ -291,7 +280,7 @@ class Request
 	 *
 	 * @return string
 	 */
-	public function getMethod()
+	public function getMethod(): string
 	{
 		return strtolower( $_SERVER['REQUEST_METHOD'] );
 	}
@@ -301,7 +290,7 @@ class Request
 	 *
 	 * @return string
 	 */
-	public function getURI()
+	public function getURI(): string
 	{
 		return $_SERVER['REQUEST_URI'];
 	}
@@ -311,7 +300,7 @@ class Request
 	 *
 	 * @return bool
 	 */
-	public function isSecure()
+	public function isSecure(): bool
 	{
 		if( isset( $_SERVER['HTTPS'] ) )
 		{
@@ -326,7 +315,7 @@ class Request
 	 *
 	 * @return bool
 	 */
-	public function isXHR()
+	public function isXHR(): bool
 	{
 		return ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] );
 	}
@@ -335,7 +324,7 @@ class Request
 	/**
 	 * Checks if this is ajax call (alias for isXHR)
 	 */
-	public function isAjax()
+	public function isAjax(): bool
 	{
 		return $this->isXHR();
 	}
@@ -349,7 +338,7 @@ class Request
 	 *
 	 * @return string The query string
 	 */
-	public function getQueryString()
+	public function getQueryString(): string
 	{
 		return $_SERVER['QUERY_STRING'];
 	}
@@ -359,7 +348,7 @@ class Request
 	 *
 	 * @return string
 	 */
-	public function getPathInfo()
+	public function getPathInfo(): ?string
 	{
 		return isset( $_SERVER['PATH_INFO'] ) ? $_SERVER['PATH_INFO'] : null;
 	}
@@ -369,7 +358,7 @@ class Request
 	 *
 	 * @return string
 	 */
-	public function getServerAddr()
+	public function getServerAddr(): string
 	{
 		return $_SERVER['SERVER_ADDR'];
 	}
@@ -379,7 +368,7 @@ class Request
 	 *
 	 * @return string
 	 */
-	public function getServerName()
+	public function getServerName(): string
 	{
 		return $_SERVER['SERVER_NAME'];
 	}
@@ -389,7 +378,7 @@ class Request
 	 *
 	 * @return string
 	 */
-	public function getServerPort()
+	public function getServerPort(): string
 	{
 		return $_SERVER['SERVER_PORT'];
 	}
@@ -399,7 +388,7 @@ class Request
 	 *
 	 * @return string
 	 */
-	public function getHostName()
+	public function getHostName(): string
 	{
 		return $_SERVER['HTTP_HOST'];
 	}
@@ -410,14 +399,14 @@ class Request
 	 *
 	 * @return boolean
 	 */
-	public function validateCSRF( $method = 'post' )
+	public function validateCSRF( string $method = 'post' ): bool
 	{
 		if( $this->getMethod() == $method )
 		{
 			$csrf_token_pieces = explode( '_', @$this->{$method}['csrf_token'] );
 			if( count( $csrf_token_pieces ) != 2 ||
-				$csrf_token_pieces[1] !== \RPC\Util::csrf( $csrf_token_pieces[0] ) ) {
-            	throw new \Exception( 'Token was not found. Please go back and refresh your page. Token: ' . @$this->{$method}['csrf_token'] );
+				! hash_equals( $csrf_token_pieces[1], \RPC\Util::csrf( $csrf_token_pieces[0] ) ) ) {
+            	throw new SecurityException( 'Token was not found. Please go back and refresh your page. Token: ' . @$this->{$method}['csrf_token'] );
         	}
 		}
 
@@ -428,13 +417,13 @@ class Request
 	/**
 	 * Parse json input
 	 */
-	public function json()
+	public function json(): ?array
 	{
 		try
 		{
 			return json_decode( file_get_contents( 'php://input' ), true );
 		}
-		catch( Exception $e )
+		catch( \Exception $e )
 		{
 			return array();
 		}

@@ -7,7 +7,7 @@ use RPC\Validator;
 class NotEmpty extends Validator
 {
 	
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		return ! empty( $value );
 	}

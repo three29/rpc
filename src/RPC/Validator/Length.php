@@ -2,6 +2,7 @@
 
 namespace RPC\Validator;
 
+use RPC\Exception\InvalidArgumentException;
 use RPC\Validator;
 
 
@@ -24,20 +25,20 @@ class Length extends Validator
 	 * Returns true if its length is greater than $min and less than
 	 * $max, false otherwise. If one of the given values is 0 it is not taken
 	 * into consideration anymore.
-	 * 
+	 *
 	 * @param mixed $value
 	 * @return bool
 	 */
-	public function validate( $value )
+	public function validate( mixed $value ): bool
 	{
 		if( $this->min == 0 &&
 		    $this->max == 0 )
 		{
-			throw new \Exception( 'Illegal arguments' );
+			throw new InvalidArgumentException( 'Illegal arguments' );
 		}
-		
+
 		$length = strlen( $value );
-		
+
 		$valid_min = ( $this->min <= $length );
 		$valid_max = ( $length <= $this->max );
 
