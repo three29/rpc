@@ -89,7 +89,7 @@ class Response
 		}
 		else
 		{
-			die( 'Headers sent in file: ' . $file . ' on line: ' . $line );
+			throw new HttpException( 'Cannot redirect to "' . $url . '", headers already sent in ' . $file . ' on line ' . $line );
 		}
 
 		exit;
@@ -198,9 +198,10 @@ class Response
 	 *
 	 * @param string $code
 	 */
-	public function setStatus( string $code ): void
+	public function setStatus( string|int $code ): void
 	{
-	    header( 'HTTP/1.0 ' . $code );
+		// Accepts 404 or "404 Not Found"; the SAPI supplies the protocol and reason phrase
+		http_response_code( (int) $code );
 	}
 
 	/**

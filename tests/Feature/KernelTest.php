@@ -122,9 +122,9 @@ ENV;
 
         // The bootstraps should run in order:
         // 1. Environment (loads .env)
-        // 2. Database (skipped in testing when DB_NAME is empty)
-        // 3. Session
-        // 4. Errors
+        // 2. Errors (so failures in later bootstraps are handled)
+        // 3. Database (skipped in testing when DB_NAME is empty)
+        // 4. Session
 
         $kernel = new Kernel($app, $router);
 
@@ -134,5 +134,78 @@ ENV;
         // Note: Full testing of bootstrap order would require mocking
         // or creating test doubles for each bootstrap class
         $this->assertInstanceOf(Kernel::class, $kernel);
+    }
+
+    private function kernelWithRoute(\Closure $route): Kernel
+    {
+        $app = Application::configure($this->testRootPath);
+        $router = new class($route) extends Router {
+            public function __construct(private \Closure $route)
+            {
+                parent::__construct();
+            }
+
+            protected function executeRoute(): void
+            {
+                ($this->route)();
+            }
+        };
+        $router->setExceptionHandler(new \RPC\Exception\Handler(null, null));
+
+        return new Kernel($app, $router);
+    }
+
+    public function testErrorMidRenderReplacesPartialOutput(): void
+    {
+        unset($_SERVER['HTTP_ACCEPT'], $_SERVER['CONTENT_TYPE'], $_SERVER['HTTP_X_REQUESTED_WITH']);
+
+        $kernel = $this->kernelWithRoute(function () {
+            echo '<html><body>half a report';
+            throw new \RuntimeException('query failed');
+        });
+
+        $log = $this->testRootPath . '/error.log';
+        $previous_log = ini_set('error_log', $log);
+
+        try {
+            $level = ob_get_level();
+            ob_start();
+            $kernel->handle();
+            $output = ob_get_clean();
+        } finally {
+            ini_set('error_log', $previous_log === false ? '' : $previous_log);
+        }
+
+        $this->assertSame('500 - Internal Server Error', $output);
+        $this->assertStringContainsString('[RPC] RuntimeException: query failed', file_get_contents($log));
+        $this->assertSame($level, ob_get_level());
+        $this->assertNull(\RPC\Exception\Handler::$output_buffer_level);
+    }
+
+    public function testSuccessfulResponseIsFlushed(): void
+    {
+        $kernel = $this->kernelWithRoute(function () {
+            echo 'all good';
+        });
+
+        $level = ob_get_level();
+        ob_start();
+        $kernel->handle();
+
+        $this->assertSame('all good', ob_get_clean());
+        $this->assertSame($level, ob_get_level());
+    }
+
+    public function testErrorsBootstrapRunsBeforeDatabase(): void
+    {
+        $bootstraps = (new \ReflectionProperty(Kernel::class, 'bootstraps'))->getValue(
+            $this->kernelWithRoute(function () {})
+        );
+
+        $this->assertSame(\RPC\Bootstraps\Environment::class, $bootstraps[0]);
+        $this->assertLessThan(
+            array_search(\RPC\Bootstraps\Database::class, $bootstraps, true),
+            array_search(\RPC\Bootstraps\Errors::class, $bootstraps, true)
+        );
     }
 }

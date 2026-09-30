@@ -18,6 +18,14 @@ abstract class TestCase extends BaseTestCase
 
     protected function tearDown(): void
     {
+        // Pop the handler RPC\Bootstraps\Errors::handle() installs, so tests
+        // leave the global exception handler stack as they found it
+        $current = set_exception_handler(null);
+        restore_exception_handler();
+        if ($current === [\RPC\Bootstraps\Errors::class, 'handleUncaught']) {
+            restore_exception_handler();
+        }
+
         parent::tearDown();
 
         // Clean up after tests

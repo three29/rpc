@@ -136,4 +136,54 @@ class ErrorsTest extends UnitTestCase
         // Should not cause issues
         $this->assertEquals(E_ALL, error_reporting());
     }
+
+    private function currentExceptionHandler(): mixed
+    {
+        $current = set_exception_handler(null);
+        restore_exception_handler();
+
+        return $current;
+    }
+
+    public function testHandleRegistersUncaughtExceptionHandlerOnce()
+    {
+        unset($_ENV['SHOW_ERRORS']);
+        putenv('SHOW_ERRORS');
+
+        $before = $this->currentExceptionHandler();
+
+        Errors::handle();
+        Errors::handle();
+
+        $this->assertSame([Errors::class, 'handleUncaught'], $this->currentExceptionHandler());
+
+        restore_exception_handler();
+        $this->assertSame($before, $this->currentExceptionHandler());
+    }
+
+    public function testHandleUncaughtReportsInCli()
+    {
+        $handler = new class implements \RPC\Contracts\ExceptionHandler {
+            public array $reported = [];
+            public array $rendered = [];
+            public function report(\Throwable $e): void { $this->reported[] = $e; }
+            public function render(\Throwable $e): void { $this->rendered[] = $e; }
+        };
+
+        $app = \RPC\Application::$app;
+        $container = new \RPC\Application();
+        $container->instance(\RPC\Contracts\ExceptionHandler::class, $handler);
+        \RPC\Application::$app = $container;
+
+        try {
+            $e = new \RuntimeException('from a CLI script');
+            Errors::handleUncaught($e);
+        } finally {
+            \RPC\Application::$app = $app;
+        }
+
+        $this->assertSame([$e], $handler->reported);
+        // CLI output is left to PHP; no HTML error page
+        $this->assertSame([], $handler->rendered);
+    }
 }
