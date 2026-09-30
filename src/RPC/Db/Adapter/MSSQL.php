@@ -183,7 +183,24 @@ class MSSQL extends Adapter
 		return $this->_rpc_affectedrows;
 	}
 
-	
-}
+	/**
+	 * SQL Server names savepoints with SAVE TRANSACTION and has no release
+	 */
+	protected function savepointSql( string $action, int $level ): string
+	{
+		$name = 'rpc_savepoint_' . $level;
 
+		switch( $action )
+		{
+			case 'create':
+				return 'SAVE TRANSACTION ' . $name;
+			case 'release':
+				return '';
+			case 'rollback':
+				return 'ROLLBACK TRANSACTION ' . $name;
+		}
+
+		throw new \InvalidArgumentException( 'Unknown savepoint action: ' . $action );
+	}
+}
 ?>

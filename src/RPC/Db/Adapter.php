@@ -226,33 +226,185 @@ abstract class Adapter
 	abstract public function prepare( string $sql, mixed $options = null ): \RPC\Db\Statement;
 
 	/**
-	 * Starts a new transaction
+	 * Open transaction depth per PDO connection. The connection is shared
+	 * between adapter instances (see the Registry), so depth is tracked on the
+	 * handle rather than on the adapter.
+	 *
+	 * @var \WeakMap<\PDO, int>|null
+	 */
+	protected static ?\WeakMap $_rpc_transaction_levels = null;
+
+	/**
+	 * Starts a transaction. Calls nest: inside an open transaction a savepoint
+	 * is created instead, so an inner rollback only undoes the inner work and
+	 * nothing is committed until the outermost commit.
 	 *
 	 * @return bool
 	 */
 	public function beginTransaction(): bool
 	{
-		return $this->getHandle()->beginTransaction();
+		$handle = $this->getHandle();
+		$level  = $this->getTransactionLevel();
+
+		if( $level === 0 )
+		{
+			$handle->beginTransaction();
+		}
+		else
+		{
+			$handle->exec( $this->savepointSql( 'create', $level ) );
+		}
+
+		static::transactionLevels()[ $handle ] = $level + 1;
+
+		return true;
 	}
 
 	/**
-	 * Commits all the queries and statements in the transaction
+	 * Commits the transaction, or releases the savepoint of a nested one
 	 *
 	 * @return bool
 	 */
 	public function commit(): bool
 	{
-		return $this->getHandle()->commit();
+		$handle = $this->getHandle();
+		$level  = $this->getTransactionLevel();
+
+		if( $level <= 1 )
+		{
+			$this->setTransactionLevel( 0 );
+
+			return $handle->commit();
+		}
+
+		$this->setTransactionLevel( $level - 1 );
+		$sql = $this->savepointSql( 'release', $level - 1 );
+		if( $sql !== '' )
+		{
+			$handle->exec( $sql );
+		}
+
+		return true;
 	}
 
 	/**
-	 * Rolls back queries and statement in the transaction
+	 * Rolls back the transaction, or only the work since the matching
+	 * beginTransaction() of a nested one
 	 *
 	 * @return bool
 	 */
 	public function rollback(): bool
 	{
-		return $this->getHandle()->rollBack();
+		$handle = $this->getHandle();
+		$level  = $this->getTransactionLevel();
+
+		if( $level <= 1 )
+		{
+			$this->setTransactionLevel( 0 );
+
+			return $handle->rollBack();
+		}
+
+		$this->setTransactionLevel( $level - 1 );
+		$handle->exec( $this->savepointSql( 'rollback', $level - 1 ) );
+
+		return true;
+	}
+
+	/**
+	 * Runs $callback in a transaction: commits when it returns, rolls back and
+	 * re-throws when it throws. Can be nested.
+	 *
+	 * @param callable $callback Receives this adapter
+	 *
+	 * @return mixed The callback's return value
+	 */
+	public function transaction( callable $callback ): mixed
+	{
+		$this->beginTransaction();
+
+		try
+		{
+			$result = $callback( $this );
+		}
+		catch( \Throwable $e )
+		{
+			if( $this->inTransaction() )
+			{
+				$this->rollback();
+			}
+
+			throw $e;
+		}
+
+		$this->commit();
+
+		return $result;
+	}
+
+	public function inTransaction(): bool
+	{
+		return $this->getTransactionLevel() > 0;
+	}
+
+	public function getTransactionLevel(): int
+	{
+		$handle = $this->getHandle();
+
+		if( ! $handle )
+		{
+			return 0;
+		}
+
+		$levels = static::transactionLevels();
+		$level  = isset( $levels[ $handle ] ) ? $levels[ $handle ] : 0;
+
+		// A transaction ended outside the adapter (e.g. an implicit commit from
+		// DDL, or direct PDO use) resets the depth
+		if( $level > 0 && ! $handle->inTransaction() )
+		{
+			$this->setTransactionLevel( 0 );
+
+			return 0;
+		}
+
+		return $level;
+	}
+
+	protected function setTransactionLevel( int $level ): void
+	{
+		static::transactionLevels()[ $this->getHandle() ] = $level;
+	}
+
+	protected static function transactionLevels(): \WeakMap
+	{
+		return static::$_rpc_transaction_levels ??= new \WeakMap();
+	}
+
+	/**
+	 * SQL for a nested-transaction savepoint. Standard SQL, as used by MySQL,
+	 * PostgreSQL and SQLite; adapters for other databases override it.
+	 *
+	 * @param string $action create|release|rollback
+	 * @param int    $level  Depth the savepoint belongs to (1 = first nested level)
+	 *
+	 * @return string SQL to run, or '' when the action is not needed
+	 */
+	protected function savepointSql( string $action, int $level ): string
+	{
+		$name = 'rpc_savepoint_' . $level;
+
+		switch( $action )
+		{
+			case 'create':
+				return 'SAVEPOINT ' . $name;
+			case 'release':
+				return 'RELEASE SAVEPOINT ' . $name;
+			case 'rollback':
+				return 'ROLLBACK TO SAVEPOINT ' . $name;
+		}
+
+		throw new \InvalidArgumentException( 'Unknown savepoint action: ' . $action );
 	}
 
 	/**
