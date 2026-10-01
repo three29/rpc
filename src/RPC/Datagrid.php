@@ -132,7 +132,7 @@ class Datagrid
 		
 		$query['sort'] = $sortby;
 		
-		return '<a href="' . $request->getPathInfo() . '?' . http_build_query( $query, '', '&amp;' ) . '" class="' . $class . '">' . $name . '<span class="th-sort">
+		return '<a href="' . htmlspecialchars( (string) $request->getPathInfo(), ENT_QUOTES, 'UTF-8' ) . '?' . http_build_query( $query, '', '&amp;' ) . '" class="' . $class . '">' . $name . '<span class="th-sort">
                         ' . ( $class == 'sortable' ? '<i class="sort-thin"></i>' : ( $class == 'sortasc' ? '<i class="fa fa-sort-up"></i>' : '<i class="fa fa-sort-down"></i>' ) ) . '
                       </span></a>';
 	}

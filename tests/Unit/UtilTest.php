@@ -327,4 +327,36 @@ class UtilTest extends TestCase
         // Two generated passwords should be different
         $this->assertNotEquals($password1, $password2);
     }
+
+    public function testCsrfTokenIsRandomAndLong()
+    {
+        $_SESSION = [];
+
+        $a = Util::csrf('a');
+        $b = Util::csrf('b');
+
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{64}$/', $a);
+        $this->assertNotSame($a, $b);
+    }
+
+    public function testValidCsrfDoesNotCreateTokens()
+    {
+        $_SESSION = [];
+
+        $this->assertFalse(Util::validCsrf('nope', 'anything'));
+        $this->assertSame([], $_SESSION);
+
+        $token = Util::csrf('form');
+        $this->assertTrue(Util::validCsrf('form', $token));
+        $this->assertFalse(Util::validCsrf('form', ''));
+        $this->assertFalse(Util::validCsrf('form', strrev($token)));
+    }
+
+    public function testGeneratePasswordAdvancedExcludesSimilarCharacters()
+    {
+        $password = Util::generatePasswordAdvanced(500, 1, 1, 1, 0, 1);
+
+        $this->assertSame(500, strlen($password));
+        $this->assertDoesNotMatchRegularExpression('/[O01lI5S]/', $password);
+    }
 }

@@ -12,6 +12,8 @@ use RPC\Db\Table\Adapter;
  */
 class MSSQL extends Adapter
 {
+	protected $identifier_quote = '"';
+
 	/**
 	 * @todo Use a cache
 	 */
@@ -115,23 +117,23 @@ class MSSQL extends Adapter
 			$condition = array();
 			foreach( $args[0] as $k => $r )
 			{
-				$condition[] = " " . $k . " = ? ";
+				$condition[] = " " . $this->quoteColumn( $k ) . " = ? ";
 				$condition_values[] = $r;
 			}
 			$condition = implode( ' and ', $condition );
 		}
 		else
 		{
-			$condition = $args[0];
-
-			//check if ? exists in condition
-			if( strpos( $condition, "?" ) === false )
-			{
-				$condition .= " = ? ";
-			}
-
 			if( isset( $args[1] ) )
 			{
+				$condition = $args[0];
+
+				//check if ? exists in condition
+				if( strpos( $condition, "?" ) === false )
+				{
+					$condition .= " = ? ";
+				}
+
 				if( is_array( $args[1] ) )
 				{
 					$condition_values = $args[1];
@@ -141,10 +143,11 @@ class MSSQL extends Adapter
 					$condition_values[] = $args[1];
 				}
 			}
-			elseif( is_numeric( $args[0] ) )
+			else
 			{
+				// A lone value is a primary key, never raw SQL
 				$condition = " " . $this->getPkField() . " = ? ";
-				$condition_values[] = $args[0];
+				$condition_values[] = $this->primaryKeyValue( $args[0] );
 			}
 		}
 
@@ -182,23 +185,23 @@ class MSSQL extends Adapter
 			$condition = array();
 			foreach( $args[0] as $k => $r )
 			{
-				$condition[] = " " . $k . " = ? ";
+				$condition[] = " " . $this->quoteColumn( $k ) . " = ? ";
 				$condition_values[] = $r;
 			}
 			$condition = implode( ' and ', $condition );
 		}
 		else
 		{
-			$condition = $args[0];
-
-			//check if ? exists in condition
-			if( strpos( $condition, "?" ) === false )
-			{
-				$condition .= " = ? ";
-			}
-
 			if( isset( $args[1] ) )
 			{
+				$condition = $args[0];
+
+				//check if ? exists in condition
+				if( strpos( $condition, "?" ) === false )
+				{
+					$condition .= " = ? ";
+				}
+
 				if( is_array( $args[1] ) )
 				{
 					$condition_values = $args[1];
@@ -208,10 +211,11 @@ class MSSQL extends Adapter
 					$condition_values[] = $args[1];
 				}
 			}
-			elseif( is_numeric( $args[0] ) )
+			else
 			{
+				// A lone value is a primary key, never raw SQL
 				$condition = " " . $this->getPkField() . " = ? ";
-				$condition_values[] = $args[0];
+				$condition_values[] = $this->primaryKeyValue( $args[0] );
 			}
 		}
 
@@ -247,13 +251,19 @@ class MSSQL extends Adapter
 			$condition = array();
 			foreach( $args[0] as $k => $r )
 			{
-				$condition[] = " " . $k . " = ? ";
+				$condition[] = " " . $this->quoteColumn( $k ) . " = ? ";
 				$condition_values[] = $r;
 			}
 			$condition = implode( ' and ', $condition );
 		}
 		else
 		{
+			if( ! isset( $args[1] ) )
+			{
+				// Without bound values the statement would run as raw SQL
+				throw new \RPC\Exception\InvalidArgumentException( 'getBySql() needs its values passed as the second argument' );
+			}
+
 			$condition = $args[0];
 
 			//check if ? exists in condition
@@ -262,21 +272,13 @@ class MSSQL extends Adapter
 				$condition .= " = ? ";
 			}
 
-			if( isset( $args[1] ) )
+			if( is_array( $args[1] ) )
 			{
-				if( is_array( $args[1] ) )
-				{
-					$condition_values = $args[1];
-				}
-				else
-				{
-					$condition_values[] = $args[1];
-				}
+				$condition_values = $args[1];
 			}
-			elseif( is_numeric( $args[0] ) )
+			else
 			{
-				$condition = " " . $this->getPkField() . " = ? ";
-				$condition_values[] = $args[0];
+				$condition_values[] = $args[1];
 			}
 		}
 
@@ -310,23 +312,23 @@ class MSSQL extends Adapter
 			$condition = array();
 			foreach( $args[0] as $k => $r )
 			{
-				$condition[] = " " . $k . " = ? ";
+				$condition[] = " " . $this->quoteColumn( $k ) . " = ? ";
 				$condition_values[] = $r;
 			}
 			$condition = implode( ' and ', $condition );
 		}
 		else
 		{
-			$condition = $args[0];
-
-			//check if ? exists in condition
-			if( strpos( $condition, "?" ) === false )
-			{
-				$condition .= " = ? ";
-			}
-
 			if( isset( $args[1] ) )
 			{
+				$condition = $args[0];
+
+				//check if ? exists in condition
+				if( strpos( $condition, "?" ) === false )
+				{
+					$condition .= " = ? ";
+				}
+
 				if( is_array( $args[1] ) )
 				{
 					$condition_values = $args[1];
@@ -336,10 +338,11 @@ class MSSQL extends Adapter
 					$condition_values[] = $args[1];
 				}
 			}
-			elseif( is_numeric( $args[0] ) )
+			else
 			{
+				// A lone value is a primary key, never raw SQL
 				$condition = " " . $this->getPkField() . " = ? ";
-				$condition_values[] = $args[0];
+				$condition_values[] = $this->primaryKeyValue( $args[0] );
 			}
 		}
 
@@ -398,23 +401,23 @@ class MSSQL extends Adapter
 				$condition = array();
 				foreach( $args[0] as $k => $r )
 				{
-					$condition[] = " " . $k . " = ? ";
+					$condition[] = " " . $this->quoteColumn( $k ) . " = ? ";
 					$condition_values[] = $r;
 				}
 				$condition = implode( ' and ', $condition );
 			}
 			else
 			{
-				$condition = $args[0];
-
-				//check if ? exists in condition
-				if( strpos( $condition, "?" ) === false )
-				{
-					$condition .= " = ? ";
-				}
-
 				if( isset( $args[1] ) )
 				{
+					$condition = $args[0];
+
+					//check if ? exists in condition
+					if( strpos( $condition, "?" ) === false )
+					{
+						$condition .= " = ? ";
+					}
+
 					if( is_array( $args[1] ) )
 					{
 						$condition_values = $args[1];
@@ -424,10 +427,11 @@ class MSSQL extends Adapter
 						$condition_values[] = $args[1];
 					}
 				}
-				elseif( is_numeric( $args[0] ) )
+				else
 				{
+					// A lone value is a primary key, never raw SQL
 					$condition = " " . $this->getPkField() . " = ? ";
-					$condition_values[] = $args[0];
+					$condition_values[] = $this->primaryKeyValue( $args[0] );
 				}
 			}
 
@@ -492,13 +496,19 @@ class MSSQL extends Adapter
 			$condition = array();
 			foreach( $args[0] as $k => $r )
 			{
-				$condition[] = " " . $k . " = ? ";
+				$condition[] = " " . $this->quoteColumn( $k ) . " = ? ";
 				$condition_values[] = $r;
 			}
 			$condition = implode( ' and ', $condition );
 		}
 		else
 		{
+			if( ! isset( $args[1] ) )
+			{
+				// Without bound values the statement would run as raw SQL
+				throw new \RPC\Exception\InvalidArgumentException( 'findBySql() needs its values passed as the second argument' );
+			}
+
 			$condition = $args[0];
 
 			//check if ? exists in condition
@@ -507,21 +517,13 @@ class MSSQL extends Adapter
 				$condition .= " = ? ";
 			}
 
-			if( isset( $args[1] ) )
+			if( is_array( $args[1] ) )
 			{
-				if( is_array( $args[1] ) )
-				{
-					$condition_values = $args[1];
-				}
-				else
-				{
-					$condition_values[] = $args[1];
-				}
+				$condition_values = $args[1];
 			}
-			elseif( is_numeric( $args[0] ) )
+			else
 			{
-				$condition = " " . $this->getPkField() . " = ? ";
-				$condition_values[] = $args[0];
+				$condition_values[] = $args[1];
 			}
 		}
 
@@ -639,7 +641,7 @@ class MSSQL extends Adapter
 
 	public function deleteBy( string $field, mixed $value ): array|bool
 	{
-		$sql   = 'delete from "' . $this->getName() . '" where "' . $field . '"=?';
+		$sql   = 'delete from "' . $this->getName() . '" where ' . $this->quoteColumn( $field ) . '=?';
 
 		return $this->getDb()->prepare( $sql )->execute( array( $value ) );
 	}
@@ -668,7 +670,7 @@ class MSSQL extends Adapter
 		if( is_readable( $filename ) &&
 		    ( time() - filemtime( $filename ) ) < $seconds )
 		{
-			return unserialize( file_get_contents( $filename ) );
+			return unserialize( file_get_contents( $filename ), array( 'allowed_classes' => array( 'stdClass' ) ) );
 		}
 
 		$res = $this->getDb()->query( $sql );

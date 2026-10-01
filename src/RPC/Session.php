@@ -351,6 +351,15 @@ class Session
 			session_set_cookie_params( $this->_rpc_expire, $this->_rpc_path, $this->_rpc_domain, $this->_rpc_secure, $this->_rpc_httponly );
 		}
 
+		if( session_status() !== PHP_SESSION_ACTIVE && ! headers_sent() )
+		{
+			// Reject session ids the server never issued (fixation), and never
+			// accept ids from the URL
+			ini_set( 'session.use_strict_mode', '1' );
+			ini_set( 'session.use_only_cookies', '1' );
+			ini_set( 'session.use_trans_sid', '0' );
+		}
+
 		session_start();
 
 		//fixation attacks
@@ -361,9 +370,18 @@ class Session
 		}
 
 		//session hijacking
+		$fingerprint = $this->userAgentFingerprint();
+
 		if( isset( $_SESSION['HTTP_USER_AGENT'] ) )
 		{
-		    if( ! hash_equals( $_SESSION['HTTP_USER_AGENT'], hash_hmac( 'sha256', $_SERVER['HTTP_USER_AGENT'] ?? '', session_id() ) ) )
+		    // Sessions created before this format stored an HMAC keyed on the session id
+		    $legacy = hash_hmac( 'sha256', $_SERVER['HTTP_USER_AGENT'] ?? '', session_id() );
+
+		    if( is_string( $_SESSION['HTTP_USER_AGENT'] ) && hash_equals( $_SESSION['HTTP_USER_AGENT'], $legacy ) )
+		    {
+		        $_SESSION['HTTP_USER_AGENT'] = $fingerprint;
+		    }
+		    elseif( ! is_string( $_SESSION['HTTP_USER_AGENT'] ) || ! hash_equals( $_SESSION['HTTP_USER_AGENT'], $fingerprint ) )
 		    {
 		        /* Prompt for password */
 		        $this->destroy();
@@ -372,10 +390,19 @@ class Session
 		}
 		else
 		{
-		    $_SESSION['HTTP_USER_AGENT'] = hash_hmac( 'sha256', $_SERVER['HTTP_USER_AGENT'] ?? '', session_id() );
+		    $_SESSION['HTTP_USER_AGENT'] = $fingerprint;
 		}
-		
+
 		return $this;
+	}
+
+	/**
+	 * Hash of the client's user agent. Not keyed on the session id, so the
+	 * check survives regenerateId() (which should be called after login)
+	 */
+	protected function userAgentFingerprint(): string
+	{
+		return hash( 'sha256', 'rpc-session-ua|' . ( $_SERVER['HTTP_USER_AGENT'] ?? '' ) );
 	}
 	
 	/**
@@ -391,7 +418,7 @@ class Session
 	 */
 	public function destroy()
 	{
-		unset( $_SESSION );
+		$_SESSION = array();
 		session_destroy();
 	}
 	

@@ -181,4 +181,31 @@ class PagerTest extends UnitTestCase
         $this->assertEquals(20, $this->pager->getPerPage());
         $this->assertEquals(2, $this->pager->getCurrentPage());
     }
+
+    public function testNegativePageIsClampedToZero()
+    {
+        $_GET['page'] = '-5';
+        unset($GLOBALS['_RPC_']);
+
+        $pager = new Pager();
+
+        $this->assertSame(0, $pager->getCurrentPage());
+        $this->assertSame([0, 50], $pager->getLimits());
+    }
+
+    public function testRenderEscapesPathInfo()
+    {
+        $_SERVER['PATH_INFO'] = '/list/"><script>alert(1)</script>';
+
+        try {
+            $this->pager->setTotal(500);
+            $this->pager->setCurrent(2);
+            $html = $this->pager->render();
+        } finally {
+            unset($_SERVER['PATH_INFO']);
+        }
+
+        $this->assertStringNotContainsString('<script>', $html);
+        $this->assertStringContainsString('&quot;&gt;&lt;script&gt;', $html);
+    }
 }

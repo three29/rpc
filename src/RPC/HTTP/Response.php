@@ -122,13 +122,23 @@ class Response
 			throw new HttpException( 'Each cookie should have a name' );
 		}
 
-		return setcookie( $cookie->getName(),
-		                  $cookie->getValue(),
-		                  $cookie->getExpire(),
-		                  $cookie->getPath(),
-		                  $cookie->getDomain(),
-						  $cookie->isSecure(),
-						  $cookie->isHTTPOnly() );
+		return setcookie( $cookie->getName(), (string) $cookie->getValue(), $this->cookieOptions( $cookie ) );
+	}
+
+	/**
+	 * setcookie() options for a cookie. SameSite=Lax keeps the cookie off
+	 * cross-site POSTs (CSRF) while still sending it on normal navigation.
+	 */
+	protected function cookieOptions( Cookie $cookie ): array
+	{
+		return array(
+			'expires'  => (int) $cookie->getExpire(),
+			'path'     => (string) $cookie->getPath(),
+			'domain'   => (string) $cookie->getDomain(),
+			'secure'   => (bool) $cookie->isSecure(),
+			'httponly' => (bool) $cookie->isHTTPOnly(),
+			'samesite' => 'Lax',
+		);
 	}
 
 	/**
@@ -149,12 +159,7 @@ class Response
 		// set the expiration date to one hour ago
 		$cookie->setExpire( time() - 3600 );
 
-		return setcookie( $cookie->getName(),
-		                  $cookie->getValue(),
-		                  $cookie->getExpire(),
-		                  $cookie->getPath(),
-		                  $cookie->getDomain(),
-		                  $cookie->isSecure() );
+		return setcookie( $cookie->getName(), (string) $cookie->getValue(), $this->cookieOptions( $cookie ) );
 	}
 
 	/**

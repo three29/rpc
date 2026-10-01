@@ -80,15 +80,14 @@ class Cookie
 	 */
 	public function __construct( $name, $value = '', $expire = 0, $path = '', $domain = '', $secure = false, $httponly = false )
 	{
-		if( ! empty( $_COOKIE[$name] ) )
+		// Only the value is read from the request. The client controls the whole
+		// cookie string, so path/domain/secure/httponly always come from the
+		// arguments and never from what the browser sent.
+		if( ! empty( $_COOKIE[$name] ) && is_string( $_COOKIE[$name] ) )
 		{
-			$parts = self::decode( $name );
-			
-			$value    = $parts['value'];
-			$path     = $parts['path'];
-			$domain   = $parts['domain'];
-			$secure   = $parts['secure'];
-			$httponly = $parts['httponly'];
+			$parts = $this->decode( $name );
+
+			$value = $parts['value'] ?? $_COOKIE[$name];
 		}
 		
 	    $this->name     = $name;
@@ -297,7 +296,13 @@ class Cookie
 			return array();
 		}
 		
-		list( $expire, $path, $domain, $secure, $httponly ) = explode( ':', substr( $value, $pos + 1 ) );
+		$meta = explode( ':', substr( $value, $pos + 1 ) );
+		if( count( $meta ) !== 5 )
+		{
+			return array();
+		}
+
+		list( $expire, $path, $domain, $secure, $httponly ) = $meta;
 		$value = substr( $value, 0, $pos );
 		
 		return array( 'value' => $value, 'expire' => (int)$expire, 'path' => $path, 'domain' => $domain, 'secure' => (bool)$secure, 'httponly' => (bool)$httponly );

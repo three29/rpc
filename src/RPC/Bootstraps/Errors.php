@@ -18,7 +18,7 @@ class Errors implements Bootstrap {
 			ini_set( 'display_errors', 1 );
 			$whoops = new \Whoops\Run;
 			if( php_sapi_name() !== 'cli' ) {
-				$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+				$whoops->pushHandler(static::prettyPageHandler());
 			} else {
 				$whoops->pushHandler(new \Whoops\Handler\PlainTextHandler);
 			}
@@ -34,6 +34,31 @@ class Errors implements Bootstrap {
 				restore_exception_handler();
 			}
 		}
+	}
+
+	/**
+	 * Whoops page with credentials masked. The page dumps $_ENV, $_SERVER,
+	 * $_POST and $_COOKIE, which hold DB_PASSWORD, API keys, submitted
+	 * passwords and the session id.
+	 */
+	protected static function prettyPageHandler(): \Whoops\Handler\PrettyPageHandler
+	{
+		$handler = new \Whoops\Handler\PrettyPageHandler;
+		$pattern = '/pass|secret|key|token|auth|credential|dsn|salt|private/i';
+
+		foreach ( array( '_ENV' => $_ENV, '_SERVER' => $_SERVER, '_POST' => $_POST ) as $global => $values ) {
+			foreach ( array_keys( $values ) as $key ) {
+				if ( is_string( $key ) && preg_match( $pattern, $key ) ) {
+					$handler->hideSuperglobalKey( $global, $key );
+				}
+			}
+		}
+
+		foreach ( array_keys( $_COOKIE ) as $key ) {
+			$handler->hideSuperglobalKey( '_COOKIE', $key );
+		}
+
+		return $handler;
 	}
 
 	public static function handleUncaught( \Throwable $e ): void

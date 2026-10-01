@@ -74,6 +74,18 @@ class DispatchTest extends UnitTestCase
         $this->assertSame(404, $this->handler->rendered[0]->getStatusCode());
     }
 
+    public function testNonIdentifierSegmentsAreRouteNotFound(): void
+    {
+        // Segments become class/method names: no path or namespace tricks
+        foreach (['/../../vendor/autoload', '/widgets/..%5c..%5cevil', '/fixtures\\widgets/save', '/widgets/save.php'] as $uri) {
+            $this->handler->rendered = [];
+            $this->dispatch('GET', $uri);
+
+            $this->assertCount(1, $this->handler->rendered, $uri);
+            $this->assertInstanceOf(RouteNotFoundException::class, $this->handler->rendered[0], $uri);
+        }
+    }
+
     public function testUnknownActionIsRouteNotFound(): void
     {
         $this->dispatch('GET', '/widgets/nosuchaction');

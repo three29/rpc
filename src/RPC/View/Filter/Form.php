@@ -178,7 +178,7 @@ class Form extends Filter
 		{
 			if( is_array( $v ) )
 			{
-				$options .= '<optgroup label="' . $k . '">';
+				$options .= '<optgroup label="' . $this->escape( (string) $k ) . '">';
 				foreach( $v as $k1 => $v1 )
 				{
 					$options .= '<option value="' . $this->escape( $k1 ) . '"';
@@ -238,7 +238,7 @@ class Form extends Filter
 
 		if( ! str_contains( $name, '[' ) )
 		{
-			return @$this->request->{$m}[$name];
+			return $this->request->{$m}[$name] ?? null;
 		}
 
 		if( str_ends_with( $name, '[]' ) )
@@ -251,8 +251,20 @@ class Form extends Filter
 			$default_return = '';
 		}
 
-		$name = "['" . implode( "']['", explode( '[', str_replace( ']', '', $name ) ) ) . "']";
-		$val = eval( 'return @$this->request->' . $m . $name . ';' );
+		// Walk the request array one key at a time; field names can contain
+		// runtime values, so they must never be turned into code
+		$val = $this->request->{$m} ?? null;
+		foreach( explode( '[', str_replace( ']', '', $name ) ) as $key )
+		{
+			if( ! is_array( $val ) || ! array_key_exists( $key, $val ) )
+			{
+				$val = null;
+				break;
+			}
+
+			$val = $val[$key];
+		}
+
 		return empty( $val ) ? $default_return : $val;
 	}
 
@@ -268,9 +280,16 @@ class Form extends Filter
 		return ! empty( $arr );
 	}
 
-	public function escape( string|null $str ): string
+	public function escape( mixed $str ): string
 	{
-		return htmlentities( $str ?: '', ENT_QUOTES, 'UTF-8', false );
+		// A submitted array (e.g. name[]=x on a scalar field) renders as empty
+		// instead of throwing a TypeError
+		if( ! is_scalar( $str ) )
+		{
+			return '';
+		}
+
+		return htmlentities( (string) $str, ENT_QUOTES, 'UTF-8', false );
 	}
 
 }

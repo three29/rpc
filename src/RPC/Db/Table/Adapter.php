@@ -10,7 +10,13 @@ use RPC\Db\Table\Row;
 /**
  * Base class for all model classes, representing a table
  *
+ * Subclasses must keep the ( ?string $table_name, bool $ignore_fields )
+ * constructor signature: query(), execute() and __callStatic() create
+ * models with new static().
+ *
  * @package Db
+ *
+ * @phpstan-consistent-constructor
  */
 abstract class Adapter
 {
@@ -663,6 +669,56 @@ abstract class Adapter
 	public function onAfterDelete( \RPC\Db\Table\Row $row ): bool
 	{
 		return true;
+	}
+
+	/**
+	 * Character used to quote identifiers (` for MySQL, " for MSSQL)
+	 *
+	 * @var string
+	 */
+	protected $identifier_quote = '`';
+
+	/**
+	 * Validates and quotes a column name used as an array key in conditions,
+	 * e.g. find( array( 'email' => $email ) ). Keys may come from request
+	 * data, so anything other than "column" or "table.column" is rejected
+	 * instead of being concatenated into the SQL.
+	 *
+	 * @param string|int $column
+	 *
+	 * @return string
+	 */
+	protected function quoteColumn( string|int $column ): string
+	{
+		if( ! is_string( $column ) ||
+		    ! preg_match( '/^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?$/', $column ) )
+		{
+			throw new \RPC\Exception\InvalidArgumentException( 'Invalid column name "' . $column . '" in query condition' );
+		}
+
+		$q = $this->identifier_quote;
+
+		return $q . str_replace( '.', $q . '.' . $q, $column ) . $q;
+	}
+
+	/**
+	 * Validates a lone value passed to a finder, e.g. find( $id ). With no
+	 * bound values a string used to be run as a raw WHERE clause, so
+	 * find( $_GET['id'] ) was SQL injection. A lone value is now only
+	 * accepted as a primary key: an int or a digits-only string.
+	 *
+	 * @param mixed $value
+	 *
+	 * @return int|string
+	 */
+	protected function primaryKeyValue( mixed $value ): int|string
+	{
+		if( is_int( $value ) || ( is_string( $value ) && preg_match( '/^[0-9]+$/', $value ) ) )
+		{
+			return $value;
+		}
+
+		throw new \RPC\Exception\InvalidArgumentException( 'A condition without bound values must be a numeric primary key; pass the values as the second argument' );
 	}
 
 	public function lastQuery( bool $show_all = false ): mixed
