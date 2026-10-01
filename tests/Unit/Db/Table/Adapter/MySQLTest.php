@@ -246,4 +246,79 @@ class MySQLTest extends UnitTestCase
             }
         }
     }
+
+    /**
+     * Adapter wired to a mock connection that records every query
+     */
+    private function adapterWithDb(\RPC\Db\Adapter $db): MySQL
+    {
+        $reflection = new \ReflectionClass(MySQL::class);
+        $adapter = $reflection->newInstanceWithoutConstructor();
+
+        foreach (['db' => $db, 'name' => 'users', 'pk' => 'id', 'fields' => ['id', 'email']] as $property => $value) {
+            $prop = $reflection->getProperty($property);
+            $prop->setValue($adapter, $value);
+        }
+
+        return $adapter;
+    }
+
+    public function testFindersRejectLoneStringConditions()
+    {
+        $db = $this->createMock(\RPC\Db\Adapter::class);
+        $db->expects($this->never())->method('query');
+        $db->expects($this->never())->method('prepare');
+        $adapter = $this->adapterWithDb($db);
+
+        $payloads = ['0 OR SLEEP(5) -- ?', "1 UNION SELECT password FROM users -- ?", 'email', '1e3', ' 1', '0x1A', '1.5', 1.5, true];
+
+        foreach (['find', 'findAll', 'get', 'getAll', 'getBySql', 'findBySql'] as $method) {
+            foreach ($payloads as $payload) {
+                try {
+                    $adapter->$method($payload);
+                    $this->fail($method . '() accepted ' . var_export($payload, true));
+                } catch (\RPC\Exception\InvalidArgumentException $e) {
+                    $this->addToAssertionCount(1);
+                }
+            }
+        }
+    }
+
+    public function testFindByNumericIdBindsThePrimaryKey()
+    {
+        $statement = $this->createMock(\RPC\Db\Statement::class);
+        $statement->expects($this->exactly(2))->method('execute')
+            ->with($this->logicalOr($this->identicalTo(['5']), $this->identicalTo([5])))
+            ->willReturn([]);
+
+        $db = $this->createMock(\RPC\Db\Adapter::class);
+        $db->expects($this->never())->method('query');
+        $db->expects($this->exactly(2))->method('prepare')
+            ->with($this->stringContains(' id = ? '))
+            ->willReturn($statement);
+
+        $adapter = $this->adapterWithDb($db);
+
+        $this->assertNull($adapter->find('5'));
+        $this->assertNull($adapter->find(5));
+    }
+
+    public function testBoundConditionsStillWork()
+    {
+        $statement = $this->createMock(\RPC\Db\Statement::class);
+        $statement->expects($this->exactly(3))->method('execute')
+            ->with($this->logicalOr($this->identicalTo(['a@example.com']), $this->identicalTo(['a@example.com', 'active'])))
+            ->willReturn([]);
+
+        $db = $this->createMock(\RPC\Db\Adapter::class);
+        $db->expects($this->never())->method('query');
+        $db->expects($this->exactly(3))->method('prepare')->willReturn($statement);
+
+        $adapter = $this->adapterWithDb($db);
+
+        // column name with a scalar value gets " = ?" appended
+        $this->assertNull($adapter->find('email', 'a@example.com'));
+        $this->assertSame([], $adapter->findAll('email = ? AND status = ?', ['a@example.com', 'active']));
+        $this->assertSame([], $adapter->findBySql('select * from users where email = ?', ['a@example.com']));
+    }
 }

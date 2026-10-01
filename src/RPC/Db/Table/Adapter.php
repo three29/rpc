@@ -701,6 +701,26 @@ abstract class Adapter
 		return $q . str_replace( '.', $q . '.' . $q, $column ) . $q;
 	}
 
+	/**
+	 * Validates a lone value passed to a finder, e.g. find( $id ). With no
+	 * bound values a string used to be run as a raw WHERE clause, so
+	 * find( $_GET['id'] ) was SQL injection. A lone value is now only
+	 * accepted as a primary key: an int or a digits-only string.
+	 *
+	 * @param mixed $value
+	 *
+	 * @return int|string
+	 */
+	protected function primaryKeyValue( mixed $value ): int|string
+	{
+		if( is_int( $value ) || ( is_string( $value ) && preg_match( '/^[0-9]+$/', $value ) ) )
+		{
+			return $value;
+		}
+
+		throw new \RPC\Exception\InvalidArgumentException( 'A condition without bound values must be a numeric primary key; pass the values as the second argument' );
+	}
+
 	public function lastQuery( bool $show_all = false ): mixed
 	{
 		return $this->getDb()->getQueries( $show_all );
