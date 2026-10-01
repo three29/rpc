@@ -363,7 +363,7 @@ class Session
 		//session hijacking
 		if( isset( $_SESSION['HTTP_USER_AGENT'] ) )
 		{
-		    if( ! hash_equals( $_SESSION['HTTP_USER_AGENT'], hash_hmac( 'sha256', @$_SERVER['HTTP_USER_AGENT'], session_id() ) ) )
+		    if( ! hash_equals( $_SESSION['HTTP_USER_AGENT'], hash_hmac( 'sha256', $_SERVER['HTTP_USER_AGENT'] ?? '', session_id() ) ) )
 		    {
 		        /* Prompt for password */
 		        $this->destroy();
@@ -372,7 +372,7 @@ class Session
 		}
 		else
 		{
-		    $_SESSION['HTTP_USER_AGENT'] = hash_hmac( 'sha256', @$_SERVER['HTTP_USER_AGENT'], session_id() );
+		    $_SESSION['HTTP_USER_AGENT'] = hash_hmac( 'sha256', $_SERVER['HTTP_USER_AGENT'] ?? '', session_id() );
 		}
 		
 		return $this;
