@@ -116,7 +116,7 @@ class MySQL extends Adapter
 			$condition = array();
 			foreach( $args[0] as $k => $r )
 			{
-				$condition[] = " " . $k . " = ? ";
+				$condition[] = " " . $this->quoteColumn( $k ) . " = ? ";
 				$condition_values[] = $r;
 			}
 			$condition = implode( ' and ', $condition );
@@ -183,7 +183,7 @@ class MySQL extends Adapter
 			$condition = array();
 			foreach( $args[0] as $k => $r )
 			{
-				$condition[] = " " . $k . " = ? ";
+				$condition[] = " " . $this->quoteColumn( $k ) . " = ? ";
 				$condition_values[] = $r;
 			}
 			$condition = implode( ' and ', $condition );
@@ -248,7 +248,7 @@ class MySQL extends Adapter
 			$condition = array();
 			foreach( $args[0] as $k => $r )
 			{
-				$condition[] = " " . $k . " = ? ";
+				$condition[] = " " . $this->quoteColumn( $k ) . " = ? ";
 				$condition_values[] = $r;
 			}
 			$condition = implode( ' and ', $condition );
@@ -311,7 +311,7 @@ class MySQL extends Adapter
 			$condition = array();
 			foreach( $args[0] as $k => $r )
 			{
-				$condition[] = " " . $k . " = ? ";
+				$condition[] = " " . $this->quoteColumn( $k ) . " = ? ";
 				$condition_values[] = $r;
 			}
 			$condition = implode( ' and ', $condition );
@@ -399,7 +399,7 @@ class MySQL extends Adapter
 				$condition = array();
 				foreach( $args[0] as $k => $r )
 				{
-					$condition[] = " " . $k . " = ? ";
+					$condition[] = " " . $this->quoteColumn( $k ) . " = ? ";
 					$condition_values[] = $r;
 				}
 				$condition = implode( ' and ', $condition );
@@ -493,7 +493,7 @@ class MySQL extends Adapter
 			$condition = array();
 			foreach( $args[0] as $k => $r )
 			{
-				$condition[] = " " . $k . " = ? ";
+				$condition[] = " " . $this->quoteColumn( $k ) . " = ? ";
 				$condition_values[] = $r;
 			}
 			$condition = implode( ' and ', $condition );
@@ -640,7 +640,7 @@ class MySQL extends Adapter
 
 	public function deleteBy( string $field, mixed $value ): array|bool|null
 	{
-		$sql   = 'delete from `' . $this->getName() . '` where `' . $field . '`=?';
+		$sql   = 'delete from `' . $this->getName() . '` where ' . $this->quoteColumn( $field ) . '=?';
 
 		return $this->getDb()->prepare( $sql )->execute( array( $value ) );
 	}
@@ -669,7 +669,7 @@ class MySQL extends Adapter
 		if( is_readable( $filename ) &&
 		    ( time() - filemtime( $filename ) ) < $seconds )
 		{
-			return unserialize( file_get_contents( $filename ) );
+			return unserialize( file_get_contents( $filename ), array( 'allowed_classes' => array( 'stdClass' ) ) );
 		}
 
 		$res = $this->getDb()->query( $sql );

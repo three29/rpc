@@ -220,4 +220,30 @@ class MSSQLTest extends UnitTestCase
         $this->assertTrue(method_exists(MSSQL::class, 'cacheQuery'));
         $this->assertTrue(method_exists(MSSQL::class, 'newObject'));
     }
+
+    private function quoteColumn(string|int $column): string
+    {
+        $reflection = new \ReflectionClass(MSSQL::class);
+        $adapter = $reflection->newInstanceWithoutConstructor();
+
+        return $reflection->getMethod('quoteColumn')->invoke($adapter, $column);
+    }
+
+    public function testQuoteColumnQuotesPlainAndQualifiedNames()
+    {
+        $this->assertSame('"email"', $this->quoteColumn('email'));
+        $this->assertSame('"u"."email"', $this->quoteColumn('u.email'));
+    }
+
+    public function testQuoteColumnRejectsInjectionInConditionKeys()
+    {
+        foreach (['1=1 or id', 'id`', 'id"', 'email = ? or 1=1 --', 'a.b.c', '', 0] as $key) {
+            try {
+                $this->quoteColumn($key);
+                $this->fail('Accepted column ' . var_export($key, true));
+            } catch (\RPC\Exception\InvalidArgumentException $e) {
+                $this->assertStringContainsString('Invalid column name', $e->getMessage());
+            }
+        }
+    }
 }

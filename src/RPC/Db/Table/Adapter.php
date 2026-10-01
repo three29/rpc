@@ -665,6 +665,36 @@ abstract class Adapter
 		return true;
 	}
 
+	/**
+	 * Character used to quote identifiers (` for MySQL, " for MSSQL)
+	 *
+	 * @var string
+	 */
+	protected $identifier_quote = '`';
+
+	/**
+	 * Validates and quotes a column name used as an array key in conditions,
+	 * e.g. find( array( 'email' => $email ) ). Keys may come from request
+	 * data, so anything other than "column" or "table.column" is rejected
+	 * instead of being concatenated into the SQL.
+	 *
+	 * @param string|int $column
+	 *
+	 * @return string
+	 */
+	protected function quoteColumn( string|int $column ): string
+	{
+		if( ! is_string( $column ) ||
+		    ! preg_match( '/^[A-Za-z_][A-Za-z0-9_]*(\.[A-Za-z_][A-Za-z0-9_]*)?$/', $column ) )
+		{
+			throw new \RPC\Exception\InvalidArgumentException( 'Invalid column name "' . $column . '" in query condition' );
+		}
+
+		$q = $this->identifier_quote;
+
+		return $q . str_replace( '.', $q . '.' . $q, $column ) . $q;
+	}
+
 	public function lastQuery( bool $show_all = false ): mixed
 	{
 		return $this->getDb()->getQueries( $show_all );

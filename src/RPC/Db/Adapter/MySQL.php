@@ -117,7 +117,11 @@ class MySQL extends Adapter
 		$options = $this->_rpc_credentials['options'];
 
 		// Check if connection exists in Registry instead of GLOBALS
-		$connection_key = 'db_connection_' . md5( $this->_rpc_hostname . $this->_rpc_database );
+		// Keyed on the full connection identity: two connections to the same
+		// database with different users must not share one (privileged) handle
+		$connection_key = 'db_connection_' . hash( 'sha256', serialize( array(
+			$this->_rpc_hostname, $this->_rpc_port, $this->_rpc_socket, $this->_rpc_database, $username, $options,
+		) ) );
 
 		if( ! \RPC\Registry::registered( $connection_key ) )
 		{
