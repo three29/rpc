@@ -115,4 +115,55 @@ class FormTest extends UnitTestCase
     {
         $this->assertTrue(method_exists($this->form, 'getValue'));
     }
+
+    private function postForm(array $post): Form
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = $post;
+        unset($GLOBALS['_RPC_']);
+
+        $form = new Form();
+        $form->setMethod('post');
+
+        return $form;
+    }
+
+    public function testGetValueReadsNestedFields()
+    {
+        $form = $this->postForm(['u' => ['name' => 'bob', 'tags' => ['a', 'b']], 'plain' => 'x']);
+
+        $this->assertSame('x', $form->getValue('plain'));
+        $this->assertSame('bob', $form->getValue('u[name]'));
+        $this->assertSame(['a', 'b'], $form->getValue('u[tags][]'));
+        $this->assertSame('', $form->getValue('u[missing]'));
+        $this->assertSame([], $form->getValue('missing[]'));
+        $this->assertNull($form->getValue('missing'));
+    }
+
+    public function testGetValueNeverEvaluatesFieldNamesAsCode()
+    {
+        $form = $this->postForm(['u' => ['name' => 'bob']]);
+        $GLOBALS['rpc_form_injection'] = false;
+
+        $result = $form->getValue("u[x'.(\$GLOBALS['rpc_form_injection'] = true).'");
+
+        $this->assertSame('', $result);
+        $this->assertFalse($GLOBALS['rpc_form_injection']);
+        unset($GLOBALS['rpc_form_injection']);
+    }
+
+    public function testTextRendersSubmittedArrayAsEmpty()
+    {
+        $form = $this->postForm(['name' => ['<script>']]);
+
+        $this->assertSame('', $form->text('name'));
+    }
+
+    public function testSelectEscapesOptgroupLabels()
+    {
+        $html = $this->form->select('s', ['<script>x</script>' => ['1' => 'One']]);
+
+        $this->assertStringNotContainsString('<script>', $html);
+        $this->assertStringContainsString('label="&lt;script&gt;x&lt;/script&gt;"', $html);
+    }
 }
