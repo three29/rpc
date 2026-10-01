@@ -200,13 +200,13 @@ class Util
 		$password = '';
 		while( strlen( $password ) < $length )
 		{
-			if( mt_rand( 0, 2 ) != 1 )
+			if( random_int( 0, 2 ) != 1 )
 			{
-				$password .= $valid_consonant[mt_rand( 0, ( $consonant_length - 1 ) )] . $valid_vowel[mt_rand( 0, ( $vowel_length - 1 ) )] . $valid_consonant[mt_rand( 0, ( $consonant_length - 1 ) )];
+				$password .= $valid_consonant[random_int( 0, ( $consonant_length - 1 ) )] . $valid_vowel[random_int( 0, ( $vowel_length - 1 ) )] . $valid_consonant[random_int( 0, ( $consonant_length - 1 ) )];
 			}
 			else
 			{
-				$password .= $valid_numbers[mt_rand( 0, ( $numbers_length - 1 ) )];
+				$password .= $valid_numbers[random_int( 0, ( $numbers_length - 1 ) )];
 			}
 		}
 
@@ -256,10 +256,10 @@ class Util
 		$password = '';
 		while( strlen( $password ) < $length )
 		{
-			$char = $valid_charset[mt_rand( 0, ( $charset_length - 1 ) )];
+			$char = $valid_charset[random_int( 0, ( $charset_length - 1 ) )];
 
 			if( ( $fix_similar &&
-			      ! strpos( 'O01lI5S', $char ) ) ||
+			      ! str_contains( 'O01lI5S', $char ) ) ||
 			    ! $fix_similar )
 		    {
 		    	$password .= $char;
@@ -276,10 +276,22 @@ class Util
 	{
 		if( ! isset( $_SESSION['csrf_token_' . $name] ) )
 		{
-			$_SESSION['csrf_token_' . $name] = md5( $name . session_id() . rand() );
+			$_SESSION['csrf_token_' . $name] = bin2hex( random_bytes( 32 ) );
 		}
 
 		return $_SESSION['csrf_token_' . $name];
+	}
+
+	/**
+	 * Checks a submitted token against the one stored for $name, without
+	 * creating a token when none exists (so forged requests can't fill the
+	 * session with tokens for arbitrary names)
+	 */
+	public static function validCsrf( string $name, string $token ): bool
+	{
+		$stored = $_SESSION['csrf_token_' . $name] ?? null;
+
+		return is_string( $stored ) && $token !== '' && hash_equals( $stored, $token );
 	}
 
 	/**
@@ -313,17 +325,8 @@ class Util
         // Return early if CLI
         if(PHP_SAPI === 'cli') return PHP_SAPI;
 
-        // Should try these in the order they are listed
-        $remote_sources = ['HTTP_X_REAL_IP', 'REMOTE_ADDR'];
-
-        foreach ($remote_sources as $source) {
-            if (isset($_SERVER[$source])) {
-                return $_SERVER[$source];
-            }
-        }
-
-        // If all else fails return something
-        return 'unknown';
+        // Proxy headers are only honoured for TRUSTED_PROXIES (see Request::getIP)
+        return \RPC\HTTP\Request::getInstance()->getIP() ?? 'unknown';
     }
 
 }

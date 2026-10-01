@@ -28,6 +28,14 @@ class RequestTest extends UnitTestCase
         $this->request = Request::getInstance();
     }
 
+    protected function tearDown(): void
+    {
+        unset($_ENV['TRUSTED_PROXIES'], $_SERVER['HTTP_CLIENT_IP'], $_SERVER['HTTP_X_FORWARDED_FOR'],
+            $_SERVER['HTTP_X_REAL_IP'], $_SERVER['HTTP_X_FORWARDED_PROTO']);
+
+        parent::tearDown();
+    }
+
     public function testGetInstance(): void
     {
         $instance1 = Request::getInstance();
@@ -59,12 +67,13 @@ class RequestTest extends UnitTestCase
         $_SERVER['REMOTE_ADDR'] = '192.168.1.1';
         $this->assertEquals('192.168.1.1', $this->request->getIP());
 
+        // Proxy headers are ignored unless the sender is a trusted proxy
         $_SERVER['HTTP_CLIENT_IP'] = '10.0.0.1';
-        $this->assertEquals('10.0.0.1', $this->request->getIP());
+        $this->assertEquals('192.168.1.1', $this->request->getIP());
 
         unset($_SERVER['HTTP_CLIENT_IP']);
         $_SERVER['HTTP_X_FORWARDED_FOR'] = '172.16.0.1';
-        $this->assertEquals('172.16.0.1', $this->request->getIP());
+        $this->assertEquals('192.168.1.1', $this->request->getIP());
     }
 
     public function testIsSecure(): void
@@ -166,20 +175,72 @@ class RequestTest extends UnitTestCase
 
     public function testGetIPPriorityOrder(): void
     {
-        // HTTP_CLIENT_IP has highest priority
+        $_ENV['TRUSTED_PROXIES'] = '192.168.1.1';
+
+        // X-Forwarded-For wins when the request comes from a trusted proxy
         $_SERVER['HTTP_CLIENT_IP'] = '10.0.0.1';
         $_SERVER['HTTP_X_FORWARDED_FOR'] = '172.16.0.1';
         $_SERVER['REMOTE_ADDR'] = '192.168.1.1';
 
-        $this->assertEquals('10.0.0.1', $this->request->getIP());
-
-        // HTTP_X_FORWARDED_FOR is second priority
-        unset($_SERVER['HTTP_CLIENT_IP']);
         $this->assertEquals('172.16.0.1', $this->request->getIP());
 
-        // REMOTE_ADDR is lowest priority
+        // Then Client-IP
         unset($_SERVER['HTTP_X_FORWARDED_FOR']);
+        $this->assertEquals('10.0.0.1', $this->request->getIP());
+
+        // REMOTE_ADDR is lowest priority
+        unset($_SERVER['HTTP_CLIENT_IP']);
         $this->assertEquals('192.168.1.1', $this->request->getIP());
+    }
+
+    public function testGetIPIgnoresSpoofedHeadersFromUntrustedClients(): void
+    {
+        $_ENV['TRUSTED_PROXIES'] = '10.0.0.0/8';
+        $_SERVER['REMOTE_ADDR'] = '203.0.113.9';
+        $_SERVER['HTTP_X_FORWARDED_FOR'] = '127.0.0.1';
+        $_SERVER['HTTP_CLIENT_IP'] = '127.0.0.1';
+        $_SERVER['HTTP_X_REAL_IP'] = '127.0.0.1';
+
+        $this->assertSame('203.0.113.9', $this->request->getIP());
+    }
+
+    public function testGetIPSkipsTrustedHopsInForwardedChain(): void
+    {
+        $_ENV['TRUSTED_PROXIES'] = '10.0.0.0/8, 2001:db8::/32';
+        $_SERVER['REMOTE_ADDR'] = '10.1.2.3';
+        // client-supplied junk, real client, then our own proxy
+        $_SERVER['HTTP_X_FORWARDED_FOR'] = '1.1.1.1, 198.51.100.7, 10.9.9.9';
+
+        $this->assertSame('198.51.100.7', $this->request->getIP());
+
+        $_SERVER['REMOTE_ADDR'] = '2001:db8::1';
+        $this->assertSame('198.51.100.7', $this->request->getIP());
+    }
+
+    public function testIsTrustedProxy(): void
+    {
+        $this->assertFalse(Request::isTrustedProxy('10.0.0.1'));
+
+        $_ENV['TRUSTED_PROXIES'] = '10.0.0.0/8,192.168.1.5';
+        $this->assertTrue(Request::isTrustedProxy('10.255.0.1'));
+        $this->assertTrue(Request::isTrustedProxy('192.168.1.5'));
+        $this->assertFalse(Request::isTrustedProxy('192.168.1.6'));
+        $this->assertFalse(Request::isTrustedProxy('11.0.0.1'));
+        $this->assertFalse(Request::isTrustedProxy('not-an-ip'));
+
+        $_ENV['TRUSTED_PROXIES'] = '*';
+        $this->assertTrue(Request::isTrustedProxy('203.0.113.1'));
+    }
+
+    public function testIsSecureHonoursForwardedProtoOnlyFromTrustedProxy(): void
+    {
+        unset($_SERVER['HTTPS']);
+        $_SERVER['REMOTE_ADDR'] = '203.0.113.9';
+        $_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
+        $this->assertFalse($this->request->isSecure());
+
+        $_ENV['TRUSTED_PROXIES'] = '203.0.113.9';
+        $this->assertTrue($this->request->isSecure());
     }
 
     public function testGetIPReturnsNullWhenNotSet(): void
@@ -304,6 +365,54 @@ class RequestTest extends UnitTestCase
         unset($_SERVER['QUERY_STRING']);
 
         $this->assertSame('', (new \RPC\HTTP\Request())->getQueryString());
+    }
+
+    public function testValidCsrfTokenPasses()
+    {
+        $_SESSION = [];
+        $token = \RPC\Util::csrf('form');
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['csrf_token'] = 'form_' . $token;
+
+        $this->assertTrue((new \RPC\HTTP\Request())->validateCSRF());
+    }
+
+    public function testCsrfTokenAcceptedFromHeader()
+    {
+        $_SESSION = [];
+        $token = \RPC\Util::csrf('ajax');
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST = [];
+        $_SERVER['HTTP_X_CSRF_TOKEN'] = 'ajax_' . $token;
+
+        try {
+            $this->assertTrue((new \RPC\HTTP\Request())->validateCSRF());
+        } finally {
+            unset($_SERVER['HTTP_X_CSRF_TOKEN']);
+        }
+    }
+
+    public function testInvalidCsrfTokenDoesNotCreateSessionTokens()
+    {
+        $_SESSION = [];
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['csrf_token'] = 'made-up-name_whatever';
+
+        try {
+            (new \RPC\HTTP\Request())->validateCSRF();
+            $this->fail('Expected TokenMismatchException');
+        } catch (\RPC\Exception\TokenMismatchException $e) {
+            $this->assertSame([], $_SESSION);
+        }
+    }
+
+    public function testArrayCsrfTokenIsRejected()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['csrf_token'] = ['a', 'b'];
+
+        $this->expectException(\RPC\Exception\TokenMismatchException::class);
+        (new \RPC\HTTP\Request())->validateCSRF();
     }
 
     public function testMissingCsrfTokenThrowsTokenMismatch()

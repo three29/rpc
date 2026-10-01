@@ -244,33 +244,124 @@ class Request
 	 * Gets the ip address.
 	 *
 	 * Returns the Internet Protocol (IP) address of the client that
-	 * sent the request. Different from getRemoteAddress, also checks
-	 * for HTTP_CLIENT_IP and HTTP_X_FORWARD_FOR
+	 * sent the request. X-Forwarded-For, X-Real-IP and Client-IP can be set
+	 * by anyone, so they are only used when REMOTE_ADDR is a proxy listed in
+	 * the TRUSTED_PROXIES env variable (comma separated IPs or CIDR ranges,
+	 * or "*" to trust any proxy). Otherwise REMOTE_ADDR is returned.
 	 *
 	 * @return string The ip address
 	 */
 	public function getIP(): ?string
 	{
-		$ip = null;
+		$remote = $_SERVER['REMOTE_ADDR'] ?? null;
+		$remote = is_string( $remote ) && $remote !== '' ? $remote : null;
 
-		if( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) )
+		if( $remote === null || ! self::isTrustedProxy( $remote ) )
 		{
-			$ip = $_SERVER['HTTP_CLIENT_IP'];
-		}
-		elseif( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) )
-		{
-			$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-		}
-		elseif( ! empty( $_SERVER['REMOTE_ADDR'] ) )
-		{
-			$ip = $_SERVER['REMOTE_ADDR'];
-		}
-		else
-		{
-			$ip = null;
+			return $remote;
 		}
 
-		return $ip;
+		if( ! empty( $_SERVER['HTTP_X_FORWARDED_FOR'] ) && is_string( $_SERVER['HTTP_X_FORWARDED_FOR'] ) )
+		{
+			// Each proxy appends the address it received the request from, so walk
+			// the chain from the right and return the first untrusted address
+			$chain = array_reverse( array_map( 'trim', explode( ',', $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) );
+			$ip    = null;
+
+			foreach( $chain as $hop )
+			{
+				if( filter_var( $hop, FILTER_VALIDATE_IP ) === false )
+				{
+					break;
+				}
+
+				$ip = $hop;
+
+				if( ! self::isTrustedProxy( $hop ) )
+				{
+					break;
+				}
+			}
+
+			if( $ip !== null )
+			{
+				return $ip;
+			}
+		}
+
+		foreach( array( 'HTTP_X_REAL_IP', 'HTTP_CLIENT_IP' ) as $header )
+		{
+			$ip = $_SERVER[$header] ?? null;
+			if( is_string( $ip ) && filter_var( trim( $ip ), FILTER_VALIDATE_IP ) !== false )
+			{
+				return trim( $ip );
+			}
+		}
+
+		return $remote;
+	}
+
+	/**
+	 * Checks if an address belongs to the TRUSTED_PROXIES env variable
+	 */
+	public static function isTrustedProxy( string $ip ): bool
+	{
+		$trusted = env( 'TRUSTED_PROXIES' );
+
+		if( ! is_string( $trusted ) || trim( $trusted ) === '' )
+		{
+			return false;
+		}
+
+		foreach( array_map( 'trim', explode( ',', $trusted ) ) as $range )
+		{
+			if( $range === '*' || self::ipInCidr( $ip, $range ) )
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Checks if an IPv4/IPv6 address matches an address or CIDR range
+	 */
+	protected static function ipInCidr( string $ip, string $range ): bool
+	{
+		[ $subnet, $bits ] = array_pad( explode( '/', $range, 2 ), 2, null );
+
+		$ip_bin     = @inet_pton( $ip );
+		$subnet_bin = @inet_pton( $subnet );
+
+		if( $ip_bin === false || $subnet_bin === false || strlen( $ip_bin ) !== strlen( $subnet_bin ) )
+		{
+			return false;
+		}
+
+		$max  = strlen( $ip_bin ) * 8;
+		$bits = $bits === null ? $max : (int) $bits;
+
+		if( $bits < 0 || $bits > $max )
+		{
+			return false;
+		}
+
+		$bytes = intdiv( $bits, 8 );
+		if( substr( $ip_bin, 0, $bytes ) !== substr( $subnet_bin, 0, $bytes ) )
+		{
+			return false;
+		}
+
+		$remainder = $bits % 8;
+		if( $remainder === 0 )
+		{
+			return true;
+		}
+
+		$mask = chr( ( 0xFF << ( 8 - $remainder ) ) & 0xFF );
+
+		return ( $ip_bin[$bytes] & $mask ) === ( $subnet_bin[$bytes] & $mask );
 	}
 
 	/**
@@ -302,9 +393,16 @@ class Request
 	 */
 	public function isSecure(): bool
 	{
-		if( isset( $_SERVER['HTTPS'] ) )
+		if( isset( $_SERVER['HTTPS'] ) && strtolower( $_SERVER['HTTPS'] ) == 'on' )
 		{
-			return strtolower( $_SERVER['HTTPS'] ) == 'on' ? true : false;
+			return true;
+		}
+
+		// TLS terminated by a trusted load balancer / proxy
+		$remote = $_SERVER['REMOTE_ADDR'] ?? '';
+		if( is_string( $remote ) && $remote !== '' && self::isTrustedProxy( $remote ) )
+		{
+			return strtolower( (string) ( $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '' ) ) === 'https';
 		}
 
 		return false;
@@ -402,16 +500,31 @@ class Request
 	 */
 	public function validateCSRF( string $method = 'post' ): bool
 	{
+		$method = strtolower( $method );
+
 		if( $this->getMethod() == $method )
 		{
-			$csrf_token_pieces = explode( '_', (string) ( $this->{$method}['csrf_token'] ?? '' ) );
+			$params = $method === self::METHOD_GET ? $this->get : $this->post;
+			$token  = $params['csrf_token'] ?? $this->getCsrfHeader();
+
+			$csrf_token_pieces = is_string( $token ) ? explode( '_', $token ) : array();
 			if( count( $csrf_token_pieces ) != 2 ||
-				! hash_equals( $csrf_token_pieces[1], \RPC\Util::csrf( $csrf_token_pieces[0] ) ) ) {
+				! \RPC\Util::validCsrf( $csrf_token_pieces[0], $csrf_token_pieces[1] ) ) {
             	throw new TokenMismatchException( 'CSRF token missing or invalid. Please go back and refresh your page.' );
         	}
 		}
 
 		return true;
+	}
+
+	/**
+	 * CSRF token sent in an X-CSRF-Token header (for AJAX requests)
+	 */
+	protected function getCsrfHeader(): ?string
+	{
+		$token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+
+		return is_string( $token ) ? $token : null;
 	}
 
 
@@ -422,7 +535,10 @@ class Request
 	{
 		try
 		{
-			return json_decode( file_get_contents( 'php://input' ), true );
+			$data = json_decode( file_get_contents( 'php://input' ), true );
+
+			// A scalar JSON body ("abc", 1) is not an object/array
+			return is_array( $data ) || is_null( $data ) ? $data : array();
 		}
 		catch( \Exception $e )
 		{
