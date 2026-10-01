@@ -147,4 +147,35 @@ class CookieTest extends TestCase
         $this->assertTrue($cookie->isSecure());
         $this->assertTrue($cookie->isHTTPOnly());
     }
+
+    public function testIncomingCookieCannotDowngradeSecurityFlags()
+    {
+        // A client-sent value in the legacy "value#expire:path:domain:secure:httponly" format
+        $_COOKIE['remember'] = 'attacker#0:/:evil.example:0:0';
+
+        try {
+            $cookie = new Cookie('remember', 'fresh', 3600, '/app', 'example.com', true, true);
+        } finally {
+            unset($_COOKIE['remember']);
+        }
+
+        $this->assertSame('attacker', $cookie->getValue());
+        $this->assertSame('/app', $cookie->getPath());
+        $this->assertSame('example.com', $cookie->getDomain());
+        $this->assertTrue($cookie->isSecure());
+        $this->assertTrue($cookie->isHTTPOnly());
+    }
+
+    public function testIncomingPlainCookieValueIsRead()
+    {
+        $_COOKIE['plain'] = 'abc123';
+
+        try {
+            $cookie = new Cookie('plain');
+        } finally {
+            unset($_COOKIE['plain']);
+        }
+
+        $this->assertSame('abc123', $cookie->getValue());
+    }
 }
