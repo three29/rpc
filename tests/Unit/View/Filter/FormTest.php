@@ -95,7 +95,7 @@ class FormTest extends UnitTestCase
 
     public function testAddFilter()
     {
-        $mockFilter = $this->createMock(Filter::class);
+        $mockFilter = $this->createStub(Filter::class);
         $this->form->addFilter($mockFilter);
 
         $this->assertTrue(true); // No exception thrown

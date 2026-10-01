@@ -54,7 +54,7 @@ class DatagridTest extends UnitTestCase
 
     public function testSetDb()
     {
-        $mockDb = $this->createMock(\RPC\Db\Adapter::class);
+        $mockDb = $this->createStub(\RPC\Db\Adapter::class);
 
         $result = $this->datagrid->setDb($mockDb);
 

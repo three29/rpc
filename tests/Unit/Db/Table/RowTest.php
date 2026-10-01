@@ -17,10 +17,10 @@ class RowTest extends UnitTestCase
         parent::setUp();
 
         // Create mock DB adapter
-        $this->mockDb = $this->createMock(DbAdapter::class);
+        $this->mockDb = $this->createStub(DbAdapter::class);
 
         // Create mock Table adapter
-        $this->mockTable = $this->createMock(Adapter::class);
+        $this->mockTable = $this->createStub(Adapter::class);
         $this->mockTable->method('getDb')->willReturn($this->mockDb);
         $this->mockTable->method('getPkField')->willReturn('id');
         $this->mockTable->method('getFields')->willReturn(['id', 'name', 'email', 'created']);

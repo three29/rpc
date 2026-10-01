@@ -16,7 +16,7 @@ class AdapterTest extends UnitTestCase
     {
         parent::setUp();
 
-        $this->mockDb = $this->createMock(DbAdapter::class);
+        $this->mockDb = $this->createStub(DbAdapter::class);
     }
 
     public function testAdapterConstants()

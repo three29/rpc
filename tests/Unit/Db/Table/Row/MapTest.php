@@ -19,7 +19,7 @@ class MapTest extends UnitTestCase
         $this->map = new Map();
 
         // Create mock Table adapter
-        $this->mockTable = $this->createMock(Adapter::class);
+        $this->mockTable = $this->createStub(Adapter::class);
         $this->mockTable->method('getPkField')->willReturn('id');
         $this->mockTable->method('getFields')->willReturn(['id', 'name']);
     }

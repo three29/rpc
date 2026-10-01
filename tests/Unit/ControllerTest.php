@@ -27,8 +27,8 @@ class ControllerTest extends TestCase
         $this->controller = new TestController();
 
         // Mock request and response
-        $this->controller->request = $this->createMock(Request::class);
-        $this->controller->response = $this->createMock(Response::class);
+        $this->controller->request = $this->createStub(Request::class);
+        $this->controller->response = $this->createStub(Response::class);
     }
 
     protected function tearDown(): void
@@ -87,7 +87,8 @@ class ControllerTest extends TestCase
     // param tests
     public function testParamReturnsValueFromRequest()
     {
-        $this->controller->request->method('getParam')
+        $this->controller->request = $this->createMock(Request::class);
+        $this->controller->request->expects($this->once())->method('getParam')
             ->with('test_param', null)
             ->willReturn('param_value');
 
@@ -97,7 +98,8 @@ class ControllerTest extends TestCase
 
     public function testParamReturnsDefaultValue()
     {
-        $this->controller->request->method('getParam')
+        $this->controller->request = $this->createMock(Request::class);
+        $this->controller->request->expects($this->once())->method('getParam')
             ->with('missing_param', 'default')
             ->willReturn('default');
 
@@ -107,7 +109,8 @@ class ControllerTest extends TestCase
 
     public function testParamWithNullName()
     {
-        $this->controller->request->method('getParam')
+        $this->controller->request = $this->createMock(Request::class);
+        $this->controller->request->expects($this->once())->method('getParam')
             ->with(null, null)
             ->willReturn(null);
 
@@ -118,6 +121,7 @@ class ControllerTest extends TestCase
     // redirect tests
     public function testRedirectCallsResponseRedirect()
     {
+        $this->controller->response = $this->createMock(Response::class);
         $this->controller->response->expects($this->once())
             ->method('redirect')
             ->with('/test/url');
@@ -130,6 +134,7 @@ class ControllerTest extends TestCase
     {
         $data = ['key' => 'value'];
 
+        $this->controller->response = $this->createMock(Response::class);
         $this->controller->response->expects($this->once())
             ->method('json')
             ->with($data);
@@ -139,6 +144,7 @@ class ControllerTest extends TestCase
 
     public function testJsonWithEmptyArray()
     {
+        $this->controller->response = $this->createMock(Response::class);
         $this->controller->response->expects($this->once())
             ->method('json')
             ->with([]);
@@ -151,6 +157,7 @@ class ControllerTest extends TestCase
     {
         $data = ['result' => 'success'];
 
+        $this->controller->response = $this->createMock(Response::class);
         $this->controller->response->expects($this->once())
             ->method('jsonSuccess')
             ->with($data);
@@ -160,6 +167,7 @@ class ControllerTest extends TestCase
 
     public function testJsonSuccessWithEmptyData()
     {
+        $this->controller->response = $this->createMock(Response::class);
         $this->controller->response->expects($this->once())
             ->method('jsonSuccess')
             ->with([]);
@@ -170,6 +178,7 @@ class ControllerTest extends TestCase
     // jsonError tests
     public function testJsonErrorCallsResponseJsonError()
     {
+        $this->controller->response = $this->createMock(Response::class);
         $this->controller->response->expects($this->once())
             ->method('jsonError')
             ->with('Error message', ['error_data' => 'value']);
@@ -179,6 +188,7 @@ class ControllerTest extends TestCase
 
     public function testJsonErrorWithOnlyMessage()
     {
+        $this->controller->response = $this->createMock(Response::class);
         $this->controller->response->expects($this->once())
             ->method('jsonError')
             ->with('Error message', []);
@@ -188,6 +198,7 @@ class ControllerTest extends TestCase
 
     public function testJsonErrorWithEmptyMessage()
     {
+        $this->controller->response = $this->createMock(Response::class);
         $this->controller->response->expects($this->once())
             ->method('jsonError')
             ->with('', []);

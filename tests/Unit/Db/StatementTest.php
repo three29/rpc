@@ -6,6 +6,7 @@ use RPC\Db\Statement;
 use RPC\Db\Adapter\MySQL;
 use Tests\Unit\UnitTestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 class StatementTest extends UnitTestCase
 {
@@ -21,12 +22,12 @@ class StatementTest extends UnitTestCase
         $this->mockPDOStatement = $this->createMock(\PDOStatement::class);
 
         // Create mock PDO
-        $this->mockPDO = $this->createMock(PDO::class);
+        $this->mockPDO = $this->createStub(PDO::class);
         $this->mockPDO->method('prepare')
             ->willReturn($this->mockPDOStatement);
 
         // Create mock adapter
-        $this->mockAdapter = $this->createMock(MySQL::class);
+        $this->mockAdapter = $this->createStub(MySQL::class);
         $this->mockAdapter->method('getHandle')
             ->willReturn($this->mockPDO);
         $this->mockAdapter->method('getFetchMode')
@@ -146,6 +147,8 @@ class StatementTest extends UnitTestCase
         $this->assertTrue($result);
     }
 
+    // Only exercises buildDebugSql(); the statement mock from setUp() is unused
+    #[AllowMockObjectsWithoutExpectations]
     public function testBuildDebugSqlWithNullParameter()
     {
         $stmt = new Statement('SELECT * FROM users WHERE deleted_at = ?', $this->mockAdapter);
@@ -158,6 +161,8 @@ class StatementTest extends UnitTestCase
         $this->assertStringContainsString('NULL', $debugSql);
     }
 
+    // Only exercises buildDebugSql(); the statement mock from setUp() is unused
+    #[AllowMockObjectsWithoutExpectations]
     public function testBuildDebugSqlWithBooleanParameter()
     {
         $stmt = new Statement('SELECT * FROM users WHERE active = ?', $this->mockAdapter);
@@ -170,6 +175,8 @@ class StatementTest extends UnitTestCase
         $this->assertStringContainsString('1', $debugSql);
     }
 
+    // Only exercises buildDebugSql(); the statement mock from setUp() is unused
+    #[AllowMockObjectsWithoutExpectations]
     public function testBuildDebugSqlWithNumericParameter()
     {
         $stmt = new Statement('SELECT * FROM users WHERE id = ?', $this->mockAdapter);
