@@ -7,6 +7,12 @@
  * Usage: php check-env.php /path/to/your/app/root
  */
 
+// Prints configuration details; never let it run from a web request
+if (PHP_SAPI !== 'cli') {
+    http_response_code(404);
+    exit(1);
+}
+
 if ($argc < 2) {
     echo "Usage: php check-env.php /path/to/app/root\n";
     exit(1);

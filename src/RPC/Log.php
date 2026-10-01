@@ -114,6 +114,8 @@ class Log {
 				//$message .= "<"."?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed'); ?".">\n\n";
 			}
 
+			$is_new = ! file_exists($filepath);
+
 			if ( ! $fp = fopen($filepath, 'ab'))
 			{
 				return false;
@@ -128,7 +130,11 @@ class Log {
 			flock($fp, LOCK_UN);
 			fclose($fp);
 
-			chmod($filepath, 0777);
+			// Never world-writable: anyone on the box could forge log entries
+			if ( $is_new )
+			{
+				@chmod($filepath, 0664);
+			}
 		}
 
 		return true;
