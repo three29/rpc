@@ -10,7 +10,13 @@ use RPC\Db\Table\Row;
 /**
  * Base class for all model classes, representing a table
  *
+ * Subclasses must keep the ( ?string $table_name, bool $ignore_fields )
+ * constructor signature: query(), execute() and __callStatic() create
+ * models with new static().
+ *
  * @package Db
+ *
+ * @phpstan-consistent-constructor
  */
 abstract class Adapter
 {
