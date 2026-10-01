@@ -74,7 +74,8 @@ class Pager
 	 */
 	public function setCurrent( $page )
 	{
-		$this->current = $page;
+		// A negative page would produce a negative LIMIT offset
+		$this->current = max( 0, (int) $page );
 		return $this;
 	}
 
@@ -150,7 +151,7 @@ class Pager
 		$html  = '<ul class="pagination">';
 
 		$request = \RPC\HTTP\Request::getInstance();
-		$uri     = $request->getPathInfo();
+		$uri     = htmlspecialchars( (string) $request->getPathInfo(), ENT_QUOTES, 'UTF-8' );
 		$query   = $request->get;
 
 		$from = $this->current - $this->delta;
@@ -159,9 +160,9 @@ class Pager
 		if( $this->current > 0 )
 		{
 			$query['page'] = 0;
-			$html .= '<li class="start"><a href="' . $uri . '?' . http_build_query( $query ) . '">&laquo;</a></li>';
+			$html .= '<li class="start"><a href="' . $uri . '?' . http_build_query( $query, '', '&amp;' ) . '">&laquo;</a></li>';
 			$query['page'] = $this->current - 1;
-			$html .= '<li class="prev"><a href="' . $uri . '?' . http_build_query( $query ) . '">&lt;</a></li>';
+			$html .= '<li class="prev"><a href="' . $uri . '?' . http_build_query( $query, '', '&amp;' ) . '">&lt;</a></li>';
 		}
 
 		for( $first = 1, $i = $from; ( $i < $to + 1 ) && ( $i < $this->getTotalPages() ); $i++ )
@@ -188,7 +189,7 @@ class Pager
 
 				$query['page'] = $i;
 
-				$html .= '<li' . $class . '><a href="' . $uri . '?' . http_build_query( $query ) . '">' . ( $i + 1 ) . '</a></li>';
+				$html .= '<li' . $class . '><a href="' . $uri . '?' . http_build_query( $query, '', '&amp;' ) . '">' . ( $i + 1 ) . '</a></li>';
 			}
 			else
 			{
@@ -199,9 +200,9 @@ class Pager
 		if( $this->current < ( $this->getTotalPages() - 1 ) )
 		{
 			$query['page'] = $this->current + 1;
-			$html .= '<li class="next"><a href="' . $uri . '?' . http_build_query( $query ) . '">&gt;</a></li>';
+			$html .= '<li class="next"><a href="' . $uri . '?' . http_build_query( $query, '', '&amp;' ) . '">&gt;</a></li>';
 			$query['page'] = $this->getTotalPages() - 1;
-			$html .= '<li class="end"><a href="' . $uri . '?' . http_build_query( $query ) . '">&raquo;</a></li>';
+			$html .= '<li class="end"><a href="' . $uri . '?' . http_build_query( $query, '', '&amp;' ) . '">&raquo;</a></li>';
 		}
 
 		$html .= '</ul>';

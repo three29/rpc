@@ -333,7 +333,24 @@ class View
 	public function render( string $template ): string
 	{
 		ob_start();
-		$this->display( $template );
+		$level = ob_get_level();
+
+		try
+		{
+			$this->display( $template );
+		}
+		catch( \Throwable $e )
+		{
+			while( ob_get_level() >= $level )
+			{
+				ob_end_clean();
+			}
+
+			$this->setCurrentTemplate( null );
+
+			throw $e;
+		}
+
 		$output = ob_get_clean();
 
 		//reset current template
@@ -387,14 +404,18 @@ class View
 
 		$view = $this;
 
-		extract( $this->_view_vars );
+		// Resolved before extract() so an assigned variable named "template"
+		// can't change which file is required
+		$_rpc_view_file = $this->getFilteredFile( $template );
+
+		extract( array_diff_key( $this->_view_vars, array( '_rpc_view_file' => true ) ) );
 
 		/*
 			"require"-ing the php file so that the PHP code is ran within the
 			local context, which will make the variables (previously extracted)
 			available without using $this->
 		*/
-		require $this->getFilteredFile( $template );
+		require $_rpc_view_file;
 
 		\RPC\Signal::getInstance()->dispatch(new \RPC\Events\ViewRendered($this, $template));
 
@@ -413,6 +434,14 @@ class View
 		if( ! file_exists( $file ) )
 		{
 			throw new NotFoundException( 'File "' . $file . '" does not exist' );
+		}
+
+		// Templates are compiled and executed as PHP, so a name like
+		// "../../uploads/x.php" must not escape the template directory
+		$real = realpath( $file );
+		if( $real === false || ! str_starts_with( $real, rtrim( $this->getTemplateDirectory(), DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR ) )
+		{
+			throw new NotFoundException( 'Template "' . $template . '" is outside the template directory' );
 		}
 
 		if( ! $this->getCache()->get( $file, $template ) )

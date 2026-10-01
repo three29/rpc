@@ -209,4 +209,17 @@ class ViewTest extends UnitTestCase
 
         $this->assertStringContainsString('value', $output);
     }
+
+    public function testTemplateOutsideTemplateDirectoryIsRejected()
+    {
+        $outside = dirname($this->tempDir) . '/rpc_view_outside_' . uniqid() . '.php';
+        file_put_contents($outside, '<?php echo "outside"; ?>');
+
+        try {
+            $this->expectException(\RPC\Exception\NotFoundException::class);
+            $this->view->render('../' . basename($outside));
+        } finally {
+            @unlink($outside);
+        }
+    }
 }

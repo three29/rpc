@@ -143,6 +143,15 @@ class Router {
 			if ( $uri ) {
 				$cmdparts = explode( '/', $uri );
 
+				// Segments become class and method names, and the autoloader maps
+				// class names to file paths, so only allow identifier characters
+				// (no "..", "\", "%5c" or other path tricks)
+				foreach ( $cmdparts as $part ) {
+					if ( ! preg_match( '/^[A-Za-z0-9_]+$/', $part ) ) {
+						throw new RouteNotFoundException( 'No controller found for "' . $this->request->getURI() . '"' );
+					}
+				}
+
 				$cmdkey = end( $cmdparts );
 				reset( $cmdparts );
 				array_pop( $cmdparts );
